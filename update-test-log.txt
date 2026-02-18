@@ -1,0 +1,32 @@
+
+
+=== TEST UPDATE 2026-02-17T11:36:33.875Z ===
+Order ID: 69944097ac334ef1d28fee68
+Item ID: 699448d2dea4c1382ddc3dad
+New Status: completed
+Order found: FB260200001
+ERROR: Cannot read properties of undefined (reading 'toString')
+TypeError: Cannot read properties of undefined (reading 'toString')
+    at eval (webpack-internal:///(rsc)/./src/app/api/test-update/route.ts:37:60)
+    at Proxy.findIndex (<anonymous>)
+    at POST (webpack-internal:///(rsc)/./src/app/api/test-update/route.ts:37:39)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async AppRouteRouteModule.do (D:\Desktop\Fabloom\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:5:38696)
+    at async AppRouteRouteModule.handle (D:\Desktop\Fabloom\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:5:45978)
+    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Ftest-update%2Froute&page=%2Fapi%2Ftest-update%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Ftest-update%2Froute.ts&appDir=D%3A%5CDesktop%5CFabloom%5Csrc%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=D%3A%5CDesktop%5CFabloom&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:203:38)
+    at async AppRouteRouteModule.handleResponse (D:\Desktop\Fabloom\node_modules\next\dist\compiled\next-server\app-route.runtime.dev.js:1:195179)
+    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Ftest-update%2Froute&page=%2Fapi%2Ftest-update%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Ftest-update%2Froute.ts&appDir=D%3A%5CDesktop%5CFabloom%5Csrc%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=D%3A%5CDesktop%5CFabloom&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:265:32)
+    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Ftest-update%2Froute&page=%2Fapi%2Ftest-update%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Ftest-update%2Froute.ts&appDir=D%3A%5CDesktop%5CFabloom%5Csrc%5Capp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=D%3A%5CDesktop%5CFabloom&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:317:13)
+    at async DevServer.renderToResponseWithComponentsImpl (D:\Desktop\Fabloom\node_modules\next\dist\server\base-server.js:1422:9)
+    at async DevServer.renderPageComponent (D:\Desktop\Fabloom\node_modules\next\dist\server\base-server.js:1474:24)
+    at async DevServer.renderToResponseImpl (D:\Desktop\Fabloom\node_modules\next\dist\server\base-server.js:1514:32)
+    at async DevServer.pipeImpl (D:\Desktop\Fabloom\node_modules\next\dist\server\base-server.js:1025:25)
+    at async NextNodeServer.handleCatchallRenderRequest (D:\Desktop\Fabloom\node_modules\next\dist\server\next-server.js:393:17)
+    at async DevServer.handleRequestImpl (D:\Desktop\Fabloom\node_modules\next\dist\server\base-server.js:916:17)
+    at async D:\Desktop\Fabloom\node_modules\next\dist\server\dev\next-dev-server.js:400:20
+    at async Span.traceAsyncFn (D:\Desktop\Fabloom\node_modules\next\dist\trace\trace.js:157:20)
+    at async DevServer.handleRequest (D:\Desktop\Fabloom\node_modules\next\dist\server\dev\next-dev-server.js:396:24)
+    at async invokeRender (D:\Desktop\Fabloom\node_modules\next\dist\server\lib\router-server.js:240:21)
+    at async handleRequest (D:\Desktop\Fabloom\node_modules\next\dist\server\lib\router-server.js:437:24)
+    at async requestHandlerImpl (D:\Desktop\Fabloom\node_modules\next\dist\server\lib\router-server.js:485:13)
+    at async Server.requestListener (D:\Desktop\Fabloom\node_modules\next\dist\server\lib\start-server.js:226:13)
