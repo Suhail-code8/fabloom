@@ -36,7 +36,7 @@ export async function GET(
         }
 
         console.log('GET Order - Items _id check:');
-        order.items.forEach((item: any, i: number) => {
+        (order as any).items.forEach((item: any, i: number) => {
             console.log(`Item ${i}: _id =`, item._id, 'name =', item.productName);
         });
 
