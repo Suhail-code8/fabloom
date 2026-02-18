@@ -120,37 +120,37 @@ export default function CartItem({
                                                     <div>
                                                         <span className="text-gray-600">Neck:</span>{' '}
                                                         <span className="font-medium">
-                                                            {item.stitchingDetails.measurements.neck}"
+                                                            {item.stitchingDetails.measurements.neck}&quot;
                                                         </span>
                                                     </div>
                                                     <div>
                                                         <span className="text-gray-600">Chest:</span>{' '}
                                                         <span className="font-medium">
-                                                            {item.stitchingDetails.measurements.chest}"
+                                                            {item.stitchingDetails.measurements.chest}&quot;
                                                         </span>
                                                     </div>
                                                     <div>
                                                         <span className="text-gray-600">Waist:</span>{' '}
                                                         <span className="font-medium">
-                                                            {item.stitchingDetails.measurements.waist}"
+                                                            {item.stitchingDetails.measurements.waist}&quot;
                                                         </span>
                                                     </div>
                                                     <div>
                                                         <span className="text-gray-600">Shoulder:</span>{' '}
                                                         <span className="font-medium">
-                                                            {item.stitchingDetails.measurements.shoulder}"
+                                                            {item.stitchingDetails.measurements.shoulder}&quot;
                                                         </span>
                                                     </div>
                                                     <div>
                                                         <span className="text-gray-600">Sleeve:</span>{' '}
                                                         <span className="font-medium">
-                                                            {item.stitchingDetails.measurements.sleeveLength}"
+                                                            {item.stitchingDetails.measurements.sleeveLength}&quot;
                                                         </span>
                                                     </div>
                                                     <div>
                                                         <span className="text-gray-600">Length:</span>{' '}
                                                         <span className="font-medium">
-                                                            {item.stitchingDetails.measurements.shirtLength}"
+                                                            {item.stitchingDetails.measurements.shirtLength}&quot;
                                                         </span>
                                                     </div>
                                                 </div>

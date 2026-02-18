@@ -74,7 +74,7 @@ export default function CartSummary({
                 {stitchingFees > 0 && (
                     <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
                         <p className="text-xs text-emerald-700">
-                            ✨ You're getting custom tailoring for ${stitchingFees.toFixed(2)}!
+                            ✨ You&apos;re getting custom tailoring for ${stitchingFees.toFixed(2)}!
                         </p>
                     </div>
                 )}
