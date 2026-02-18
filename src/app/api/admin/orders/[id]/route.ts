@@ -16,12 +16,12 @@ const STITCHING_STATUSES = ['pending', 'in_progress', 'completed', 'delivered'] 
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await dbConnect();
 
-        const { id } = params;
+        const { id } = await params;
 
         const order = await Order.findById(id).lean();
 
@@ -59,12 +59,12 @@ export async function GET(
 
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await dbConnect();
 
-        const { id } = params;
+        const { id } = await params;
         const body = await request.json();
         const { status, stitchingStatus, itemId } = body;
 

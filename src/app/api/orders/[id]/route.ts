@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import  connectToDatabase  from "@/lib/db";
+import connectToDatabase from "@/lib/db";
 import { Order } from "@/models/Order";
 import { isValidObjectId } from "mongoose";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
 
     // 1. Validate ID format
     if (!isValidObjectId(id)) {
