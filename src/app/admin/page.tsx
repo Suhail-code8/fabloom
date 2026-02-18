@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function AdminDashboardPage() {
     return (
         <div className="space-y-6">
@@ -29,7 +31,7 @@ export default function AdminDashboardPage() {
             <div className="bg-white p-6 rounded-lg border">
                 <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <a
+                    <Link
                         href="/admin/orders"
                         className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                     >
@@ -37,8 +39,8 @@ export default function AdminDashboardPage() {
                         <p className="text-sm text-gray-600 mt-1">
                             View and update order statuses
                         </p>
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                         href="/admin/orders?filter=stitching"
                         className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                     >
@@ -46,7 +48,7 @@ export default function AdminDashboardPage() {
                         <p className="text-sm text-gray-600 mt-1">
                             Print tailor job cards
                         </p>
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>

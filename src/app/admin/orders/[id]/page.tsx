@@ -24,28 +24,24 @@ export default function AdminOrderDetailPage() {
 
     useEffect(() => {
         if (orderId) {
+            const fetchOrder = async () => {
+                try {
+                    const res = await fetch(`/api/admin/orders/${orderId}`, { cache: 'no-store' });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        setOrder(data.data);
+                    }
+                } catch (error) {
+                    console.error('Error fetching order:', error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
             fetchOrder();
         }
     }, [orderId]);
-
-    const fetchOrder = async () => {
-        try {
-            if (!orderId) {
-                return;
-            }
-
-            const res = await fetch(`/api/admin/orders/${orderId}`, { cache: 'no-store' });
-            const data = await res.json();
-
-            if (data.success) {
-                setOrder(data.data);
-            }
-        } catch (error) {
-            console.error('Error fetching order:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const updateOrderStatus = async (status: string) => {
         try {

@@ -24,29 +24,29 @@ export default function AdminOrdersPage() {
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
+        const fetchOrders = async () => {
+            setLoading(true);
+            try {
+                const url =
+                    filter === 'all'
+                        ? '/api/admin/orders'
+                        : `/api/admin/orders?filter=${filter}`;
+
+                const res = await fetch(url, { cache: 'no-store' });
+                const data = await res.json();
+
+                if (data.success) {
+                    setOrders(data.data);
+                }
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchOrders();
     }, [filter]);
-
-    const fetchOrders = async () => {
-        setLoading(true);
-        try {
-            const url =
-                filter === 'all'
-                    ? '/api/admin/orders'
-                    : `/api/admin/orders?filter=${filter}`;
-
-            const res = await fetch(url, { cache: 'no-store' });
-            const data = await res.json();
-
-            if (data.success) {
-                setOrders(data.data);
-            }
-        } catch (error) {
-            console.error('Error fetching orders:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const filteredOrders = orders.filter((order) => {
         if (!searchQuery) return true;
