@@ -52,7 +52,7 @@ export default function OrderSuccessPage({
                         Order Placed Successfully!
                     </h1>
                     <p className="text-lg text-gray-600">
-                        Thank you for your order. We'll send you a confirmation email shortly.
+                        Thank you for your order. We&apos;ll send you a confirmation email shortly.
                     </p>
                 </div>
 
@@ -117,11 +117,11 @@ export default function OrderSuccessPage({
                     <ul className="space-y-2 text-sm text-gray-700">
                         <li className="flex items-start gap-2">
                             <span className="text-emerald-600 mt-0.5">✓</span>
-                            <span>You'll receive an order confirmation email</span>
+                            <span>You&apos;ll receive an order confirmation email</span>
                         </li>
                         <li className="flex items-start gap-2">
                             <span className="text-emerald-600 mt-0.5">✓</span>
-                            <span>We'll process your order within 1-2 business days</span>
+                            <span>We&apos;ll process your order within 1-2 business days</span>
                         </li>
                         <li className="flex items-start gap-2">
                             <span className="text-emerald-600 mt-0.5">✓</span>
@@ -129,7 +129,7 @@ export default function OrderSuccessPage({
                         </li>
                         <li className="flex items-start gap-2">
                             <span className="text-emerald-600 mt-0.5">✓</span>
-                            <span>You'll receive tracking information once shipped</span>
+                            <span>You&apos;ll receive tracking information once shipped</span>
                         </li>
                     </ul>
                 </div>

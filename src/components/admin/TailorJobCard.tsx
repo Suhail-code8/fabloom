@@ -83,27 +83,27 @@ export default function TailorJobCard({
                         <div className="grid grid-cols-2 gap-4 print:gap-6">
                             <div className="border-l-4 border-emerald-600 pl-4 print:pl-6">
                                 <p className="text-sm text-gray-600 print:text-lg">Neck</p>
-                                <p className="text-3xl font-bold print:text-5xl">{measurements.neck}"</p>
+                                <p className="text-3xl font-bold print:text-5xl">{measurements.neck}&quot;</p>
                             </div>
                             <div className="border-l-4 border-emerald-600 pl-4 print:pl-6">
                                 <p className="text-sm text-gray-600 print:text-lg">Chest</p>
-                                <p className="text-3xl font-bold print:text-5xl">{measurements.chest}"</p>
+                                <p className="text-3xl font-bold print:text-5xl">{measurements.chest}&quot;</p>
                             </div>
                             <div className="border-l-4 border-emerald-600 pl-4 print:pl-6">
                                 <p className="text-sm text-gray-600 print:text-lg">Waist</p>
-                                <p className="text-3xl font-bold print:text-5xl">{measurements.waist}"</p>
+                                <p className="text-3xl font-bold print:text-5xl">{measurements.waist}&quot;</p>
                             </div>
                             <div className="border-l-4 border-emerald-600 pl-4 print:pl-6">
                                 <p className="text-sm text-gray-600 print:text-lg">Shoulder</p>
-                                <p className="text-3xl font-bold print:text-5xl">{measurements.shoulder}"</p>
+                                <p className="text-3xl font-bold print:text-5xl">{measurements.shoulder}&quot;</p>
                             </div>
                             <div className="border-l-4 border-emerald-600 pl-4 print:pl-6">
                                 <p className="text-sm text-gray-600 print:text-lg">Sleeve Length</p>
-                                <p className="text-3xl font-bold print:text-5xl">{measurements.sleeveLength}"</p>
+                                <p className="text-3xl font-bold print:text-5xl">{measurements.sleeveLength}&quot;</p>
                             </div>
                             <div className="border-l-4 border-emerald-600 pl-4 print:pl-6">
                                 <p className="text-sm text-gray-600 print:text-lg">Garment Length</p>
-                                <p className="text-3xl font-bold print:text-5xl">{measurements.shirtLength}"</p>
+                                <p className="text-3xl font-bold print:text-5xl">{measurements.shirtLength}&quot;</p>
                             </div>
                         </div>
                     </div>

@@ -52,7 +52,7 @@ export default function CartPage() {
                         Your Cart is Empty
                     </h1>
                     <p className="text-gray-600 mb-8">
-                        Looks like you haven't added any items to your cart yet. Start
+                        Looks like you haven&apos;t added any items to your cart yet. Start
                         shopping to find your perfect garment!
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
