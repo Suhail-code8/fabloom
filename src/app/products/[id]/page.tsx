@@ -3,11 +3,12 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import ProductGallery from '@/components/product/ProductGallery';
 import ProductInfo from '@/components/product/ProductInfo';
+import { getBaseUrl } from '@/lib/getBaseUrl';
 
 async function getProduct(id: string) {
     try {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products/${id}`,
+            `${getBaseUrl()}/api/products/${id}`,
             {
                 cache: 'no-store', // Always fetch fresh data
             }

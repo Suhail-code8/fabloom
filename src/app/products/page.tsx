@@ -1,11 +1,11 @@
 import ProductCard from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Filter } from "lucide-react";
+import { getBaseUrl } from "@/lib/getBaseUrl";
 
 async function getProducts() {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-        const res = await fetch(`${baseUrl}/api/products`, {
+        const res = await fetch(`${getBaseUrl()}/api/products`, {
             cache: 'no-store' // Always fetch fresh data
         });
 

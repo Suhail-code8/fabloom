@@ -1,11 +1,11 @@
 import ProductCard from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Scissors, Sparkles } from "lucide-react";
+import { getBaseUrl } from "@/lib/getBaseUrl";
 
 async function getFabrics() {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-        const res = await fetch(`${baseUrl}/api/products?type=fabric`, {
+        const res = await fetch(`${getBaseUrl()}/api/products?type=fabric`, {
             cache: 'no-store'
         });
 
