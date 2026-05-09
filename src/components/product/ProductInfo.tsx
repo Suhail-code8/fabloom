@@ -49,12 +49,11 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             return;
         }
 
-        const cartItem: ReadymadeCartItem = {
-            id: '',
+        const cartItem: any = {
             productId: product._id,
             name: product.name,
             image: product.images[0] || '',
-            type: 'readymade',
+            itemType: 'readymade',
             size: selectedSize as any,
             price: product.price,
             quantity: 1,
@@ -73,12 +72,11 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             return;
         }
 
-        const cartItem: FabricCartItem = {
-            id: '',
+        const cartItem: any = {
             productId: product._id,
             name: product.name,
             image: product.images[0] || '',
-            type: 'fabric',
+            itemType: 'fabric',
             pricePerMeter: product.pricePerMeter || 0,
             meters: meters,
             quantity: 1,
@@ -91,12 +89,11 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
     // Handle add to cart for accessory
     const handleAddAccessoryToCart = () => {
-        const cartItem = {
-            id: '',
+        const cartItem: any = {
             productId: product._id,
             name: product.name,
             image: product.images[0] || '',
-            type: 'accessory' as const,
+            itemType: 'accessory',
             price: product.price,
             quantity: 1,
             material: product.material,

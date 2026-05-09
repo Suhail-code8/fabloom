@@ -1,51 +1,33 @@
-import dotenv from 'dotenv';
-import { resolve } from 'path';
-
-// Load environment variables
-dotenv.config({ path: resolve(process.cwd(), '.env.local') });
-
 import mongoose from 'mongoose';
-import { Product } from '../models/Product';
+import * as dotenv from 'dotenv';
+import path from 'path';
 
-async function checkDatabase() {
+dotenv.config({ path: path.join(process.cwd(), '.env.local') });
+
+async function checkDB() {
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+        console.error('MONGODB_URI not found in .env.local');
+        return;
+    }
+
     try {
-        console.log('🔍 Checking MongoDB database...\n');
+        await mongoose.connect(uri);
+        console.log('Connected to:', uri.split('@')[1]); // Log host only for safety
 
-        // Connect to MongoDB
-        await mongoose.connect(process.env.MONGODB_URI!);
-        console.log('✅ Connected to MongoDB Atlas\n');
-
-        // Count products
-        const count = await Product.countDocuments();
-        console.log(`📊 Total products in database: ${count}\n`);
-
-        if (count > 0) {
-            // Fetch all products
-            const products = await Product.find({}).lean();
-
-            console.log('Products:');
-            products.forEach((product: any, index: number) => {
-                console.log(`\n${index + 1}. ${product.name}`);
-                console.log(`   Type: ${product.type}`);
-                console.log(`   Category: ${product.category}`);
-                console.log(`   Price: $${product.price}`);
-                console.log(`   Active: ${product.active}`);
-                console.log(`   ID: ${product._id}`);
+        const products = await mongoose.connection.db?.collection('products').find({}).toArray();
+        console.log('Total products found:', products?.length);
+        
+        if (products) {
+            products.forEach(p => {
+                console.log(`- ID: ${p._id} | TYPE: ${p.type} | SUB: ${p.subcategory} | NAME: ${p.name} | SLUG: ${p.slug}`);
             });
-        } else {
-            console.log('❌ No products found in database!');
-            console.log('Run: npm run seed');
         }
 
-        await mongoose.connection.close();
-        console.log('\n✅ Database connection closed');
-
-    } catch (error) {
-        console.error('❌ Error:', error);
-        if (mongoose.connection.readyState === 1) {
-            await mongoose.connection.close();
-        }
+        await mongoose.disconnect();
+    } catch (err) {
+        console.error('Error:', err);
     }
 }
 
-checkDatabase();
+checkDB();

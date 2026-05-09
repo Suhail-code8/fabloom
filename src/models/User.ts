@@ -12,6 +12,7 @@ export interface IUser extends Document {
     role: 'customer' | 'admin';
     avatar?: string;
     addresses: {
+        _id?: mongoose.Types.ObjectId;
         fullName: string;
         phone: string;
         addressLine1: string;
@@ -22,6 +23,12 @@ export interface IUser extends Document {
         country: string;
         isDefault: boolean;
     }[];
+    wishlist: mongoose.Types.ObjectId[];
+    notificationPreferences: {
+        whatsapp: boolean;
+        email: boolean;
+        promotional: boolean;
+    };
     createdAt: Date;
     updatedAt: Date;
 }
@@ -55,6 +62,12 @@ const UserSchema = new Schema<IUser>(
                 isDefault: { type: Boolean, default: false },
             },
         ],
+        wishlist: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
+        notificationPreferences: {
+            whatsapp: { type: Boolean, default: true },
+            email: { type: Boolean, default: true },
+            promotional: { type: Boolean, default: false },
+        },
     },
     { timestamps: true }
 );

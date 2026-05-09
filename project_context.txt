@@ -1,0 +1,90 @@
+# Fabloom - Complete Project Context & Historical Journey
+
+## 1. Project Overview & Tech Stack
+Fabloom is a premium custom tailoring and fashion e-commerce web application designed primarily for mobile users. It offers readymade garments, fabrics (by the meter), custom tailoring services (stitching), and accessories.
+
+**Tech Stack:**
+- **Framework:** Next.js 15 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS (Navy `#0f1035` & Gold `#D4A853` theme)
+- **Database:** MongoDB with Mongoose
+- **Authentication:** Clerk
+- **State Management:** Zustand (with persistence)
+- **Payments:** Razorpay
+- **Email Notifications:** Resend + React Email
+- **Error Tracking & Monitoring:** Sentry
+- **Rate Limiting:** Upstash Redis
+- **PWA:** next-pwa
+
+---
+
+## 2. The Development Journey (How We Got Here)
+
+This project was built iteratively in distinct phases. If you are an AI assisting with this project, understanding this history will explain *why* certain architectural choices were made.
+
+### Phase 1: Foundation & Authentication
+- Initialized Next.js App Router and set up the global Tailwind CSS theme to match the premium brand identity.
+- Integrated **Clerk** for seamless user authentication and protected routes.
+
+### Phase 2: Database Architecture (Polymorphic Models)
+- Integrated MongoDB using Mongoose.
+- Designed a complex, polymorphic `Product` schema using **Mongoose Discriminators**. This allows us to have a single `products` collection with three distinct types:
+  1. `ReadymadeProduct` (Tracks inventory by Sizes: S, M, L, XL)
+  2. `FabricProduct` (Tracks inventory in Meters, includes stitching availability & pricing)
+  3. `AccessoryProduct` (Simple unit stock)
+- Created `UserMeasurementProfile` to save customer body measurements for repeat tailoring orders.
+
+### Phase 3: Mobile-First Storefront UI
+- Built the `(store)` Route Group to serve as the main shopping interface.
+- Implemented a mobile app-like shell using a sticky `TopCategoryBar` for quick navigation and a fixed `BottomNav` for core app sections (Home, Wishlist, Cart, Account).
+
+### Phase 4: Complex State Management (Zustand)
+- Created `useCartStore.ts` to handle the shopping cart.
+- The cart logic is highly complex because it handles mixed items. "Stitching" items bundle the selected fabric, the required meters, the user's measurement profile snapshot, and the tailoring fees into a single unique cart entry.
+- Added cart synchronization with the backend (`/api/cart/sync`) to ensure stock validity before checkout.
+
+### Phase 5: Payments & Order Processing
+- Integrated **Razorpay** to process payments in INR.
+- Built a secure server-side checkout flow that verifies Razorpay signatures, creates complex `Order` documents in MongoDB, and triggers post-purchase events.
+
+### Phase 6: Admin Dashboard & Tailoring Kanban
+- Built a protected `(admin)` route group.
+- Implemented an inventory management system to quickly restock fabrics and readymade sizes.
+- Created a **Stitching Kanban Board** to visually track custom tailoring orders through various states: `Pending` -> `Cutting` -> `Stitching` -> `Quality Check` -> `Ready`.
+
+### Phase 7: Production Safety Layer & PWA
+- Integrated **Sentry** to monitor client and server errors, implementing a custom `global-error.tsx` fallback UI.
+- Integrated **Upstash Redis** to add API rate limiting, preventing checkout spam and brute-force attacks.
+- Configured **next-pwa** and generated manifests/icons so users can install Fabloom directly to their mobile home screens.
+
+### Phase 8: Notification Engine Migration
+- Originally, the app was built to send WhatsApp notifications via WATI.
+- **Pivot:** To simplify infrastructure and increase reliability, we archived the WATI integration and rebuilt the notification engine to be **Email-Only** using **Resend**.
+- Designed four responsive React Email templates: `OrderConfirmationEmail`, `StitchingStartedEmail`, `StitchingReadyEmail`, and `OrderDispatchedEmail`.
+- *Note: The old WhatsApp logic is safely archived in `lib/notifications/whatsapp.ts` with instructions on how to use the Meta Cloud API in the future.*
+
+### Phase 9: Refinement & Bug Squashing
+- Fixed routing conflicts (resolving duplicate `page.tsx` endpoints mapping to `/`).
+- Cleaned up Mongoose duplicate index warnings.
+- Fixed React hydration/invocation bugs related to Zustand state selectors.
+
+---
+
+## 3. Directory Structure Details
+
+- `src/app/(store)`: The public-facing storefront.
+- `src/app/(admin)` / `src/app/admin`: The administrator dashboard.
+- `src/app/(auth)`: Clerk authentication pages.
+- `src/app/api`: Backend route handlers (REST endpoints).
+- `src/components`: UI components organized strictly by feature (`layout`, `homepage`, `readymade`, `stitching`, `cart`, `checkout`, `admin`).
+- `src/models`: Database schemas (`Product.ts`, `Order.ts`, `User.ts`, `Cart.ts`, `UserMeasurementProfile.ts`).
+- `src/store`: Zustand stores (`useCartStore.ts`).
+- `src/lib`: Core utilities (`db.ts` for connection, validations, rate limiting, and notifications).
+- `emails/`: React Email template files.
+
+## 4. How to Help Going Forward
+When making changes to this codebase:
+1. Always respect the mobile-first design and the premium Navy/Gold aesthetic.
+2. Remember that products are polymorphic; handle `itemType` checks explicitly when dealing with cart or order logic.
+3. Keep notifications fire-and-forget inside API routes to prevent checkout blocking.
+4. Make sure Server Components and Client Components (`"use client"`) are separated properly, particularly when dealing with Zustand or standard browser APIs.

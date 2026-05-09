@@ -23,11 +23,17 @@ export default function Navbar() {
 
     // Get cart count only on client side to avoid hydration errors
     useEffect(() => {
-        setCartItemCount(useCartStore.getState().totalItems());
+        const getCount = (state: any) => 
+            state.items.reduce((total: number, item: any) => {
+                if (item.itemType === 'stitching') return total + 1;
+                return total + (item.quantity || 0);
+            }, 0);
+
+        setCartItemCount(getCount(useCartStore.getState()));
 
         // Subscribe to cart changes
         const unsubscribe = useCartStore.subscribe((state) => {
-            setCartItemCount(state.totalItems());
+            setCartItemCount(getCount(state));
         });
 
         return unsubscribe;

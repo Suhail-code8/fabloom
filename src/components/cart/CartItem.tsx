@@ -19,10 +19,11 @@ interface CartItemProps {
 }
 
 export default function CartItem({
-    item,
+    item: rawItem,
     onRemove,
     onUpdateQuantity,
 }: CartItemProps) {
+    const item = rawItem as any;
     const [isStitchingOpen, setIsStitchingOpen] = useState(false);
 
     // Calculate item total

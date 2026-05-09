@@ -24,8 +24,8 @@ export const measurementSchema = z.object({
             required_error: 'Chest measurement is required',
             invalid_type_error: 'Chest must be a number',
         })
-        .min(20, 'Chest measurement must be at least 20 inches')
-        .max(60, 'Chest measurement must not exceed 60 inches')
+        .min(50, 'Chest measurement must be at least 50 cm')
+        .max(200, 'Chest measurement must not exceed 200 cm')
         .positive('Chest measurement must be positive'),
 
     waist: z
@@ -33,8 +33,8 @@ export const measurementSchema = z.object({
             required_error: 'Waist measurement is required',
             invalid_type_error: 'Waist must be a number',
         })
-        .min(20, 'Waist measurement must be at least 20 inches')
-        .max(60, 'Waist measurement must not exceed 60 inches')
+        .min(50, 'Waist measurement must be at least 50 cm')
+        .max(200, 'Waist measurement must not exceed 200 cm')
         .positive('Waist measurement must be positive'),
 
     shoulder: z

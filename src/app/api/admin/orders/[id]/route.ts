@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import { Order } from '@/models/Order';
 import mongoose from 'mongoose';
+import { sendStitchingStartedEmail, sendStitchingReadyEmail, sendOrderDispatchedEmail } from '@/lib/notifications/email';
 
 const ORDER_STATUSES = [
     'pending',
@@ -163,6 +164,17 @@ export async function PATCH(
             await order.save();
             const updatedOrder = await Order.findById(id).lean();
 
+            // Fire and forget notifications
+            const phone = order.shippingAddress.phone;
+            const customerName = order.shippingAddress.fullName;
+            const garmentName = item.productName;
+            
+            if (stitchingStatus === 'in_progress') { // Corresponds to cutting/stitching
+                sendStitchingStartedEmail('customer@example.com', { orderNumber: order.orderNumber, customerName, garmentType: garmentName }); // Hardcoded email fallback if clerk not initialized server side
+            } else if (stitchingStatus === 'completed' || stitchingStatus === 'delivered') {
+                sendStitchingReadyEmail('customer@example.com', { orderNumber: order.orderNumber, customerName, garmentType: garmentName });
+            }
+
             return NextResponse.json({
                 success: true,
                 data: updatedOrder,
@@ -180,11 +192,11 @@ export async function PATCH(
                 );
             }
 
-            const updatedOrder = await Order.findByIdAndUpdate(
+            const updatedOrder = (await Order.findByIdAndUpdate(
                 id,
                 { $set: { status } },
                 { new: true, runValidators: true }
-            ).lean();
+            ).lean()) as any;
 
             if (!updatedOrder) {
                 return NextResponse.json(
@@ -194,6 +206,15 @@ export async function PATCH(
                     },
                     { status: 404 }
                 );
+            }
+
+            if (status === 'shipped') {
+                sendOrderDispatchedEmail('customer@example.com', {
+                    orderNumber: updatedOrder.orderNumber,
+                    customerName: updatedOrder.shippingAddress.fullName,
+                    trackingNumber: 'TRK-PENDING', // Ideally fetched from payload
+                    courierName: 'Standard Shipping'
+                });
             }
 
             return NextResponse.json({

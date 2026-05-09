@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import InstallPrompt from "@/components/pwa/InstallPrompt";
 import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -12,9 +11,30 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-    title: "Fabloom - Islamic Clothing & Custom Stitching",
-    description: "Premium Islamic clothing for scholars and kids. Readymade garments, quality fabrics, and custom stitching services.",
+    title: {
+        template: '%s | Fabloom',
+        default: 'Fabloom — Custom Tailoring & Premium Fashion',
+    },
+    description: 'Shop readymade kurtas, thobes, kandooras and premium fabrics. Custom stitching with your measurements. Fast delivery across India.',
+    keywords: ['custom tailoring', 'kurta', 'thobe', 'kandoora', 'linen fabric', 'Kerala tailoring', 'Muslim fashion'],
+    openGraph: {
+        type: 'website',
+        locale: 'en_IN',
+        url: 'https://fabloom.in',
+        siteName: 'Fabloom',
+    },
+    robots: {
+        index: true,
+        follow: true,
+    },
 };
+
+// Root layout is a BARE shell.
+// Navigation chrome is owned by each route group:
+//   (store)/layout.tsx    → TopCategoryBar + BottomNav
+//   (admin)/layout.tsx    → Admin sidebar
+//   (auth)/layout.tsx     → Plain centered wrapper
+import { Toaster } from "sonner";
 
 export default function RootLayout({
     children,
@@ -23,13 +43,18 @@ export default function RootLayout({
 }>) {
     return (
         <ClerkProvider>
-            <html lang="en">
-                <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
-                    <div className="flex min-h-screen flex-col">
-                        <Navbar />
-                        <main className="flex-1">{children}</main>
-                        <Footer />
-                    </div>
+            <html lang="en" suppressHydrationWarning>
+                <head>
+                    <link rel="manifest" href="/manifest.json" />
+                    <meta name="theme-color" content="#0f1035" />
+                    <meta name="apple-mobile-web-app-capable" content="yes" />
+                    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+                    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+                </head>
+                <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`} suppressHydrationWarning>
+                    {children}
+                    <Toaster position="top-center" richColors theme="dark" />
+                    <InstallPrompt />
                 </body>
             </html>
         </ClerkProvider>

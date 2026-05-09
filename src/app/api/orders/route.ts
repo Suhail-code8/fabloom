@@ -5,6 +5,44 @@ import { User } from '@/models/User';
 import { shippingAddressSchema } from '@/lib/validations/order';
 import { auth } from '@clerk/nextjs/server';
 
+// ============================================================================
+// GET /api/orders — fetch orders for authenticated user
+// ============================================================================
+
+export async function GET(request: NextRequest) {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        await dbConnect();
+
+        const { searchParams } = new URL(request.url);
+        const page  = Math.max(1, parseInt(searchParams.get('page')  || '1'));
+        const limit = Math.min(50, parseInt(searchParams.get('limit') || '10'));
+        const skip  = (page - 1) * limit;
+
+        const [orders, total] = await Promise.all([
+            Order.find({ userId })
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .lean(),
+            Order.countDocuments({ userId }),
+        ]);
+
+        return NextResponse.json({
+            success: true,
+            data: orders,
+            pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+        });
+    } catch (error: any) {
+        console.error('Error fetching orders:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
 export async function POST(request: NextRequest) {
     try {
         await dbConnect();

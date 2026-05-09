@@ -32,7 +32,8 @@ interface IOrderItem {
         };
         stitchingPrice: number;
         specialInstructions?: string;
-        status: 'pending' | 'in_progress' | 'completed' | 'delivered';
+        adminNotes?: string;
+        status: 'pending' | 'cutting' | 'stitching' | 'quality_check' | 'ready' | 'delivered';
         estimatedCompletionDate?: Date;
     };
 }
@@ -105,15 +106,21 @@ const OrderItemSchema = new Schema({
             neck: Number,
             chest: Number,
             waist: Number,
+            hip: Number,
             shoulder: Number,
             sleeveLength: Number,
             shirtLength: Number,
+            thobeLength: Number,
+            pantLength: Number,
+            pantWaist: Number,
+            inseam: Number,
         },
         stitchingPrice: { type: Number, min: 0 },
         specialInstructions: { type: String, maxlength: 500 },
+        adminNotes: { type: String, maxlength: 1000 },
         status: {
             type: String,
-            enum: ['pending', 'in_progress', 'completed', 'delivered'],
+            enum: ['pending', 'cutting', 'stitching', 'quality_check', 'ready', 'delivered'],
             default: 'pending',
         },
         estimatedCompletionDate: Date,
@@ -176,16 +183,38 @@ const OrderSchema = new Schema<IOrder>(
     { timestamps: true }
 );
 
+// Counter Schema for Atomic Order Numbers
+const CounterSchema = new Schema({
+    _id: { type: String, required: true }, // e.g. "order_sequence_2505"
+    seq: { type: Number, default: 0 }
+});
+
+const Counter = mongoose.models.Counter || mongoose.model('Counter', CounterSchema);
+
 // Auto-generate order number before validation
 OrderSchema.pre('validate', async function (next) {
     if (!this.orderNumber) {
-        const count = await mongoose.model('Order').countDocuments();
         const date = new Date();
         const year = date.getFullYear().toString().slice(-2);
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        this.orderNumber = `FB${year}${month}${(count + 1).toString().padStart(5, '0')}`;
+        const counterId = `order_sequence_${year}${month}`;
+
+        try {
+            const counter = await Counter.findByIdAndUpdate(
+                counterId,
+                { $inc: { seq: 1 } },
+                { new: true, upsert: true }
+            );
+            
+            // FB + YY + MM + 5-digit sequence
+            this.orderNumber = `FB${year}${month}${counter.seq.toString().padStart(5, '0')}`;
+            next();
+        } catch (error: any) {
+            next(error);
+        }
+    } else {
+        next();
     }
-    next();
 });
 
 // Indexes for queries

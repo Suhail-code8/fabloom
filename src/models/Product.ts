@@ -12,6 +12,7 @@ export interface IProduct extends Document {
     subcategory?: string; // e.g., 'kurta', 'hijab', 'cap'
     type: 'readymade' | 'fabric' | 'accessory';
     price: number;
+    slug: string;
     images: string[]; // Cloudinary URLs
     featured: boolean;
     active: boolean;
@@ -74,6 +75,7 @@ const ProductSchema = new Schema<IProduct>(
             enum: ['readymade', 'fabric', 'accessory'],
             required: true,
         },
+        slug: { type: String, required: true, unique: true, trim: true },
         price: { type: Number, required: true, min: 0 },
         images: [{ type: String }],
         featured: { type: Boolean, default: false },

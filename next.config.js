@@ -1,17 +1,89 @@
 /** @type {import('next').NextConfig} */
+const { withSentryConfig } = require("@sentry/nextjs");
+const withPWA = require("next-pwa")({
+    dest: "public",
+    register: true,
+    skipWaiting: true,
+    disable: process.env.NODE_ENV === "development",
+});
+
 const nextConfig = {
     images: {
         remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: 'res.cloudinary.com',
-            },
-            {
-                protocol: 'https',
-                hostname: 'images.unsplash.com',
-            },
+            { hostname: 'images.unsplash.com' },
+            { hostname: 'res.cloudinary.com' },
+            { hostname: 'img.clerk.com' },
+            { hostname: 'images.clerk.dev' },
+            { hostname: 'lh3.googleusercontent.com' },
         ],
     },
-}
+    async headers() {
+        return [
+            {
+                source: '/(.*)',
+                headers: [
+                    {
+                        key: 'X-Frame-Options',
+                        value: 'DENY',
+                    },
+                    {
+                        key: 'X-Content-Type-Options',
+                        value: 'nosniff',
+                    },
+                    {
+                        key: 'Referrer-Policy',
+                        value: 'strict-origin-when-cross-origin',
+                    },
+                    {
+                        key: 'Content-Security-Policy',
+                        value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.clerk.accounts.dev *.razorpay.com blob:; connect-src 'self' *.clerk.accounts.dev *.razorpay.com clerk-telemetry.com *.clerk.com; img-src 'self' data: res.cloudinary.com images.unsplash.com *.clerk.com blob:; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; frame-src 'self' *.razorpay.com; worker-src 'self' blob:;",
+                    },
+                ],
+            },
+        ];
+    },
+};
 
-module.exports = nextConfig
+module.exports = withSentryConfig(
+    withPWA(nextConfig),
+    {
+        // For all available options, see:
+        // https://github.com/getsentry/sentry-webpack-plugin#options
+
+        // Suppresses source map uploading logs during bundling
+        silent: !process.env.CI,
+        org: "muhammad-suhail",
+        project: "fabloom-production",
+    },
+    {
+        // For all available options, see:
+        // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+
+        // Upload a larger set of source maps for prettier stack traces (increases build time)
+        widenClientFileUpload: true,
+
+        // Transpiles SDK to be compatible with IE11 (increases bundle size)
+        transpileClientSDK: true,
+
+        // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
+        // tunnelRoute: "/monitoring",
+
+        // Hides source maps from generated client bundles
+        hideSourceMaps: true,
+
+        // Automatically tree-shake Sentry logger statements to reduce bundle size
+        disableLogger: true,
+
+        // Enables automatic instrumentation of Vercel Cron Monitors.
+        // See the following for more information:
+        // https://docs.sentry.io/product/crons/
+        // https://vercel.com/docs/cron-jobs
+        automaticVercelMonitors: true,
+
+        webpack: {
+            treeshake: {
+                removeDebugLogging: true,
+            },
+        },
+    }
+);

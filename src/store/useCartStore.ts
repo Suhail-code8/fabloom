@@ -5,59 +5,88 @@ import { persist } from 'zustand/middleware';
 // TYPES
 // ============================================================================
 
-// Stitching details for fabric products
-export interface StitchingDetails {
-    style: 'Jubbah' | 'Kurta' | 'Shirt' | 'Kandura';
-    measurements: {
-        neck: number;
-        chest: number;
-        waist: number;
-        shoulder: number;
-        sleeveLength: number;
-        shirtLength: number;
-    };
+export type StitchingDetails = {
+    style: string;
+    measurements: Record<string, number>;
     notes?: string;
-}
+};
 
-// Base cart item
-interface BaseCartItem {
-    id: string; // Unique cart item ID
-    productId: string; // Product MongoDB ID
+export type ReadymadeCartItem = {
+    id: string;
+    itemType: 'readymade';
+    productId: string;
     name: string;
     image: string;
-    type: 'readymade' | 'fabric' | 'accessory';
+    size: string;
     quantity: number;
-}
-
-// Readymade cart item
-export interface ReadymadeCartItem extends BaseCartItem {
-    type: 'readymade';
-    size: 'S' | 'M' | 'L' | 'XL' | 'XXL';
     price: number;
-    material?: string;
-    color?: string;
-}
+};
 
-// Fabric cart item (with optional stitching)
-export interface FabricCartItem extends BaseCartItem {
-    type: 'fabric';
+export type StitchingCartItem = {
+    id: string;
+    itemType: 'stitching';
+    fabricId: string;
+    fabricName: string;
+    fabricImage: string;
+    meters: number;
     pricePerMeter: number;
-    meters: number; // Quantity in meters
-    fabricType?: string;
+    garmentType: string;
+    stitchingCharge: number;
+    measurementProfileId: string;
+    measurementProfileName: string;
+    measurementSnapshot: Record<string, number>;
+    totalPrice: number;
+};
+
+export type AccessoryCartItem = {
+    id: string;
+    itemType: 'accessory';
+    productId: string;
+    name: string;
+    image: string;
+    color?: string;
+    quantity: number;
+    price: number;
+};
+
+export type FabricCartItem = {
+    id: string;
+    itemType: 'fabric';
+    productId: string;
+    name: string;
+    image: string;
+    meters: number;
+    pricePerMeter: number;
+    fabricType: string;
+    quantity: number;
     stitchingDetails?: StitchingDetails;
     stitchingPrice?: number;
+};
+
+export type CartItem = ReadymadeCartItem | StitchingCartItem | AccessoryCartItem | FabricCartItem;
+
+// ============================================================================
+// HELPERS
+// ============================================================================
+
+function computeTotalItems(items: CartItem[]): number {
+    return items.reduce((total, item) => {
+        if (item.itemType === 'stitching') return total + 1;
+        return total + item.quantity;
+    }, 0);
 }
 
-// Accessory cart item
-export interface AccessoryCartItem extends BaseCartItem {
-    type: 'accessory';
-    price: number;
-    material?: string;
-    color?: string;
+function computeTotal(items: CartItem[]): number {
+    return items.reduce((total, item) => {
+        if (item.itemType === 'stitching') return total + item.totalPrice;
+        if (item.itemType === 'fabric') {
+            const fabricCost = item.pricePerMeter * item.meters;
+            const stitchingCost = item.stitchingPrice || 0;
+            return total + (fabricCost + stitchingCost) * item.quantity;
+        }
+        return total + item.price * item.quantity;
+    }, 0);
 }
-
-// Union type for all cart items
-export type CartItem = ReadymadeCartItem | FabricCartItem | AccessoryCartItem;
 
 // ============================================================================
 // STORE INTERFACE
@@ -65,44 +94,15 @@ export type CartItem = ReadymadeCartItem | FabricCartItem | AccessoryCartItem;
 
 interface CartStore {
     items: CartItem[];
-    addItem: (item: CartItem) => void;
+    totalItems: number;   // ← reactive count for badges
+    addItem: (item: Omit<CartItem, 'id'>) => void;
     removeItem: (itemId: string) => void;
     updateQuantity: (itemId: string, quantity: number) => void;
     clearCart: () => void;
-    totalItems: () => number;
-    cartTotal: () => number;
+    getTotal: () => number;
+    getItemCount: () => number;
+    syncWithServer: (userId: string) => Promise<void>;
 }
-
-// ============================================================================
-// HELPER FUNCTIONS
-// ============================================================================
-
-// Generate unique ID for cart item
-const generateCartItemId = (item: CartItem): string => {
-    if (item.type === 'readymade') {
-        return `${item.productId}-${item.size}`;
-    } else if (item.type === 'fabric' && item.stitchingDetails) {
-        // Each custom stitched fabric is unique
-        return `${item.productId}-custom-${Date.now()}`;
-    } else {
-        return item.productId;
-    }
-};
-
-// Calculate item total price
-const getItemTotal = (item: CartItem): number => {
-    if (item.type === 'readymade') {
-        return item.price * item.quantity;
-    } else if (item.type === 'fabric') {
-        const fabricCost = item.pricePerMeter * item.meters;
-        const stitchingCost = item.stitchingDetails && item.stitchingPrice
-            ? item.stitchingPrice
-            : 0;
-        return (fabricCost + stitchingCost) * item.quantity;
-    } else {
-        return item.price * item.quantity;
-    }
-};
 
 // ============================================================================
 // ZUSTAND STORE
@@ -112,66 +112,93 @@ export const useCartStore = create<CartStore>()(
     persist(
         (set, get) => ({
             items: [],
+            totalItems: 0,
 
-            // Add item to cart
             addItem: (newItem) => {
                 const items = get().items;
-                const itemId = generateCartItemId(newItem);
 
-                // Check if item already exists
-                const existingItemIndex = items.findIndex((item) => item.id === itemId);
+                // Generate deterministic ID
+                let id = '';
+                if (newItem.itemType === 'readymade') {
+                    id = `readymade-${(newItem as any).productId}-${(newItem as any).size}`;
+                } else if (newItem.itemType === 'accessory') {
+                    id = `accessory-${(newItem as any).productId}-${(newItem as any).color || 'none'}`;
+                } else if (newItem.itemType === 'stitching') {
+                    id = `stitching-${Date.now()}`;
+                } else if (newItem.itemType === 'fabric') {
+                    id = `fabric-${(newItem as any).productId}-${(newItem as any).meters}-${(newItem as any).stitchingDetails ? 'stitched' : 'raw'}`;
+                }
 
-                if (existingItemIndex > -1) {
-                    // Item exists - update quantity
-                    // Only for readymade and non-custom fabric items
-                    if (newItem.type === 'readymade' ||
-                        (newItem.type === 'fabric' && !newItem.stitchingDetails)) {
-                        const updatedItems = [...items];
-                        updatedItems[existingItemIndex].quantity += newItem.quantity;
-                        set({ items: updatedItems });
+                // Merge if same deterministic ID (not stitching)
+                if (newItem.itemType !== 'stitching') {
+                    const existingIdx = items.findIndex(i => i.id === id);
+                    if (existingIdx > -1) {
+                        const updated = [...items];
+                        const existingItem = updated[existingIdx];
+                        if (existingItem.itemType !== 'stitching') {
+                            existingItem.quantity += (newItem as any).quantity;
+                        }
+                        set({ items: updated, totalItems: computeTotalItems(updated) });
                         return;
                     }
                 }
 
-                // Add as new item (with generated ID)
-                set({ items: [...items, { ...newItem, id: itemId }] });
+                const updated = [...items, { ...newItem, id } as CartItem];
+                set({ items: updated, totalItems: computeTotalItems(updated) });
             },
 
-            // Remove item from cart
             removeItem: (itemId) => {
-                set({ items: get().items.filter((item) => item.id !== itemId) });
+                const updated = get().items.filter(i => i.id !== itemId);
+                set({ items: updated, totalItems: computeTotalItems(updated) });
             },
 
-            // Update item quantity
             updateQuantity: (itemId, quantity) => {
                 if (quantity <= 0) {
                     get().removeItem(itemId);
                     return;
                 }
-
-                const updatedItems = get().items.map((item) =>
-                    item.id === itemId ? { ...item, quantity } : item
+                const updated = get().items.map(item =>
+                    item.id === itemId && item.itemType !== 'stitching'
+                        ? { ...item, quantity }
+                        : item
                 );
-                set({ items: updatedItems });
+                set({ items: updated, totalItems: computeTotalItems(updated) });
             },
 
-            // Clear entire cart
-            clearCart: () => {
-                set({ items: [] });
-            },
+            clearCart: () => set({ items: [], totalItems: 0 }),
 
-            // Get total number of items
-            totalItems: () => {
-                return get().items.reduce((total, item) => total + item.quantity, 0);
-            },
+            getTotal: () => computeTotal(get().items),
 
-            // Get cart total price
-            cartTotal: () => {
-                return get().items.reduce((total, item) => total + getItemTotal(item), 0);
+            getItemCount: () => computeTotalItems(get().items),
+
+            syncWithServer: async (userId) => {
+                try {
+                    const items = get().items;
+                    const res = await fetch('/api/cart/sync', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId, items }),
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.mergedItems) {
+                            const merged = data.mergedItems;
+                            set({ items: merged, totalItems: computeTotalItems(merged) });
+                        }
+                    }
+                } catch (err) {
+                    console.error('Failed to sync cart with server', err);
+                }
             },
         }),
         {
-            name: 'fabloom-cart-storage', // localStorage key
+            name: 'fabloom-cart',
+            onRehydrateStorage: () => (state) => {
+                // Recompute totalItems after hydration from localStorage
+                if (state) {
+                    state.totalItems = computeTotalItems(state.items);
+                }
+            },
         }
     )
 );
