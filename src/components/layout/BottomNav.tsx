@@ -73,19 +73,18 @@ const NAV_TABS: NavTab[] = [
 export default function BottomNav() {
     const pathname = usePathname();
     
-    // HIDE BOTTOM NAV ON SPECIFIC ROUTES
-    const hideOnRoutes = ['/checkout', '/stitching'];
-    if (hideOnRoutes.some(route => pathname.startsWith(route))) {
-        return null;
-    }
-
-    // totalItems is a value in the state
     const totalItems = useCartStore((state) => 
         state.items.reduce((total, item: any) => {
             if (item.itemType === 'stitching') return total + 1;
             return total + (item.quantity || 0);
         }, 0)
     );
+
+    // HIDE BOTTOM NAV ON SPECIFIC ROUTES
+    const hideOnRoutes = ['/checkout', '/stitching'];
+    if (hideOnRoutes.some(route => pathname.startsWith(route))) {
+        return null;
+    }
 
     return (
         <nav

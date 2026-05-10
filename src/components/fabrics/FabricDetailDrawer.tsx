@@ -46,7 +46,9 @@ export default function FabricDetailDrawer({ fabric, onClose }: FabricDetailDraw
     const open    = fabric !== null;
 
     // Reset meter count each time a new fabric opens
-    useEffect(() => { if (fabric) setMeters(2); }, [fabric?._id]);
+    useEffect(() => { 
+        if (fabric) setMeters(2); 
+    }, [fabric]);
 
     // Close on ESC
     useEffect(() => {

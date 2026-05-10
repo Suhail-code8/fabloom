@@ -35,7 +35,7 @@ export default function InventoryPageClient() {
     const [isAddOpen, setIsAddOpen] = useState(false);
 
     // Filter Logic
-    const products = data?.products || [];
+    const products = useMemo(() => data?.products || [], [data?.products]);
     const filteredProducts = useMemo(() => {
         return products.filter(p => {
             // Tab filter
