@@ -15,9 +15,11 @@ function mock(
     material: string,
     S = 5, M = 8, L = 6, XL = 3, XXL = 1
 ): IReadymadeProduct {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     return {
         _id: id,
         name,
+        slug,
         description: `Premium ${material} ${name.toLowerCase()} for everyday elegance.`,
         category: 'mens',
         subcategory,

@@ -8,8 +8,9 @@ function cap(
     price: number, colors: ColorVariant[], sizes: CapSize[],
     stock = 20, featured = false,
 ): ICapProduct {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     return {
-        _id: id, name,
+        _id: id, name, slug,
         description: `Premium ${name.toLowerCase()} — crafted for everyday elegance.`,
         category: 'accessories', subcategory, type: 'accessory',
         price, images: [img()], featured, active: true,

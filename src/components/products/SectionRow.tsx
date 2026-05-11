@@ -72,7 +72,7 @@ export default function SectionRow({
                             : (
                                 <AccessoryCard
                                     product={product}
-                                    href={`/products/${product._id}`}
+                                href={`/accessories/${product.slug ?? product._id}`}
                                 />
                             )}
                     </div>

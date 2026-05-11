@@ -29,7 +29,7 @@ function CapCard({ cap }: { cap: ICapProduct }) {
         <AccessoryCard
             product={cap}
             aspectClass="aspect-[4/5]"
-            href={`/products/${cap._id}`}
+            href={`/accessories/${cap.slug ?? cap._id}`}
         >
             {/* Color swatches */}
             {cap.colorVariants && cap.colorVariants.length > 0 && (
@@ -155,7 +155,7 @@ export default function CapsPageClient({
     }, [caps, activeFilter, colorFilter]);
 
     return (
-        <div className="min-h-screen" style={{ backgroundColor: '#0f1035' }}>
+        <div className="min-h-screen pb-20" style={{ backgroundColor: '#0f1035' }}>
             <div className="px-4 pt-5 pb-3">
                 <h1 className="text-2xl font-extrabold text-white">Caps & Headwear</h1>
                 <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.5)' }}>

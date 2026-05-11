@@ -118,7 +118,7 @@ function PageInner({ sections }: { sections: SectionDef[] }) {
             </div>
 
             {/* Sections */}
-            <div className="flex flex-col gap-8 pb-6">
+            <div className="flex flex-col gap-8 pb-20">
                 {sections.map((section) => (
                     <ProductGrid
                         key={section.id}

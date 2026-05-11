@@ -9,8 +9,9 @@ function perf(
     top: string[], heart: string[], base: string[],
     concentration = 'EDP', stock = 20, featured = false,
 ): IPerfumeProduct {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     return {
-        _id: id, name,
+        _id: id, name, slug,
         description: `${name} — a captivating ${subcategory} fragrance.`,
         category: 'accessories', subcategory, type: 'accessory',
         price, images: [img('ecommerce/accessories-bag')],

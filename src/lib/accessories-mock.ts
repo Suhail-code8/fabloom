@@ -11,8 +11,9 @@ function acc(
     price: number, color: string, isNew: boolean,
     imgSlug: string, stock = 25, featured = false,
 ): IAccessoryProduct {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     return {
-        _id: id, name,
+        _id: id, name, slug,
         description: `${name} — premium quality accessory.`,
         category: 'accessories', subcategory, type: 'accessory',
         price, images: [img(imgSlug)],

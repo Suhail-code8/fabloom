@@ -140,7 +140,7 @@ export default function ReadymadeCard({
     if (cardStyle === 'landscape') {
         return (
             <Link
-                href={`/products/${product._id}`}
+                href={`/readymade/${product.slug ?? product._id}`}
                 className="flex gap-3 rounded-2xl overflow-hidden bg-white active:opacity-90 transition-opacity duration-150"
                 aria-label={product.name}
             >
@@ -170,7 +170,7 @@ export default function ReadymadeCard({
     // Portrait (default)
     return (
         <Link
-            href={`/products/${product._id}`}
+            href={`/readymade/${product.slug ?? product._id}`}
             className="relative block rounded-2xl overflow-hidden bg-white active:opacity-90 transition-opacity duration-150"
             aria-label={product.name}
             onMouseEnter={() => setShowQuickAdd(true)}

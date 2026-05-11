@@ -9,6 +9,7 @@ export const MOCK_FABRICS: IFabricProduct[] = [
     {
         _id: 'fab001',
         name: 'Egyptian Linen — Natural',
+        slug: 'egyptian-linen-natural',
         description: 'Premium Egyptian linen, breathable and perfect for thobes and kurtas.',
         category: 'mens',
         subcategory: 'linen',
@@ -31,6 +32,7 @@ export const MOCK_FABRICS: IFabricProduct[] = [
     {
         _id: 'fab002',
         name: 'Pure Cotton — Slate Blue',
+        slug: 'pure-cotton-slate-blue',
         description: 'Soft weave cotton, ideal for casual kurtas and shirts.',
         category: 'mens',
         subcategory: 'cotton',
@@ -53,6 +55,7 @@ export const MOCK_FABRICS: IFabricProduct[] = [
     {
         _id: 'fab003',
         name: 'Italian Wool Blend — Charcoal',
+        slug: 'italian-wool-blend-charcoal',
         description: 'Luxurious mid-weight wool blend, structured and elegant.',
         category: 'mens',
         subcategory: 'wool',
@@ -75,6 +78,7 @@ export const MOCK_FABRICS: IFabricProduct[] = [
     {
         _id: 'fab004',
         name: 'Silk Dupion — Champagne',
+        slug: 'silk-dupion-champagne',
         description: 'Lustrous silk dupion with a subtle sheen, perfect for festive wear.',
         category: 'mens',
         subcategory: 'silk',
@@ -97,6 +101,7 @@ export const MOCK_FABRICS: IFabricProduct[] = [
     {
         _id: 'fab005',
         name: 'Khadi Cotton — Off White',
+        slug: 'khadi-cotton-off-white',
         description: 'Hand-spun khadi, textured and authentic.',
         category: 'mens',
         subcategory: 'khadi',
@@ -119,6 +124,7 @@ export const MOCK_FABRICS: IFabricProduct[] = [
     {
         _id: 'fab006',
         name: 'Premium Poplin — White',
+        slug: 'premium-poplin-white',
         description: 'Crisp poplin weave, wrinkle-resistant. Great for formal thobes.',
         category: 'mens',
         subcategory: 'poplin',

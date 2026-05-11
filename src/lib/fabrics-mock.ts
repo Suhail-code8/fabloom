@@ -20,9 +20,11 @@ function fab(
     imgSlug: string,
     featured = false,
 ): IFabricProduct {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     return {
         _id: id,
         name,
+        slug,
         description: desc,
         category: 'mens',
         subcategory,

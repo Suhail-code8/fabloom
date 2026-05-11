@@ -8,6 +8,7 @@
 export interface IBaseProduct {
     _id: string;
     name: string;
+    slug: string;
     description: string;
     category: 'mens' | 'womens' | 'kids' | 'accessories';
     subcategory?: string;

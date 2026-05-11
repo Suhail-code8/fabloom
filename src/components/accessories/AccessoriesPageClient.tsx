@@ -54,7 +54,7 @@ export default function AccessoriesPageClient({ accessories }: { accessories: IA
                                 <AccessoryCard
                                     product={product}
                                     aspectClass="aspect-square"
-                                    href={`/products/${product._id}`}
+                                    href={`/accessories/${product.slug ?? product._id}`}
                                 />
                             )}
                         />

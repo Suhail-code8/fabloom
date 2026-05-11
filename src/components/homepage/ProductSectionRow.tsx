@@ -13,7 +13,7 @@ function ProductMiniCard({ product }: { product: ProductSummary }) {
 
     return (
         <Link
-            href={`/products/${product.slug}`}
+            href={`/${product.productType === 'readymade' ? 'readymade' : product.productType === 'fabric' ? 'fabrics' : 'accessories'}/${product.slug}`}
             className="flex-shrink-0 block rounded-2xl overflow-hidden active:opacity-80 transition-opacity duration-150"
             style={{ width: '148px', backgroundColor: 'rgba(255,255,255,0.05)' }}
             aria-label={product.name}
