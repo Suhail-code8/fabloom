@@ -13,6 +13,9 @@ import { getProductsAction } from '@/lib/dal';
 // SERVER COMPONENT — app/(store)/page.tsx
 // ============================================================================
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
     title: 'Fabloom — Premium Custom Tailoring & Fashion',
     description:
