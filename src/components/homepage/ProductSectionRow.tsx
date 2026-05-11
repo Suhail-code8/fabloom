@@ -7,13 +7,18 @@ import type { ProductSummary } from '@/lib/homepage';
 // PRODUCT MINI CARD
 // ============================================================================
 
-function ProductMiniCard({ product }: { product: ProductSummary }) {
-    const isFabric = product.productType === 'fabric';
+function ProductMiniCard({ product }: { product: ProductSummary | any }) {
+    const type = product.productType || product.type;
+    const isFabric = type === 'fabric';
     const priceLabel = isFabric ? `₹${product.price}/m` : `₹${product.price}`;
+    
+    // Determine the correct route prefix
+    const routePrefix = type === 'readymade' ? 'readymade' : type === 'fabric' ? 'fabrics' : 'accessories';
+    const identifier = product.slug || product._id;
 
     return (
         <Link
-            href={`/${product.productType === 'readymade' ? 'readymade' : product.productType === 'fabric' ? 'fabrics' : 'accessories'}/${product.slug}`}
+            href={`/${routePrefix}/${identifier}`}
             className="flex-shrink-0 block rounded-2xl overflow-hidden active:opacity-80 transition-opacity duration-150"
             style={{ width: '148px', backgroundColor: 'rgba(255,255,255,0.05)' }}
             aria-label={product.name}
@@ -37,7 +42,7 @@ function ProductMiniCard({ product }: { product: ProductSummary }) {
                     className="absolute top-2 left-2 text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
                     style={{ backgroundColor: 'rgba(212,168,83,0.9)', color: '#0f1035' }}
                 >
-                    {isFabric ? 'Fabric' : product.productType === 'accessory' ? 'Acc.' : 'Ready'}
+                    {isFabric ? 'Fabric' : type === 'accessory' ? 'Acc.' : 'Ready'}
                 </span>
             </div>
 
