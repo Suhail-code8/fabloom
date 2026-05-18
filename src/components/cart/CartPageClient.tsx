@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/useCartStore';
 import type { CartItem, StitchingCartItem, ReadymadeCartItem, AccessoryCartItem } from '@/store/useCartStore';
 
@@ -139,6 +140,7 @@ function EmptyCart() {
 // MAIN PAGE
 // ============================================================================
 export default function CartPageClient() {
+    const router = useRouter();
     const { items, removeItem, updateQuantity, getTotal, clearCart } = useCartStore();
     const [isHydrated, setIsHydrated] = useState(false);
 
@@ -219,7 +221,7 @@ export default function CartPageClient() {
                 </div>
 
                 {/* Right Column / Bottom Sheet - Order Summary */}
-                <div className="fixed bottom-[80px] left-0 right-0 z-20 bg-white border-t border-gray-100 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] p-4 rounded-t-3xl lg:static lg:w-96 lg:rounded-2xl lg:shadow-sm lg:border">
+                <div className="fixed bottom-20 left-0 right-0 z-40 bg-white border-t border-gray-100 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] p-4 rounded-t-3xl lg:static lg:w-96 lg:rounded-2xl lg:shadow-sm lg:border">
                     <h3 className="text-sm font-extrabold text-gray-900 mb-4 hidden lg:block">Order Summary</h3>
                     
                     <div className="flex gap-2 mb-4">
@@ -249,7 +251,11 @@ export default function CartPageClient() {
                         <span className="text-xl font-extrabold text-[#D4A853]">₹{fmtINR(subtotal)}</span>
                     </div>
 
-                    <button className="w-full py-4 rounded-xl text-sm font-bold bg-[#D4A853] text-[#0f1035] active:scale-95 transition-transform flex items-center justify-center gap-2">
+                    <button 
+                        onClick={() => router.push('/checkout')}
+                        disabled={items.length === 0}
+                        className="w-full py-4 rounded-xl text-sm font-bold bg-[#D4A853] text-[#0f1035] active:scale-95 transition-transform flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100"
+                    >
                         Proceed to Checkout
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     </button>
