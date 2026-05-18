@@ -182,7 +182,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             <CardFooter className="p-4 pt-0">
                 {product.type === 'fabric' && product.stitchingAvailable ? (
                     <div className="w-full flex gap-2">
-                        <Link href={`/${(product.productType || product.type) === 'fabric' ? 'fabrics' : (product.productType || product.type) === 'readymade' ? 'readymade' : 'accessories'}/${product.slug || product._id}`} className="flex-1">
+                        <Link href={`/${((product as any).productType || product.type) === 'fabric' ? 'fabrics' : ((product as any).productType || product.type) === 'readymade' ? 'readymade' : 'accessories'}/${(product as any).slug || product._id}`} className="flex-1">
                             <Button
                                 variant="outline"
                                 className="w-full border-emerald-600 text-emerald-600 hover:bg-emerald-50"
@@ -200,7 +200,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                         </Button>
                     </div>
                 ) : (
-                    <Link href={`/${(product.productType || product.type) === 'fabric' ? 'fabrics' : (product.productType || product.type) === 'readymade' ? 'readymade' : 'accessories'}/${product.slug || product._id}`} className="w-full">
+                    <Link href={`/${((product as any).productType || product.type) === 'fabric' ? 'fabrics' : ((product as any).productType || product.type) === 'readymade' ? 'readymade' : 'accessories'}/${(product as any).slug || product._id}`} className="w-full">
                         <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
                             <ShoppingBag className="mr-2 h-4 w-4" />
                             View Details
