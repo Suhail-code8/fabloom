@@ -25,8 +25,8 @@ export const metadata = {
 export default async function StorefrontPage() {
     // PRODUCTION HARDENING: Call DAL directly to avoid fetch-during-build errors
     const [trendingReadymade, premiumFabrics] = await Promise.all([
-        getProductsAction({ type: 'readymade', limit: 8, featured: true, sort: 'createdAt' }),
-        getProductsAction({ type: 'fabric', limit: 8, featured: true, sort: 'createdAt' }),
+        getProductsAction({ type: 'readymade', limit: 8, sort: 'createdAt' }),
+        getProductsAction({ type: 'fabric', limit: 8, sort: 'createdAt' }),
     ]);
 
     const testimonials = TESTIMONIALS;
