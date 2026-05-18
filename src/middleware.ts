@@ -37,7 +37,7 @@ export default clerkMiddleware(async (auth, req) => {
         }
 
         // Role check
-        const role = (authObj.sessionClaims as any)?.publicMetadata?.role;
+        const role = (authObj.sessionClaims as any)?.role || (authObj.sessionClaims as any)?.publicMetadata?.role || (authObj.sessionClaims as any)?.metadata?.role;
         if (role !== 'admin') {
             // Return 403 Forbidden or redirect to unauthorized
             if (req.nextUrl.pathname.startsWith('/api/')) {
