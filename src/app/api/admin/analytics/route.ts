@@ -38,9 +38,35 @@ export async function GET() {
 
         const todayRevenue = ordersToday.reduce((sum: number, o: any) => sum + o.totalAmount, 0);
         const yesterdayRevenue = ordersYesterday.reduce((sum: number, o: any) => sum + o.totalAmount, 0);
-        const revenueTrend = yesterdayRevenue === 0 ? 100 : Math.round(((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100);
+        const revenueTrend = yesterdayRevenue === 0 ? 0 : Math.round(((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100);
 
         const ordersTodayCount = ordersToday.length;
+
+        if (allOrders.length === 0) {
+            return NextResponse.json({
+                metrics: {
+                    todayRevenue: 0,
+                    revenueTrend: 0,
+                    ordersToday: 0,
+                    stitchingToday: 0,
+                    readymadeToday: 0,
+                    pendingStitchingCount: 0,
+                    lowStockCount: 0
+                },
+                charts: {
+                    revenueData: Array.from({ length: 7 }).map((_, i) => ({ name: `Day ${i+1}`, readymade: 0, stitching: 0 })),
+                    ordersByType: [],
+                    pipelineData: [
+                        { name: 'Pending', orders: 0 },
+                        { name: 'Cutting', orders: 0 },
+                        { name: 'Stitching', orders: 0 },
+                        { name: 'QA', orders: 0 },
+                        { name: 'Ready', orders: 0 },
+                    ]
+                },
+                activityFeed: []
+            });
+        }
         
         let pendingStitchingCount = 0;
         let stitchingToday = 0;
