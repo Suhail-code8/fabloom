@@ -9,6 +9,8 @@ import { useState, useRef, useCallback } from 'react';
 interface MeasurementPoint {
     id:   string;
     label: string;
+    range: string;
+    instruction: string;
     x:    number;  // % of SVG width
     y:    number;  // % of SVG height
     cx:   number;  // circle center x
@@ -18,12 +20,12 @@ interface MeasurementPoint {
 }
 
 const POINTS: MeasurementPoint[] = [
-    { id: 'neck',         label: 'Neck',         x: 35, y: 4,  cx: 200, cy: 52  },
-    { id: 'shoulder',     label: 'Shoulder',     x: 5,  y: 14, cx: 200, cy: 104 },
-    { id: 'chest',        label: 'Chest',        x: 5,  y: 24, cx: 200, cy: 160 },
-    { id: 'waist',        label: 'Waist',        x: 5,  y: 38, cx: 200, cy: 230 },
-    { id: 'sleeveLength', label: 'Sleeve',       x: 72, y: 28, cx: 200, cy: 180 },
-    { id: 'shirtLength',  label: 'Length',       x: 72, y: 55, cx: 200, cy: 310 },
+    { id: 'neck',         label: 'Neck',         range: '14-18 in',  instruction: 'Measure around the base of your neck, leaving room for two fingers.', x: 35, y: 4,  cx: 200, cy: 52  },
+    { id: 'shoulder',     label: 'Shoulder',     range: '16-22 in',  instruction: 'Measure across the back from the edge of one shoulder tip to the other.', x: 5,  y: 14, cx: 200, cy: 104 },
+    { id: 'chest',        label: 'Chest',        range: '34-48 in',  instruction: 'Measure around the fullest part of your chest, keeping tape horizontal.', x: 5,  y: 24, cx: 200, cy: 160 },
+    { id: 'waist',        label: 'Waist',        range: '28-44 in',  instruction: 'Measure around your natural waistline, where your trousers sit.', x: 5,  y: 38, cx: 200, cy: 230 },
+    { id: 'sleeveLength', label: 'Sleeve',       range: '22-28 in',  instruction: 'Measure from the shoulder seam down to the wrist bone.', x: 72, y: 28, cx: 200, cy: 180 },
+    { id: 'shirtLength',  label: 'Length',       range: '38-46 in',  instruction: 'Measure from the base of the back neck down to desired length.', x: 72, y: 55, cx: 200, cy: 310 },
 ];
 
 // ============================================================================
@@ -175,41 +177,47 @@ export default function MeasurementVisualizer({
                     return (
                         <div
                             key={pt.id}
-                            className="relative rounded-xl transition-all duration-200"
+                            className="p-4 rounded-2xl transition-all duration-300"
                             style={{
-                                border: `1px solid ${isActive ? '#D4A853' : 'rgba(255,255,255,0.08)'}`,
-                                backgroundColor: isActive ? 'rgba(212,168,83,0.06)' : 'rgba(255,255,255,0.03)',
-                                boxShadow: isActive ? '0 0 0 3px rgba(212,168,83,0.12)' : 'none',
+                                backgroundColor: isActive ? 'rgba(212,168,83,0.08)' : 'rgba(255,255,255,0.03)',
+                                border: isActive ? '1.5px solid #D4A853' : '1.5px solid rgba(255,255,255,0.08)',
+                                transform: isActive ? 'scale(1.02)' : 'scale(1)',
                             }}
+                            onClick={() => handlePointClick(pt.id)}
                         >
-                            <label
-                                htmlFor={`measurement-${pt.id}`}
-                                className="absolute left-3 top-2 text-[10px] font-bold uppercase tracking-wider"
-                                style={{ color: isActive ? '#D4A853' : 'rgba(255,255,255,0.4)' }}
-                            >
-                                {pt.label}
-                            </label>
-                            <div className="flex items-end">
-                                <input
-                                    id={`measurement-${pt.id}`}
-                                    ref={(el) => { inputRefs.current[pt.id] = el; }}
-                                    type="number"
-                                    step="0.1"
-                                    min="0"
-                                    placeholder="0.0"
-                                    value={values[pt.id] ?? ''}
-                                    onChange={(e) => onChange(pt.id, e.target.value)}
-                                    onFocus={() => handleInputFocus(pt.id)}
-                                    onBlur={handleInputBlur}
-                                    className="flex-1 bg-transparent pt-6 pb-2 pl-3 pr-1 text-xl font-bold outline-none w-full"
-                                    style={{ color: '#fff' }}
-                                />
-                                <span
-                                    className="pr-3 pb-2.5 text-sm font-medium"
-                                    style={{ color: 'rgba(255,255,255,0.4)' }}
-                                >
-                                    {unit}
-                                </span>
+                            <div className="flex justify-between items-start gap-4">
+                                <div className="flex-1">
+                                    <label htmlFor={`measurement-${pt.id}`} className="text-sm font-extrabold text-white block mb-1">
+                                        {pt.label}
+                                    </label>
+                                    <p className="text-[10px] flex items-start gap-1 leading-snug" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                                        <svg className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                                            <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
+                                        </svg>
+                                        {pt.instruction}
+                                    </p>
+                                    <p className="text-[9px] mt-1" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                                        Typical range: {pt.range}
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-1.5 w-24 flex-shrink-0">
+                                    <input
+                                        id={`measurement-${pt.id}`}
+                                        ref={(el) => { inputRefs.current[pt.id] = el; }}
+                                        type="number"
+                                        step="0.1"
+                                        min="0"
+                                        placeholder="0.0"
+                                        value={values[pt.id] ?? ''}
+                                        onChange={(e) => onChange(pt.id, e.target.value)}
+                                        onFocus={() => handleInputFocus(pt.id)}
+                                        onBlur={handleInputBlur}
+                                        className="w-full bg-transparent text-right text-lg font-bold text-white outline-none placeholder-gray-600"
+                                    />
+                                    <span className="text-xs font-bold" style={{ color: '#D4A853' }}>
+                                        {unit}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     );
