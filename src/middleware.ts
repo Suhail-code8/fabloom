@@ -1,4 +1,4 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher, clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isProtectedRoute = createRouteMatcher([
@@ -37,7 +37,18 @@ export default clerkMiddleware(async (auth, req) => {
         }
 
         // Role check
-        const role = (authObj.sessionClaims as any)?.role || (authObj.sessionClaims as any)?.publicMetadata?.role || (authObj.sessionClaims as any)?.metadata?.role;
+        let role = (authObj.sessionClaims as any)?.role || (authObj.sessionClaims as any)?.publicMetadata?.role || (authObj.sessionClaims as any)?.metadata?.role;
+        
+        if (!role && authObj.userId) {
+            try {
+                const client = await clerkClient();
+                const user = await client.users.getUser(authObj.userId);
+                role = user?.publicMetadata?.role;
+            } catch (err) {
+                console.error("Clerk API Role Fetch Error:", err);
+            }
+        }
+
         if (role !== 'admin') {
             // Return 403 Forbidden or redirect to unauthorized
             if (req.nextUrl.pathname.startsWith('/api/')) {
