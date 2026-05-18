@@ -21,7 +21,7 @@ const OrderItemSchema = z.object({
     price: z.number().optional(),
     meters: z.number().optional(),
     pricePerMeter: z.number().optional(),
-    totalPrice: z.number(),
+    totalPrice: z.number().optional(),
     stitchingCharge: z.number().optional(),
     garmentType: z.string().optional(),
     measurementProfileName: z.string().optional(),
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
                     size: item.size,
                     quantity: item.quantity,
                     price: item.price,
-                    totalPrice: item.totalPrice
+                    totalPrice: item.totalPrice || (item.price * item.quantity)
                 };
             }
             if (item.itemType === 'accessory') {
@@ -134,7 +134,7 @@ export async function POST(req: NextRequest) {
                     color: item.color,
                     quantity: item.quantity,
                     price: item.price,
-                    totalPrice: item.totalPrice
+                    totalPrice: item.totalPrice || (item.price * item.quantity)
                 };
             }
             if (item.itemType === 'stitching') {
