@@ -292,8 +292,8 @@ export default function CheckoutPageClient() {
                                         {pincodeLoading && <div className="absolute right-3 top-3.5 w-4 h-4 border-2 border-[#D4A853] border-t-transparent rounded-full animate-spin" />}
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
-                                        <input placeholder="City" value={newAddr.city} readOnly className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-500 outline-none" />
-                                        <input placeholder="State" value={newAddr.state} readOnly className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-500 outline-none" />
+                                        <input placeholder="City" value={newAddr.city} onChange={e => setNewAddr({...newAddr, city: e.target.value})} className="w-full p-3 rounded-xl border border-gray-200 text-sm focus:border-[#D4A853] outline-none" />
+                                        <input placeholder="State" value={newAddr.state} onChange={e => setNewAddr({...newAddr, state: e.target.value})} className="w-full p-3 rounded-xl border border-gray-200 text-sm focus:border-[#D4A853] outline-none" />
                                     </div>
                                     <input placeholder="House No, Building, Street" value={newAddr.addressLine1} onChange={e => setNewAddr({...newAddr, addressLine1: e.target.value})} className="w-full p-3 rounded-xl border border-gray-200 text-sm focus:border-[#D4A853] outline-none" />
                                     <input placeholder="Landmark (Optional)" value={newAddr.addressLine2} onChange={e => setNewAddr({...newAddr, addressLine2: e.target.value})} className="w-full p-3 rounded-xl border border-gray-200 text-sm focus:border-[#D4A853] outline-none" />

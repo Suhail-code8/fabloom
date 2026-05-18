@@ -66,7 +66,7 @@ export default function MeasurementFormDrawer({
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     profileName: profileName.trim(),
-                    garmentType: garmentType.toLowerCase(),
+                    garmentTypes: [garmentType.toLowerCase()],
                     measurements,
                     isDefault: false
                 }),
