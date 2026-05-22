@@ -113,3 +113,65 @@ export async function DELETE(req: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
+
+export async function PATCH(req: NextRequest) {
+    const { userId } = await auth();
+    if (!userId) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    try {
+        const body = await req.json();
+        const { addressId, ...updateFields } = body;
+
+        if (!addressId) {
+            return NextResponse.json({ error: 'Address ID required' }, { status: 400 });
+        }
+
+        // Basic validation for required fields
+        if (!updateFields.fullName || !updateFields.phone || !updateFields.addressLine1 || !updateFields.city || !updateFields.state || !updateFields.postalCode) {
+            return NextResponse.json({ error: 'Missing required address fields' }, { status: 400 });
+        }
+
+        await dbConnect();
+
+        // If this is set to default, we must unset all others first
+        if (updateFields.isDefault) {
+            await User.updateOne(
+                { clerkId: userId },
+                { $set: { 'addresses.$[].isDefault': false } }
+            );
+        }
+
+        const user = await User.findOneAndUpdate(
+            { clerkId: userId, 'addresses._id': addressId },
+            {
+                $set: {
+                    'addresses.$': {
+                        _id: addressId,
+                        fullName: updateFields.fullName,
+                        phone: updateFields.phone,
+                        addressLine1: updateFields.addressLine1,
+                        addressLine2: updateFields.addressLine2,
+                        city: updateFields.city,
+                        state: updateFields.state,
+                        postalCode: updateFields.postalCode,
+                        country: updateFields.country || 'India',
+                        isDefault: updateFields.isDefault || false
+                    }
+                }
+            },
+            { new: true }
+        ).lean();
+
+        if (!user) {
+            return NextResponse.json({ error: 'User or Address not found' }, { status: 404 });
+        }
+
+        return NextResponse.json({ success: true, addresses: (user as any).addresses });
+    } catch (error: any) {
+        console.error('Error updating address:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
