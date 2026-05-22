@@ -17,6 +17,19 @@ const nextConfig = {
             { hostname: 'lh3.googleusercontent.com' },
         ],
     },
+    async redirects() {
+        return [
+            // Admin URL aliases — sidebar uses /admin/* but route group maps to /*
+            { source: '/admin', destination: '/dashboard', permanent: false },
+            { source: '/admin/dashboard', destination: '/dashboard', permanent: false },
+            { source: '/admin/orders', destination: '/orders', permanent: false },
+            { source: '/admin/orders/:id', destination: '/orders/:id', permanent: false },
+            { source: '/admin/production', destination: '/production', permanent: false },
+            { source: '/admin/inventory', destination: '/inventory', permanent: false },
+            { source: '/admin/products', destination: '/products', permanent: false },
+            { source: '/admin/products/:path*', destination: '/products/:path*', permanent: false },
+        ];
+    },
     async headers() {
         return [
             {
