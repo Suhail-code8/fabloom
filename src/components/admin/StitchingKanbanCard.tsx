@@ -74,9 +74,9 @@ export default function StitchingKanbanCard({ item, onClick, onMoveForward, onMo
             {/* Key Measurements & Days */}
             <div className="flex items-end justify-between">
                 <div className="text-[9px] font-medium text-gray-500 leading-snug">
-                    {item.measurements?.chest ? `C: ${item.measurements.chest}"` : ''}
+                    {item.measurements?.chest ? `C: ${item.measurements.chest}` : ''}
                     {item.measurements?.chest && item.measurements?.shirtLength ? ' · ' : ''}
-                    {item.measurements?.shirtLength ? `L: ${item.measurements.shirtLength}"` : ''}
+                    {item.measurements?.shirtLength ? `L: ${item.measurements.shirtLength}` : ''}
                 </div>
                 
                 <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/useCartStore';
-import type { CartItem, StitchingCartItem, ReadymadeCartItem, AccessoryCartItem } from '@/store/useCartStore';
+import type { CartItem, StitchingCartItem, ReadymadeCartItem, AccessoryCartItem, FabricCartItem } from '@/store/useCartStore';
 
 function fmtINR(n: number) {
     return n.toLocaleString('en-IN');
@@ -65,7 +65,7 @@ function StitchingBundleCard({ item, onRemove }: { item: StitchingCartItem; onRe
                         {Object.entries(item.measurementSnapshot).map(([key, val]) => (
                             <div key={key} className="flex justify-between pr-4">
                                 <span className="text-gray-500 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                                <span className="font-bold text-gray-900">{val as number}"</span>
+                                <span className="font-bold text-gray-900">{val as number}</span>
                             </div>
                         ))}
                     </div>
@@ -78,7 +78,17 @@ function StitchingBundleCard({ item, onRemove }: { item: StitchingCartItem; onRe
 // ============================================================================
 // REGULAR ITEM CARD (Section 2)
 // ============================================================================
-function RegularItemCard({ item, onRemove, onQty }: { item: ReadymadeCartItem | AccessoryCartItem; onRemove: () => void; onQty: (q: number) => void }) {
+function RegularItemCard({ item, onRemove, onQty }: { item: ReadymadeCartItem | AccessoryCartItem | FabricCartItem; onRemove: () => void; onQty: (q: number) => void }) {
+    const itemTotal = (() => {
+        if (item.itemType === 'readymade' || item.itemType === 'accessory') {
+            return item.price * item.quantity;
+        }
+        // FabricCartItem
+        const fabricCost = item.pricePerMeter * item.meters;
+        const stitchingCost = item.stitchingPrice || 0;
+        return (fabricCost + stitchingCost) * item.quantity;
+    })();
+
     return (
         <div className="flex gap-4 py-4 border-b border-gray-100 last:border-0">
             <div className="w-[80px] h-[80px] rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 relative">
@@ -95,6 +105,11 @@ function RegularItemCard({ item, onRemove, onQty }: { item: ReadymadeCartItem | 
                     </div>
                     {item.itemType === 'readymade' && <span className="text-[10px] font-bold text-gray-500 uppercase mt-0.5 block">Size: {item.size}</span>}
                     {item.itemType === 'accessory' && item.color && <span className="text-[10px] font-bold text-gray-500 uppercase mt-0.5 block">Color: {item.color}</span>}
+                    {item.itemType === 'fabric' && (
+                        <span className="text-[10px] font-bold text-gray-500 uppercase mt-0.5 block">
+                            {item.fabricType} · {item.meters}m
+                        </span>
+                    )}
                 </div>
 
                 <div className="flex justify-between items-end mt-2">
@@ -103,7 +118,7 @@ function RegularItemCard({ item, onRemove, onQty }: { item: ReadymadeCartItem | 
                         <span className="text-sm font-bold w-4 text-center">{item.quantity}</span>
                         <button onClick={() => onQty(item.quantity + 1)} className="w-6 h-6 rounded-full bg-[#D4A853] flex items-center justify-center font-bold text-[#0f1035]">+</button>
                     </div>
-                    <span className="text-sm font-extrabold text-[#0f1035]">₹{fmtINR(item.price * item.quantity)}</span>
+                    <span className="text-sm font-extrabold text-[#0f1035]">₹{fmtINR(itemTotal)}</span>
                 </div>
             </div>
         </div>
@@ -149,7 +164,9 @@ export default function CartPageClient() {
     }, []);
 
     const stitchingItems = items.filter((i): i is StitchingCartItem => i.itemType === 'stitching');
-    const regularItems = items.filter((i): i is ReadymadeCartItem | AccessoryCartItem => i.itemType !== 'stitching');
+    const regularItems = items.filter(
+        (i): i is ReadymadeCartItem | AccessoryCartItem | FabricCartItem => i.itemType !== 'stitching'
+    );
     
     const subtotal = getTotal();
     const stitchingCharges = stitchingItems.reduce((acc, curr) => acc + curr.stitchingCharge, 0);

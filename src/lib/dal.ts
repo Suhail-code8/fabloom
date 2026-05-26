@@ -7,6 +7,7 @@ export interface GetProductsFilters {
     category?: string;
     featured?: boolean;
     slug?: string;
+    search?: string;
     limit?: number;
     sort?: string;
 }
@@ -32,10 +33,19 @@ export async function getProductsAction(filters: GetProductsFilters = {}) {
             }
         }
 
+        if (filters.search && filters.search.trim()) {
+            query.$text = { $search: filters.search.trim() };
+        }
+
         let cursor = Product.find(query);
 
         // Sorting
-        if (filters.sort === 'createdAt') {
+        if (filters.search && filters.search.trim()) {
+            // Text relevance sort (requires a text index on the Product schema)
+            cursor = cursor
+                .select({ score: { $meta: 'textScore' } })
+                .sort({ score: { $meta: 'textScore' } });
+        } else if (filters.sort === 'createdAt') {
             cursor = cursor.sort({ createdAt: -1 });
         } else {
             cursor = cursor.sort({ featured: -1, createdAt: -1 });

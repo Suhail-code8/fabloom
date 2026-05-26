@@ -244,7 +244,7 @@ export default function ProductDetailClient({ product }: Props) {
                 </div>
 
                 {/* ADD TO CART ACTION */}
-                <div className="flex flex-col gap-4 mt-auto pt-8 border-t border-gray-100">
+                <div className="flex flex-col gap-4 mt-auto pt-4 border-t border-gray-100 bg-white fixed bottom-20 left-0 right-0 z-40 px-4 pb-4 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.06)] lg:static lg:px-0 lg:pb-0 lg:rounded-none lg:shadow-none lg:pt-8 lg:bg-transparent">
                     <button 
                         onClick={handleAddToCart}
                         disabled={isAdding}
@@ -276,7 +276,11 @@ export default function ProductDetailClient({ product }: Props) {
                     <div className="p-5 rounded-2xl bg-gray-50 border border-gray-100">
                         <h4 className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2">Technical Detail</h4>
                         <p className="text-xs font-bold text-gray-900">
-                            {isFabric ? `Width: ${(product as IFabricProduct).width}"` : isReadymade ? `Material: ${(product as IReadymadeProduct).material}` : `Item: ${product.type}`}
+                            {isFabric
+                                ? `Width: ${(product as IFabricProduct).width}cm`
+                                : isReadymade
+                                ? `Material: ${(product as IReadymadeProduct).material}`
+                                : `Item: ${product.type}`}
                         </p>
                     </div>
                     <div className="p-5 rounded-2xl bg-gray-50 border border-gray-100">

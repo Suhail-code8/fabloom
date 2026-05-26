@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-type StitchingStatus = 'pending' | 'cutting' | 'stitching' | 'quality_check' | 'ready' | 'delivered';
+type StitchingStatus = 'pending' | 'cutting' | 'stitching' | 'quality_check' | 'ready';
 
 const STITCHING_STAGES: { key: StitchingStatus; label: string }[] = [
     { key: 'pending',       label: 'Pending' },
@@ -17,7 +18,6 @@ const STITCHING_STAGES: { key: StitchingStatus; label: string }[] = [
     { key: 'stitching',     label: 'Stitching' },
     { key: 'quality_check', label: 'Quality Check' },
     { key: 'ready',         label: 'Ready' },
-    { key: 'delivered',     label: 'Delivered' },
 ];
 
 const ORDER_STATUS_COLORS: Record<string, string> = {
@@ -60,19 +60,43 @@ export default function AdminOrderDetailPage() {
     }, [id]);
 
     // Update a single item's stitching status
-    async function updateStitchingStatus(itemIndex: number, newStatus: StitchingStatus) {
+    async function updateStitchingStatus(itemId: string, newStatus: StitchingStatus) {
         setSaving(true);
         try {
             const res = await fetch(`/api/admin/orders/${id}/stitching-status`, {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ itemIndex, status: newStatus }),
+                body: JSON.stringify({ itemId, status: newStatus }),
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Update failed');
-            setOrder(data.data);
+
+            // Refresh order truth so UI always matches MongoDB
+            const orderRes = await fetch(`/api/admin/orders/${id}`);
+            const orderData = await orderRes.json();
+            if (!orderRes.ok) throw new Error(orderData.error || 'Failed to reload order');
+            setOrder(orderData.data);
         } catch (e: any) {
-            alert(`Error: ${e.message}`);
+            toast.error(e?.message || 'Failed to update stitching stage');
+        } finally {
+            setSaving(false);
+        }
+    }
+
+    async function updateOrderStatus(newStatus: 'confirmed' | 'shipped' | 'delivered') {
+        setSaving(true);
+        try {
+            const res = await fetch(`/api/admin/orders/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || data.message || 'Failed to update order status');
+            setOrder(data.data);
+            toast.success(`Order marked as ${newStatus}`);
+        } catch (e: any) {
+            toast.error(e?.message || 'Failed to update order status');
         } finally {
             setSaving(false);
         }
@@ -120,6 +144,29 @@ export default function AdminOrderDetailPage() {
                 <Badge className={ORDER_STATUS_COLORS[order.status] || 'bg-gray-100 text-gray-800'}>
                     {order.status}
                 </Badge>
+            </div>
+
+            {/* Order status update (Confirmed → Shipped → Delivered) */}
+            <div className="flex flex-wrap gap-2 items-center">
+                {(['confirmed', 'shipped', 'delivered'] as const).map((s) => {
+                    const sequence = ['confirmed', 'shipped', 'delivered'] as const;
+                    const currentIdx = sequence.indexOf(order.status);
+                    const nextIdx = currentIdx === -1 ? 0 : currentIdx + 1;
+                    const enabled = sequence.indexOf(s) === nextIdx && order.status !== s;
+
+                    return (
+                        <Button
+                            key={s}
+                            type="button"
+                            variant="outline"
+                            disabled={!enabled || saving}
+                            onClick={() => updateOrderStatus(s)}
+                            className="text-xs font-bold"
+                        >
+                            Mark {s[0].toUpperCase() + s.slice(1)}
+                        </Button>
+                    );
+                })}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -271,7 +318,7 @@ export default function AdminOrderDetailPage() {
                                                 <button
                                                     key={key}
                                                     disabled={saving || item.stitchingDetails.status === key}
-                                                    onClick={() => updateStitchingStatus(idx, key)}
+                                                    onClick={() => updateStitchingStatus(item._id, key)}
                                                     className="px-3 py-1 rounded-full text-xs font-medium transition-all duration-150 disabled:opacity-50"
                                                     style={{
                                                         backgroundColor: item.stitchingDetails.status === key

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import dbConnect from '@/lib/db';
 import { Order } from '@/models/Order';
+import { sendStitchingReady, sendStitchingStarted } from '@/lib/notifications/whatsapp';
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const { userId } = await auth();
@@ -30,6 +31,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         return NextResponse.json({ error: 'Stitching item not found' }, { status: 404 });
     }
 
+    const previousStatus = item.stitchingDetails.status;
+
     if (status) {
         item.stitchingDetails.status = status;
     }
@@ -40,7 +43,37 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     await order.save();
 
-    // OPTIONAL: Trigger WhatsApp notification here if status changed
+    // WhatsApp notification stub: fire-and-forget on stage changes.
+    // Never block production moves on external notification failures.
+    try {
+        const nextStatus = item.stitchingDetails.status;
+        if (status && nextStatus !== previousStatus) {
+            const specialInstructions = item.stitchingDetails.specialInstructions || '';
+            const garmentType =
+                specialInstructions.match(/Garment:\s*([^|]+)/i)?.[1]?.trim() ||
+                (item as any).productName ||
+                'Garment';
+
+            const phone = order.shippingAddress.phone;
+            const customerName = order.shippingAddress.fullName;
+
+            if (nextStatus === 'ready') {
+                void sendStitchingReady(phone, {
+                    orderNumber: order.orderNumber,
+                    customerName,
+                    garmentType,
+                });
+            } else {
+                void sendStitchingStarted(phone, {
+                    orderNumber: order.orderNumber,
+                    customerName,
+                    garmentType,
+                });
+            }
+        }
+    } catch (e) {
+        // Ignore notification failures
+    }
 
     return NextResponse.json({ success: true, item });
 }

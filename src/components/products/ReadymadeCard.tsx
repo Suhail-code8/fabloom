@@ -2,8 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import type { IReadymadeProduct, SizeKey } from '@/types/product';
+import useSWR from 'swr';
+import { toast } from 'sonner';
 
 // ============================================================================
 // CONSTANTS
@@ -17,12 +19,51 @@ const SIZE_ORDER: SizeKey[] = ['S', 'M', 'L', 'XL', 'XXL'];
 
 function WishlistButton({ productId }: { productId: string }) {
     const [wishlisted, setWishlisted] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const fetcher = async (url: string) => {
+        const res = await fetch(url);
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) return { wishlist: [] };
+        return json;
+    };
+
+    const { data, mutate } = useSWR('/api/user/wishlist', fetcher);
+
+    useEffect(() => {
+        const next = Boolean(data?.wishlist?.some((p: any) => p?._id?.toString() === productId));
+        setWishlisted(next);
+    }, [data, productId]);
+
     return (
         <button
             aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
             onClick={(e) => {
                 e.preventDefault();
-                setWishlisted((v) => !v);
+                e.stopPropagation();
+
+                if (isSaving) return;
+                setIsSaving(true);
+
+                fetch('/api/user/wishlist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId }),
+                })
+                    .then(async (res) => {
+                        const json = await res.json().catch(() => ({}));
+                        if (!res.ok) throw new Error(json.error || json.message || 'Wishlist update failed');
+
+                        // API returns the new isLiked state.
+                        if (typeof json.isLiked === 'boolean') setWishlisted(json.isLiked);
+                        void mutate();
+
+                        toast.success(json.isLiked ? 'Added to wishlist' : 'Removed from wishlist');
+                    })
+                    .catch((err) => {
+                        toast.error(err?.message || 'Failed to update wishlist');
+                    })
+                    .finally(() => setIsSaving(false));
             }}
             className="absolute top-2 right-2 z-10 flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 active:scale-90"
             style={{
