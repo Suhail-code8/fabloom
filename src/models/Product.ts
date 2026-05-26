@@ -93,6 +93,14 @@ ProductSchema.index({ type: 1, category: 1, active: 1 });
 ProductSchema.index({ featured: 1 });
 ProductSchema.index({ tags: 1 });
 
+// Text index for full-text search (used by /search and /api/products?search=...)
+ProductSchema.index({
+    name: 'text',
+    description: 'text',
+    subcategory: 'text',
+    tags: 'text',
+});
+
 // Base Product Model
 const Product: Model<IProduct> =
     mongoose.models.Product || mongoose.model<IProduct>('Product', ProductSchema);

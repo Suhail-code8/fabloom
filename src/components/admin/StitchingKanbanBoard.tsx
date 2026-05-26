@@ -242,7 +242,7 @@ export default function StitchingKanbanBoard() {
                                     {Object.entries(selectedItem.measurements || {}).map(([key, val]) => (
                                         <div key={key} className="flex justify-between border-b border-gray-100 pb-1">
                                             <span className="text-xs font-medium text-gray-500 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                                            <span className="text-xs font-bold text-gray-900">{val as number}"</span>
+                                            <span className="text-xs font-bold text-gray-900">{val as number}</span>
                                         </div>
                                     ))}
                                 </div>

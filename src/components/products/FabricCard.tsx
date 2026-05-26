@@ -2,6 +2,9 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import useSWR from 'swr';
+import { toast } from 'sonner';
 import type { IFabricProduct } from '@/types/product';
 
 // ============================================================================
@@ -21,6 +24,85 @@ function StockBadge({ stock }: { stock: number }) {
             <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
             {label}
         </span>
+    );
+}
+
+// ============================================================================
+// WISHLIST HEART BUTTON
+// ============================================================================
+
+function WishlistButton({ productId }: { productId: string }) {
+    const [wishlisted, setWishlisted] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const fetcher = async (url: string) => {
+        const res = await fetch(url);
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) return { wishlist: [] };
+        return json;
+    };
+
+    const { data, mutate } = useSWR('/api/user/wishlist', fetcher);
+
+    useEffect(() => {
+        const next = Boolean(data?.wishlist?.some((p: any) => p?._id?.toString() === productId));
+        setWishlisted(next);
+    }, [data, productId]);
+
+    return (
+        <div
+            role="button"
+            tabIndex={0}
+            aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    (e.currentTarget as HTMLDivElement).click();
+                }
+            }}
+            onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (isSaving) return;
+                setIsSaving(true);
+
+                fetch('/api/user/wishlist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId }),
+                })
+                    .then(async (res) => {
+                        const json = await res.json().catch(() => ({}));
+                        if (!res.ok) throw new Error(json.error || json.message || 'Wishlist update failed');
+
+                        if (typeof json.isLiked === 'boolean') setWishlisted(json.isLiked);
+                        void mutate();
+                        toast.success(json.isLiked ? 'Added to wishlist' : 'Removed from wishlist');
+                    })
+                    .catch((err) => {
+                        toast.error(err?.message || 'Failed to update wishlist');
+                    })
+                    .finally(() => setIsSaving(false));
+            }}
+            className="absolute top-2 right-2 z-20 flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 active:scale-90"
+            style={{
+                backgroundColor: 'rgba(255,255,255,0.9)',
+                backdropFilter: 'blur(4px)',
+            }}
+        >
+            <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill={wishlisted ? '#ef4444' : 'none'}
+                stroke={wishlisted ? '#ef4444' : '#6b7280'}
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+        </div>
     );
 }
 
@@ -61,7 +143,7 @@ export default function FabricCard({ fabric, onOpenDrawer }: FabricCardProps) {
                         className="text-[9px] font-bold px-2 py-0.5 rounded-full"
                         style={{ backgroundColor: 'rgba(15,16,53,0.82)', color: '#D4A853' }}
                     >
-                        {fabric.width}&quot;
+                        {fabric.width}cm
                     </span>
                     {/* Material badge */}
                     <span
@@ -72,10 +154,12 @@ export default function FabricCard({ fabric, onOpenDrawer }: FabricCardProps) {
                     </span>
                 </div>
 
+                <WishlistButton productId={fabric._id} />
+
                 {/* Featured star */}
                 {fabric.featured && (
                     <div
-                        className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center"
+                        className="absolute top-2 right-10 w-6 h-6 rounded-full flex items-center justify-center"
                         style={{ backgroundColor: '#D4A853' }}
                     >
                         <svg className="w-3 h-3" viewBox="0 0 24 24" fill="#0f1035">

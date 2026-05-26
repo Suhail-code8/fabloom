@@ -101,6 +101,17 @@ export async function POST(req: NextRequest) {
                     );
                     if (!updated) throw new Error(`Insufficient fabric stock for: ${item.fabricName || item.fabricId}`);
                     processedItems.push({ type: 'stitching', id: item.fabricId!, field: 'stockInMeters', amount: meters });
+                } else if (item.itemType === 'fabric') {
+                    const qty = item.quantity || 1;
+                    const metersPerUnit = item.meters || 1;
+                    const totalMeters = metersPerUnit * qty;
+
+                    const updated = await Product.findOneAndUpdate(
+                        { _id: item.productId, stockInMeters: { $gte: totalMeters } },
+                        { $inc: { stockInMeters: -totalMeters } }
+                    );
+                    if (!updated) throw new Error(`Insufficient fabric stock for: ${item.name || item.productId}`);
+                    processedItems.push({ type: 'fabric', id: item.productId!, field: 'stockInMeters', amount: totalMeters });
                 }
             }
         } catch (stockError: any) {
@@ -154,6 +165,41 @@ export async function POST(req: NextRequest) {
                     }
                 };
             }
+
+            if (item.itemType === 'fabric') {
+                const qty = item.quantity || 1;
+                const meters = item.meters || 0;
+                const pricePerMeter = item.pricePerMeter || 0;
+                const stitchingCost = item.stitchingPrice || 0;
+
+                // If this fabric cart item has stitching details, preserve them as well.
+                const hasStitching = Boolean(item.stitchingDetails);
+
+                const totalPrice = item.totalPrice || ((meters * pricePerMeter + stitchingCost) * qty);
+
+                return {
+                    itemType: 'fabric',
+                    productId: item.productId,
+                    productName: item.name,
+                    productImage: item.image,
+                    meters,
+                    pricePerMeter,
+                    totalPrice,
+                    ...(hasStitching && item.stitchingDetails
+                        ? {
+                            stitchingDetails: {
+                                measurements: item.stitchingDetails.measurements,
+                                stitchingPrice: stitchingCost,
+                                status: 'pending',
+                                specialInstructions: `Garment: ${(item.stitchingDetails.style || 'Garment').toString()}`,
+                                adminNotes: item.stitchingDetails.notes,
+                            },
+                        }
+                        : {}),
+                };
+            }
+
+            throw new Error(`Unsupported order item type: ${item.itemType}`);
         });
 
         // 4. Create the Order

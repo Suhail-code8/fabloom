@@ -321,7 +321,7 @@ export function Step5Review({ onSubmit, isSubmitting }: { onSubmit: () => void, 
             <div className="flex items-center justify-between py-2.5 border-b border-white/5 last:border-0">
                 <span className="text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>{label}</span>
                 <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-white">{value}"</span>
+                    <span className="text-sm font-bold text-white">{value}</span>
                     <button onClick={() => goToStep(step)} className="text-[10px] font-bold text-[#D4A853] uppercase tracking-wider px-2 py-1 bg-[#D4A853]/10 rounded-md">Edit</button>
                 </div>
             </div>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import useSWR from 'swr';
 import DeleteModal from '@/components/ui/DeleteModal';
+import { toast } from 'sonner';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -53,7 +54,7 @@ export default function AddressesListClient() {
             mutate();
             setDeleteId(null);
         } catch (err) {
-            alert('Failed to delete address');
+            toast.error('Failed to delete address');
         }
         setIsDeleting(false);
     };

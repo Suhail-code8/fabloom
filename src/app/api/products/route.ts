@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
         const type = searchParams.get('type') || undefined;
         const featured = searchParams.get('featured') === 'true' ? true : undefined;
         const slug = searchParams.get('slug') || undefined;
+        const search = searchParams.get('search') || undefined;
         const limit = parseInt(searchParams.get('limit') || '0') || undefined;
 
         const products = await getProductsAction({
@@ -17,6 +18,7 @@ export async function GET(request: NextRequest) {
             type,
             featured,
             slug,
+            search,
             limit,
             sort: searchParams.get('sort') || undefined
         });

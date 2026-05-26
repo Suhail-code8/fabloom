@@ -3,11 +3,14 @@
 import useSWR from 'swr';
 import Link from 'next/link';
 import Image from 'next/image';
+import { toast } from 'sonner';
+import { useCartStore } from '@/store/useCartStore';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export default function WishlistClient() {
     const { data, error, mutate, isLoading } = useSWR('/api/user/wishlist', fetcher);
+    const addItem = useCartStore((s) => s.addItem);
 
     if (error) return <div className="p-8 text-center text-red-500">Failed to load wishlist.</div>;
 
@@ -25,6 +28,58 @@ export default function WishlistClient() {
     };
 
     const wishlist = data?.wishlist || [];
+
+    const handleAddToCart = (product: any) => {
+        if (!product) return;
+
+        if (product.type === 'readymade') {
+            const sizes = product.sizeStock || {};
+            const inStock = Object.entries(sizes).find(([_, qty]: any) => qty > 0);
+            const size = inStock?.[0] || Object.keys(sizes)[0];
+            if (!size) {
+                toast.error('This item is out of stock');
+                return;
+            }
+
+            addItem({
+                itemType: 'readymade',
+                productId: product._id,
+                name: product.name,
+                image: product.images?.[0] ?? '',
+                size,
+                quantity: 1,
+                price: product.price,
+            } as any);
+            toast.success('Added to cart');
+            return;
+        }
+
+        if (product.type === 'fabric') {
+            addItem({
+                itemType: 'fabric',
+                productId: product._id,
+                name: product.name,
+                image: product.images?.[0] ?? '',
+                meters: 2,
+                pricePerMeter: product.pricePerMeter ?? product.price,
+                fabricType: product.fabricType ?? '',
+                quantity: 1,
+            } as any);
+            toast.success('Added to cart');
+            return;
+        }
+
+        addItem({
+            itemType: 'accessory',
+            productId: product._id,
+            name: product.name,
+            image: product.images?.[0] ?? '',
+            color: product.color,
+            quantity: 1,
+            price: product.price,
+        } as any);
+        toast.success('Added to cart');
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 pb-20">
@@ -66,6 +121,15 @@ export default function WishlistClient() {
                                     <Link href={`/${product.type}/${product._id}`} className="mt-2 w-full py-2.5 rounded-xl border-2 border-[#0f1035] text-[#0f1035] text-xs font-bold text-center hover:bg-[#0f1035] hover:text-white transition-colors active:scale-95">
                                         View Product
                                     </Link>
+                                    <button
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleAddToCart(product);
+                                        }}
+                                        className="mt-2 w-full py-2.5 rounded-xl bg-[#0f1035] text-white text-xs font-bold text-center hover:bg-[#0f1035]/90 transition-colors active:scale-95"
+                                    >
+                                        Add to cart
+                                    </button>
                                 </div>
                             </div>
                         ))}

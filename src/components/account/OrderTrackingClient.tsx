@@ -85,7 +85,7 @@ function StitchingTrackingCard({ item }: { item: any }) {
                         {Object.entries(details.measurements || {}).map(([key, val]) => (
                             <div key={key} className="flex justify-between pr-4">
                                 <span className="text-gray-500 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                                <span className="font-bold text-gray-900">{val as number}"</span>
+                                <span className="font-bold text-gray-900">{val as number}</span>
                             </div>
                         ))}
                     </div>

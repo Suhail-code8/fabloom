@@ -65,7 +65,17 @@ export default function DashboardClient() {
         </div>
     );
 
-    const metrics = data.metrics ?? {};
+    // Safe defaults so dashboard never crashes on empty analytics.
+    const metrics = {
+        revenueTrend: 0,
+        todayRevenue: 0,
+        ordersToday: 0,
+        stitchingToday: 0,
+        readymadeToday: 0,
+        pendingStitchingCount: 0,
+        lowStockCount: 0,
+        ...(data.metrics ?? {}),
+    };
     const charts = data.charts ?? { revenueData: [], ordersByType: [], pipelineData: [] };
     const activityFeed: any[] = data.activityFeed ?? [];
 

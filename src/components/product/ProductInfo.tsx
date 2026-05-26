@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import StitchingModal from './StitchingModal';
 import { useCartStore, ReadymadeCartItem, FabricCartItem } from '@/store/useCartStore';
+import { toast } from 'sonner';
 
 interface ProductInfoProps {
     product: any; // Will be typed based on Product model
@@ -45,7 +46,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     // Handle add to cart for readymade
     const handleAddReadymadeToCart = () => {
         if (!selectedSize) {
-            alert('Please select a size');
+            toast.error('Please select a size');
             return;
         }
 
@@ -62,13 +63,13 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         };
 
         addItem(cartItem);
-        alert('Added to cart!');
+        toast.success('Added to cart!');
     };
 
     // Handle add to cart for fabric (without stitching)
     const handleAddFabricToCart = () => {
         if (meters < 1) {
-            alert('Please enter at least 1 meter');
+            toast.error('Please enter at least 1 meter');
             return;
         }
 
@@ -84,7 +85,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         };
 
         addItem(cartItem);
-        alert('Added to cart!');
+        toast.success('Added to cart!');
     };
 
     // Handle add to cart for accessory
@@ -101,7 +102,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         };
 
         addItem(cartItem);
-        alert('Added to cart!');
+        toast.success('Added to cart!');
     };
 
     return (

@@ -81,7 +81,7 @@ export default function BottomNav() {
     );
 
     // HIDE BOTTOM NAV ON SPECIFIC ROUTES
-    const hideOnRoutes = ['/checkout', '/stitching'];
+    const hideOnRoutes = ['/checkout', '/stitching', '/account/measurements/new'];
     if (hideOnRoutes.some(route => pathname.startsWith(route))) {
         return null;
     }

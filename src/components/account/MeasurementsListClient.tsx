@@ -105,7 +105,7 @@ export default function MeasurementsListClient() {
                                     {Object.entries(profile.measurements).slice(0, 6).map(([key, val]) => (
                                         <div key={key} className="flex justify-between border-b border-gray-50 pb-1">
                                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                                            <span className="text-xs font-extrabold text-[#0f1035]">{val as number}"</span>
+                                            <span className="text-xs font-extrabold text-[#0f1035]">{val as number}</span>
                                         </div>
                                     ))}
                                     {Object.keys(profile.measurements).length > 6 && (

@@ -25,24 +25,24 @@ export default function OrderSummaryBar({ currentStep, onNext, onBack }: {
 
     const handleAddToCart = () => {
         const order = store.buildOrderItem();
-        if (!order || !fabric) return;
+        if (!order) return;
 
+        // Stitching bundle is its own cart item type (CartPageClient renders it separately).
         const cartItem: any = {
-            productId: fabric._id,
-            name: `${order.garmentType} — ${fabric.name}`,
-            image: fabric.images[0] ?? '',
-            itemType: 'fabric',
-            quantity: 1,
-            pricePerMeter: fabric.pricePerMeter,
+            itemType: 'stitching',
+            fabricId: order.fabricId,
+            fabricName: order.fabricName,
+            fabricImage: order.fabricImage,
             meters: order.meters,
-            fabricType: fabric.fabricType,
-            stitchingPrice: order.stitchingPrice,
-            stitchingDetails: {
-                style: order.garmentType as any,
-                measurements: order.measurementProfile.measurements as any,
-                notes: order.stitchingNotes,
-            },
+            pricePerMeter: order.pricePerMeter,
+            garmentType: order.garmentType,
+            stitchingCharge: order.stitchingPrice,
+            measurementProfileId: order.measurementProfile._id,
+            measurementProfileName: order.measurementProfile.profileName,
+            measurementSnapshot: order.measurementProfile.measurements,
+            totalPrice: order.totalPrice,
         };
+
         addItem(cartItem);
         store.reset();
         router.push('/cart');
@@ -50,7 +50,7 @@ export default function OrderSummaryBar({ currentStep, onNext, onBack }: {
 
     return (
         <div
-            className="fixed bottom-[80px] left-0 right-0 z-40 border-t"
+            className="fixed bottom-20 left-0 right-0 z-40 border-t"
             style={{
                 backgroundColor: '#0f1035',
                 borderColor: 'rgba(255,255,255,0.1)',
