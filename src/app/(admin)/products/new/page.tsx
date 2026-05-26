@@ -127,7 +127,7 @@ export default function NewProductPage() {
         }
 
         try {
-            const res = await fetch('/api/products', {
+            const res = await fetch('/api/admin/products', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -135,11 +135,11 @@ export default function NewProductPage() {
 
             const data = await res.json();
 
-            if (!res.ok || !data.success) {
-                throw new Error(data.message || data.error || 'Failed to create product');
+            if (!res.ok) {
+                throw new Error(data.error || data.message || 'Failed to create product');
             }
 
-            router.push('/admin');
+            router.push('/inventory');
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -156,11 +156,11 @@ export default function NewProductPage() {
             {/* Header */}
             <div className="mb-8">
                 <Link
-                    href="/admin"
+                    href="/inventory"
                     className="inline-flex items-center text-sm text-gray-600 hover:text-emerald-600 mb-4"
                 >
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to Admin
+                    Back to Inventory
                 </Link>
                 <h1 className="text-2xl font-bold text-gray-900">Add New Product</h1>
                 <p className="text-gray-500 text-sm mt-1">Fill in the details to list a new product.</p>

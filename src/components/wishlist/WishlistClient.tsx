@@ -2,6 +2,7 @@
 
 import useSWR from 'swr';
 import Link from 'next/link';
+import { getProductDetailHref } from '@/lib/product-routes';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import { useCartStore } from '@/store/useCartStore';
@@ -118,7 +119,7 @@ export default function WishlistClient() {
                                     <p className="text-sm font-extrabold text-[#D4A853]">
                                         ₹{product.price?.toLocaleString('en-IN') || product.basePrice?.toLocaleString('en-IN')}
                                     </p>
-                                    <Link href={`/${product.type}/${product._id}`} className="mt-2 w-full py-2.5 rounded-xl border-2 border-[#0f1035] text-[#0f1035] text-xs font-bold text-center hover:bg-[#0f1035] hover:text-white transition-colors active:scale-95">
+                                    <Link href={getProductDetailHref(product)} className="mt-2 w-full py-2.5 rounded-xl border-2 border-[#0f1035] text-[#0f1035] text-xs font-bold text-center hover:bg-[#0f1035] hover:text-white transition-colors active:scale-95">
                                         View Product
                                     </Link>
                                     <button

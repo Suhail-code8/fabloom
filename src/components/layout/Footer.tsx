@@ -2,17 +2,17 @@ import Link from "next/link";
 import { Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react";
 
 const shopLinks = [
-    { name: "Readymade Garments", href: "/products" },
+    { name: "Readymade Garments", href: "/readymade" },
     { name: "Premium Fabrics", href: "/fabrics" },
     { name: "Custom Stitching", href: "/stitching" },
-    { name: "Accessories", href: "/products?category=accessories" },
+    { name: "Accessories", href: "/accessories" },
 ];
 
 const customerServiceLinks = [
-    { name: "Track Order", href: "/orders" },
-    { name: "Stitching Guide", href: "/stitching-guide" },
-    { name: "Size Chart", href: "/size-chart" },
-    { name: "Returns & Exchange", href: "/returns" },
+    { name: "Track Order", href: "/account/orders" },
+    { name: "Stitching Guide", href: "/stitching" },
+    { name: "Size Chart", href: "/about" },
+    { name: "Returns & Exchange", href: "/about" },
 ];
 
 export default function Footer() {

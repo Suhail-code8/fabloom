@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import dbConnect from '@/lib/db';
 import { Product, ReadymadeProduct, FabricProduct, AccessoryProduct } from '@/models/Product';
+import { ensureUniqueProductSlug } from '@/lib/slugify';
 
 // ============================================================================
 // GET ALL PRODUCTS
@@ -38,10 +39,14 @@ export async function POST(req: NextRequest) {
     try {
         await dbConnect();
         const body = await req.json();
-        
+
         // Base Validation
         if (!body.name || !body.description || !body.type || !body.price || !body.category) {
             return NextResponse.json({ error: 'Missing base required fields' }, { status: 400 });
+        }
+
+        if (!body.slug) {
+            body.slug = await ensureUniqueProductSlug(body.name);
         }
 
         let newProduct;
