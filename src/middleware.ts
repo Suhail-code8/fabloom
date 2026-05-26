@@ -11,7 +11,13 @@ const isProtectedRoute = createRouteMatcher([
 
 const isAdminRoute = createRouteMatcher([
     '/admin(.*)',
-    '/api/admin(.*)'
+    '/api/admin(.*)',
+    // Route group (admin) maps to these paths (see next.config redirects)
+    '/dashboard(.*)',
+    '/orders(.*)',
+    '/production(.*)',
+    '/inventory(.*)',
+    '/products/new(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
