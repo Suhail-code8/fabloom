@@ -178,7 +178,7 @@ export default function AdminOrdersPage() {
                                         {new Date(order.createdAt).toLocaleDateString()}
                                     </TableCell>
                                     <TableCell>
-                                        <Link href={`/admin/orders/${order._id}`}>
+                                        <Link href={`/orders/${order._id}`}>
                                             <Button variant="ghost" size="sm">
                                                 View
                                             </Button>

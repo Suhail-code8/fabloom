@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CldUploadWidget } from 'next-cloudinary';
+import ImageUpload from '@/components/ImageUpload';
 
 interface Props {
     onClose: () => void;
@@ -122,24 +122,12 @@ export default function AddProductDrawer({ onClose, onSave }: Props) {
                             </div>
                             <div>
                                 <label className="text-xs font-bold text-gray-700 block mb-2">Images ({images.length} added)</label>
-                                <CldUploadWidget 
-                                    uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'fabloom_products'}
-                                    onSuccess={(result: any) => {
-                                        if (result?.info?.secure_url) {
-                                            setImages(prev => [...prev, result.info.secure_url]);
-                                        }
-                                    }}
-                                >
-                                    {({ open }) => (
-                                        <div 
-                                            onClick={() => open?.()}
-                                            className="p-6 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center bg-gray-50 text-xs text-gray-400 font-bold cursor-pointer hover:border-[#D4A853] hover:bg-amber-50/20 transition-all"
-                                        >
-                                            <svg className="w-8 h-8 text-gray-300 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                            Click to Upload Images
-                                        </div>
-                                    )}
-                                </CldUploadWidget>
+                                <ImageUpload
+                                    variant="dropzone"
+                                    onUploadSuccess={(url) =>
+                                        setImages((prev) => [...prev, url])
+                                    }
+                                />
                                 
                                 {images.length > 0 && (
                                     <div className="flex gap-2 mt-4 overflow-x-auto pb-2">

@@ -88,7 +88,7 @@ export default function CartSummary({
                     </Button>
                 </Link>
 
-                <Link href="/products" className="w-full">
+                <Link href="/readymade" className="w-full">
                     <Button variant="outline" className="w-full">
                         Continue Shopping
                     </Button>

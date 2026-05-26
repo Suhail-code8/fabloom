@@ -8,6 +8,12 @@ const withPWA = require("next-pwa")({
 });
 
 const nextConfig = {
+    // Expose cloud name to client even if only CLOUDINARY_CLOUD_NAME is set in .env.local
+    env: {
+        NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:
+            process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
+            process.env.CLOUDINARY_CLOUD_NAME,
+    },
     images: {
         remotePatterns: [
             { hostname: 'images.unsplash.com' },
@@ -19,15 +25,27 @@ const nextConfig = {
     },
     async redirects() {
         return [
-            // Admin URL aliases — sidebar uses /admin/* but route group maps to /*
+            // Admin URL aliases — (admin) route group serves paths without /admin prefix
             { source: '/admin', destination: '/dashboard', permanent: false },
             { source: '/admin/dashboard', destination: '/dashboard', permanent: false },
+            { source: '/admin/analytics', destination: '/analytics', permanent: false },
             { source: '/admin/orders', destination: '/orders', permanent: false },
             { source: '/admin/orders/:id', destination: '/orders/:id', permanent: false },
+            { source: '/admin/stitching', destination: '/production', permanent: false },
+            { source: '/admin/stitching/pending', destination: '/production', permanent: false },
             { source: '/admin/production', destination: '/production', permanent: false },
             { source: '/admin/inventory', destination: '/inventory', permanent: false },
-            { source: '/admin/products', destination: '/products', permanent: false },
+            { source: '/admin/inventory/alerts', destination: '/inventory', permanent: false },
+            { source: '/admin/products', destination: '/inventory', permanent: false },
+            { source: '/admin/products/new', destination: '/products/new', permanent: false },
             { source: '/admin/products/:path*', destination: '/products/:path*', permanent: false },
+            { source: '/admin/customers', destination: '/customers', permanent: false },
+            { source: '/admin/measurements', destination: '/measurements', permanent: false },
+            { source: '/admin/settings', destination: '/settings', permanent: false },
+            { source: '/admin/settings/shipping', destination: '/settings/shipping', permanent: false },
+            { source: '/admin/settings/notifications', destination: '/settings/notifications', permanent: false },
+            // Legacy storefront listing path only (do not catch /products/new)
+            { source: '/products', destination: '/readymade', permanent: false },
         ];
     },
     async headers() {
@@ -49,7 +67,7 @@ const nextConfig = {
                     },
                     {
                         key: 'Content-Security-Policy',
-                        value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.clerk.accounts.dev *.razorpay.com blob:; connect-src 'self' *.clerk.accounts.dev *.razorpay.com clerk-telemetry.com *.clerk.com; img-src 'self' data: res.cloudinary.com images.unsplash.com *.clerk.com blob:; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; frame-src 'self' *.razorpay.com; worker-src 'self' blob:;",
+                        value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.clerk.accounts.dev *.razorpay.com https://upload-widget.cloudinary.com https://widget.cloudinary.com blob:; connect-src 'self' *.clerk.accounts.dev *.razorpay.com clerk-telemetry.com *.clerk.com https://api.cloudinary.com https://*.cloudinary.com; img-src 'self' data: https://res.cloudinary.com images.unsplash.com *.clerk.com blob:; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; frame-src 'self' *.razorpay.com https://widget.cloudinary.com https://upload-widget.cloudinary.com; worker-src 'self' blob:;",
                     },
                 ],
             },

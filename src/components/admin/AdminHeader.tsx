@@ -7,10 +7,9 @@ import Link from 'next/link';
 // HELPER TO GENERATE TITLE FROM PATH
 // ============================================================================
 function getPageTitle(pathname: string): string {
-    if (pathname === '/admin') return 'Dashboard';
+    if (pathname === '/admin' || pathname === '/dashboard') return 'Dashboard';
 
     const segments = pathname.split('/').filter(Boolean);
-    // Remove 'admin' segment
     if (segments[0] === 'admin') segments.shift();
 
     if (segments.length === 0) return 'Dashboard';
@@ -37,21 +36,21 @@ export default function AdminHeader() {
                 {/* Quick Action Buttons */}
                 <div className="hidden md:flex items-center gap-3 mr-2">
                     <Link
-                        href="/admin/products/new"
+                        href="/products/new"
                         className="px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95"
                         style={{ backgroundColor: '#f3f4f6', color: '#374151' }}
                     >
                         Add Product
                     </Link>
                     <Link
-                        href="/admin/orders/new"
+                        href="/orders"
                         className="px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5"
                         style={{ backgroundColor: '#0f1035', color: '#ffffff' }}
                     >
                         <svg className="w-3.5 h-3.5 text-[#D4A853]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
                             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                         </svg>
-                        New Order
+                        View Orders
                     </Link>
                 </div>
 

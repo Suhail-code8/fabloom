@@ -10,7 +10,7 @@ import { useCartStore } from "@/store/useCartStore";
 import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
 
 const navLinks = [
-    { name: "Readymade", href: "/products" },
+    { name: "Readymade", href: "/readymade" },
     { name: "Fabrics", href: "/fabrics" },
     { name: "Stitching", href: "/stitching" },
     { name: "About", href: "/about" },

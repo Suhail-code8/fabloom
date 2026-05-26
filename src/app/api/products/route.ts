@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import { ReadymadeProduct, FabricProduct, AccessoryProduct } from '@/models/Product';
 import { getProductsAction } from '@/lib/dal';
+import { ensureUniqueProductSlug } from '@/lib/slugify';
 
 export async function GET(request: NextRequest) {
     try {
@@ -43,6 +44,10 @@ export async function POST(request: NextRequest) {
 
         const body = await request.json();
         const { type } = body;
+
+        if (!body.slug && body.name) {
+            body.slug = await ensureUniqueProductSlug(body.name);
+        }
 
         if (!type || !['readymade', 'fabric', 'accessory'].includes(type)) {
             return NextResponse.json(

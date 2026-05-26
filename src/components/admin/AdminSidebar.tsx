@@ -45,42 +45,49 @@ const MENU: NavGroup[] = [
     {
         title: 'Overview',
         items: [
-            { label: 'Dashboard', href: '/admin', icon: Icons.dashboard },
-            { label: 'Analytics', href: '/admin/analytics', icon: Icons.analytics },
+            { label: 'Dashboard', href: '/dashboard', icon: Icons.dashboard },
+            { label: 'Analytics', href: '/analytics', icon: Icons.analytics },
         ],
     },
     {
         title: 'Orders',
         items: [
-            { label: 'All Orders', href: '/admin/orders', icon: Icons.orders },
-            { label: 'Stitching Production', href: '/admin/stitching', icon: Icons.kanban },
-            { label: 'Pending Stitching', href: '/admin/stitching/pending', icon: Icons.clock },
+            { label: 'All Orders', href: '/orders', icon: Icons.orders },
+            { label: 'Stitching Production', href: '/production', icon: Icons.kanban },
+            { label: 'Pending Stitching', href: '/production', icon: Icons.clock },
         ],
     },
     {
         title: 'Inventory',
         items: [
-            { label: 'Products', href: '/admin/products', icon: Icons.products },
-            { label: 'Add Product', href: '/admin/products/new', icon: Icons.plus },
-            { label: 'Low Stock Alerts', href: '/admin/inventory/alerts', icon: Icons.alert },
+            { label: 'Products', href: '/inventory', icon: Icons.products },
+            { label: 'Add Product', href: '/products/new', icon: Icons.plus },
+            { label: 'Low Stock Alerts', href: '/inventory', icon: Icons.alert },
         ],
     },
     {
         title: 'Customers',
         items: [
-            { label: 'Customer List', href: '/admin/customers', icon: Icons.users },
-            { label: 'Measurement Profiles', href: '/admin/measurements', icon: Icons.measurements },
+            { label: 'Customer List', href: '/customers', icon: Icons.users },
+            { label: 'Measurement Profiles', href: '/measurements', icon: Icons.measurements },
         ],
     },
     {
         title: 'Settings',
         items: [
-            { label: 'Store Settings', href: '/admin/settings', icon: Icons.settings },
-            { label: 'Shipping', href: '/admin/settings/shipping', icon: Icons.truck },
-            { label: 'Notifications', href: '/admin/settings/notifications', icon: Icons.bell },
+            { label: 'Store Settings', href: '/settings', icon: Icons.settings },
+            { label: 'Shipping', href: '/settings/shipping', icon: Icons.truck },
+            { label: 'Notifications', href: '/settings/notifications', icon: Icons.bell },
         ],
     },
 ];
+
+function isNavItemActive(pathname: string, href: string): boolean {
+    if (href === '/dashboard') {
+        return pathname === '/dashboard' || pathname === '/admin' || pathname === '/admin/dashboard';
+    }
+    return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 // ============================================================================
 // COMPONENT
@@ -117,7 +124,7 @@ function NavGroupSection({ group, pathname }: { group: NavGroup; pathname: strin
             >
                 <div className="flex flex-col gap-1 mt-1 px-3">
                     {group.items.map((item) => {
-                        const active = pathname === item.href;
+                        const active = isNavItemActive(pathname, item.href);
                         return (
                             <Link
                                 key={item.href}
@@ -149,7 +156,7 @@ export default function AdminSidebar({ name, email, avatar }: AdminSidebarProps)
         <aside className="w-[240px] h-full flex flex-col flex-shrink-0" style={{ backgroundColor: '#0f1035' }}>
             {/* Logo / Brand */}
             <div className="h-16 px-6 flex items-center flex-shrink-0 border-b border-white/10">
-                <Link href="/admin" className="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
+                <Link href="/dashboard" className="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
                     <span className="w-6 h-6 rounded bg-[#D4A853] flex items-center justify-center text-[#0f1035] text-sm">F</span>
                     Fabloom <span className="text-[#D4A853] text-[10px] uppercase tracking-widest mt-1 ml-1">Admin</span>
                 </Link>

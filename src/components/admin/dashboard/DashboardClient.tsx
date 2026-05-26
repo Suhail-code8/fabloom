@@ -247,11 +247,11 @@ export default function DashboardClient() {
                     <div className="bg-[#0f1035] rounded-2xl p-5 shadow-sm text-white">
                         <h3 className="text-sm font-extrabold mb-4 opacity-90">Quick Actions</h3>
                         <div className="space-y-2">
-                            <Link href="/admin/production" className="flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors group">
+                            <Link href="/production" className="flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors group">
                                 <span className="text-xs font-bold">Stitching Production</span>
                                 <svg className="w-4 h-4 text-[#D4A853] group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><polyline points="9 18 15 12 9 6" /></svg>
                             </Link>
-                            <Link href="/admin/inventory" className="flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors group">
+                            <Link href="/inventory" className="flex items-center justify-between p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors group">
                                 <span className="text-xs font-bold">Inventory & Add Product</span>
                                 <svg className="w-4 h-4 text-[#D4A853] group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><polyline points="9 18 15 12 9 6" /></svg>
                             </Link>
