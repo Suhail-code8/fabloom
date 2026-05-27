@@ -28,9 +28,9 @@ export default function StitchingKanbanCard({ item, onClick, onMoveForward, onMo
         zIndex: isDragging ? 999 : 1,
     };
 
-    // Calculate days styling
-    const isRed = item.daysSinceOrder > 7;
-    const isAmber = item.daysSinceOrder > 3 && !isRed;
+    // Calculate days styling — red if > 5 days
+    const isRed = item.daysSinceOrder > 5;
+    const isAmber = item.daysSinceOrder > 3 && item.daysSinceOrder <= 5;
 
     return (
         <div

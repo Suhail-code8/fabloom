@@ -2,116 +2,99 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Search, Filter } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 
-type FilterType = 'all' | 'stitching' | 'completed';
+type FilterType = 'all' | 'pending' | 'processing' | 'delivered';
+
+const STATUS_COLORS: Record<string, string> = {
+    pending: 'bg-yellow-100 text-yellow-800',
+    confirmed: 'bg-blue-100 text-blue-800',
+    processing: 'bg-purple-100 text-purple-800',
+    shipped: 'bg-indigo-100 text-indigo-800',
+    delivered: 'bg-green-100 text-green-800',
+    cancelled: 'bg-red-100 text-red-800',
+};
+
+const PAYMENT_COLORS: Record<string, string> = {
+    paid: 'bg-green-100 text-green-800',
+    pending: 'bg-yellow-100 text-yellow-800',
+    failed: 'bg-red-100 text-red-800',
+    refunded: 'bg-gray-100 text-gray-800',
+};
 
 export default function AdminOrdersPage() {
+    const router = useRouter();
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<FilterType>('all');
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
-        const fetchOrders = async () => {
+        async function fetchOrders() {
             setLoading(true);
             try {
                 const url =
                     filter === 'all'
                         ? '/api/admin/orders'
                         : `/api/admin/orders?filter=${filter}`;
-
                 const res = await fetch(url, { cache: 'no-store' });
                 const data = await res.json();
-
-                if (data.success) {
-                    setOrders(data.data);
-                }
+                if (data.success) setOrders(data.data || []);
             } catch (error) {
                 console.error('Error fetching orders:', error);
             } finally {
                 setLoading(false);
             }
-        };
-
+        }
         fetchOrders();
     }, [filter]);
 
     const filteredOrders = orders.filter((order) => {
         if (!searchQuery) return true;
-        const query = searchQuery.toLowerCase();
+        const q = searchQuery.toLowerCase();
         return (
-            order.orderNumber.toLowerCase().includes(query) ||
-            order.shippingAddress.fullName.toLowerCase().includes(query)
+            order.orderNumber?.toLowerCase().includes(q) ||
+            order.shippingAddress?.fullName?.toLowerCase().includes(q)
         );
     });
 
-    const getStatusColor = (status: string) => {
-        const colors: Record<string, string> = {
-            pending: 'bg-yellow-100 text-yellow-800',
-            confirmed: 'bg-blue-100 text-blue-800',
-            processing: 'bg-purple-100 text-purple-800',
-            shipped: 'bg-indigo-100 text-indigo-800',
-            delivered: 'bg-green-100 text-green-800',
-            cancelled: 'bg-red-100 text-red-800',
-        };
-        return colors[status] || 'bg-gray-100 text-gray-800';
-    };
-
-    const hasStitchingItems = (order: any) => {
-        return order.items.some((item: any) => item.stitchingDetails);
-    };
-
     return (
         <div className="space-y-6">
-            {/* Header */}
             <div>
-                <h1 className="text-3xl font-serif font-bold text-navy-900">Orders</h1>
-                <p className="text-gray-600 mt-2">Manage and track all customer orders</p>
+                <h1 className="text-2xl font-extrabold text-gray-900">Orders</h1>
+                <p className="text-sm text-gray-500 mt-1">All customer orders, newest first</p>
             </div>
 
-            {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                <div className="flex gap-2">
-                    <Button
-                        variant={filter === 'all' ? 'default' : 'outline'}
-                        onClick={() => setFilter('all')}
-                        className={filter === 'all' ? 'bg-emerald-600' : ''}
-                    >
-                        All Orders
-                    </Button>
-                    <Button
-                        variant={filter === 'stitching' ? 'default' : 'outline'}
-                        onClick={() => setFilter('stitching')}
-                        className={filter === 'stitching' ? 'bg-emerald-600' : ''}
-                    >
-                        Stitching Orders
-                    </Button>
-                    <Button
-                        variant={filter === 'completed' ? 'default' : 'outline'}
-                        onClick={() => setFilter('completed')}
-                        className={filter === 'completed' ? 'bg-emerald-600' : ''}
-                    >
-                        Completed
-                    </Button>
+                <div className="flex flex-wrap gap-2">
+                    {(
+                        [
+                            ['all', 'All'],
+                            ['pending', 'Pending'],
+                            ['processing', 'Processing'],
+                            ['delivered', 'Delivered'],
+                        ] as const
+                    ).map(([id, label]) => (
+                        <button
+                            key={id}
+                            onClick={() => setFilter(id)}
+                            className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+                                filter === id
+                                    ? 'bg-[#0f1035] text-white'
+                                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                            }`}
+                        >
+                            {label}
+                        </button>
+                    ))}
                 </div>
-
-                {/* Search */}
-                <div className="relative w-full sm:w-64">
+                <div className="relative w-full sm:w-72">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                        placeholder="Search orders..."
+                        placeholder="Search by order #..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-10"
@@ -119,96 +102,71 @@ export default function AdminOrdersPage() {
                 </div>
             </div>
 
-            {/* Orders Table */}
-            <div className="bg-white rounded-lg border">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 {loading ? (
-                    <div className="p-8 text-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto"></div>
+                    <div className="p-12 flex justify-center">
+                        <div className="w-8 h-8 border-4 border-[#D4A853] border-t-transparent rounded-full animate-spin" />
                     </div>
                 ) : filteredOrders.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">
-                        No orders found
-                    </div>
+                    <p className="p-12 text-center text-sm text-gray-500">No orders found</p>
                 ) : (
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Order #</TableHead>
-                                <TableHead>Customer</TableHead>
-                                <TableHead>Items</TableHead>
-                                <TableHead>Total</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Date</TableHead>
-                                <TableHead></TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredOrders.map((order) => (
-                                <TableRow key={order._id} className="cursor-pointer hover:bg-gray-50">
-                                    <TableCell className="font-medium">
-                                        {order.orderNumber}
-                                    </TableCell>
-                                    <TableCell>
-                                        <div>
-                                            <p className="font-medium">{order.shippingAddress.fullName}</p>
-                                            <p className="text-sm text-gray-500">
-                                                {order.shippingAddress.city}
-                                            </p>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-2">
-                                            <span>{order.items.length} items</span>
-                                            {hasStitchingItems(order) && (
-                                                <Badge className="bg-gold-100 text-gold-700 text-xs">
-                                                    Stitching
-                                                </Badge>
-                                            )}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="font-semibold">
-                                        ${order.totalAmount.toFixed(2)}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge className={getStatusColor(order.status)}>
-                                            {order.status}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="text-sm text-gray-600">
-                                        {new Date(order.createdAt).toLocaleDateString()}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Link href={`/orders/${order._id}`}>
-                                            <Button variant="ghost" size="sm">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="bg-gray-50 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                                    <th className="text-left p-4">Order #</th>
+                                    <th className="text-left p-4">Customer</th>
+                                    <th className="text-left p-4">Items</th>
+                                    <th className="text-left p-4">Total</th>
+                                    <th className="text-left p-4">Payment</th>
+                                    <th className="text-left p-4">Status</th>
+                                    <th className="text-left p-4">Date</th>
+                                    <th className="text-left p-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {filteredOrders.map((order) => (
+                                    <tr
+                                        key={order._id}
+                                        className="hover:bg-gray-50 cursor-pointer"
+                                        onClick={() => router.push(`/admin/orders/${order._id}`)}
+                                    >
+                                        <td className="p-4 font-bold text-gray-900">{order.orderNumber}</td>
+                                        <td className="p-4">
+                                            <p className="font-medium">{order.shippingAddress?.fullName}</p>
+                                            <p className="text-xs text-gray-500">{order.shippingAddress?.city}</p>
+                                        </td>
+                                        <td className="p-4">{order.items?.length ?? 0}</td>
+                                        <td className="p-4 font-semibold">
+                                            ₹{Number(order.totalAmount).toLocaleString('en-IN')}
+                                        </td>
+                                        <td className="p-4">
+                                            <Badge className={PAYMENT_COLORS[order.paymentStatus] || 'bg-gray-100'}>
+                                                {order.paymentStatus}
+                                            </Badge>
+                                        </td>
+                                        <td className="p-4">
+                                            <Badge className={STATUS_COLORS[order.status] || 'bg-gray-100'}>
+                                                {order.status}
+                                            </Badge>
+                                        </td>
+                                        <td className="p-4 text-gray-600">
+                                            {new Date(order.createdAt).toLocaleDateString('en-IN')}
+                                        </td>
+                                        <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                                            <Link
+                                                href={`/admin/orders/${order._id}`}
+                                                className="text-xs font-bold text-[#D4A853] hover:underline"
+                                            >
                                                 View
-                                            </Button>
-                                        </Link>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white p-6 rounded-lg border">
-                    <p className="text-sm text-gray-600">Total Orders</p>
-                    <p className="text-3xl font-bold text-navy-900 mt-2">{orders.length}</p>
-                </div>
-                <div className="bg-white p-6 rounded-lg border">
-                    <p className="text-sm text-gray-600">Stitching Orders</p>
-                    <p className="text-3xl font-bold text-gold-600 mt-2">
-                        {orders.filter(hasStitchingItems).length}
-                    </p>
-                </div>
-                <div className="bg-white p-6 rounded-lg border">
-                    <p className="text-sm text-gray-600">Total Revenue</p>
-                    <p className="text-3xl font-bold text-emerald-600 mt-2">
-                        ${orders.reduce((sum, o) => sum + o.totalAmount, 0).toFixed(2)}
-                    </p>
-                </div>
             </div>
         </div>
     );

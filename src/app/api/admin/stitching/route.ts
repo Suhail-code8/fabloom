@@ -54,7 +54,9 @@ export async function GET() {
                     orderNumber: order.orderNumber,
                     customerName: order.shippingAddress.fullName,
                     customerPhone: order.shippingAddress.phone,
-                    garmentType: item.stitchingDetails.specialInstructions?.split(':')[0] || 'Garment', // Or derive from notes
+                    garmentType:
+                        item.stitchingDetails.specialInstructions?.match(/Garment:\s*([^|]+)/i)?.[1]?.trim() ||
+                        'Garment',
                     productName: item.productName,
                     productImage: item.productImage,
                     meters: item.meters || 0,

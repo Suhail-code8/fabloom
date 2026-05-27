@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import dbConnect from '@/lib/db';
-import { Product } from '@/models/Product';
+import { Product, ReadymadeProduct, FabricProduct, AccessoryProduct } from '@/models/Product';
 import { updateProductSchema } from '@/lib/validations/product';
 import mongoose from 'mongoose';
 
@@ -70,11 +70,19 @@ export async function PATCH(
             );
         }
 
-        const updated = await Product.findByIdAndUpdate(
-            id,
-            { $set: parsed.data },
-            { new: true, runValidators: true }
-        ).lean();
+        const existing = await Product.findById(id).lean();
+        if (!existing) return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+
+        const updateOpts = { new: true, runValidators: true } as const;
+        let updated: unknown;
+
+        if ((existing as { type: string }).type === 'readymade') {
+            updated = await ReadymadeProduct.findByIdAndUpdate(id, { $set: parsed.data }, updateOpts).lean();
+        } else if ((existing as { type: string }).type === 'fabric') {
+            updated = await FabricProduct.findByIdAndUpdate(id, { $set: parsed.data }, updateOpts).lean();
+        } else {
+            updated = await AccessoryProduct.findByIdAndUpdate(id, { $set: parsed.data }, updateOpts).lean();
+        }
 
         if (!updated) return NextResponse.json({ error: 'Product not found' }, { status: 404 });
 

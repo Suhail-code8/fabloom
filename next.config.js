@@ -25,26 +25,22 @@ const nextConfig = {
     },
     async redirects() {
         return [
-            // Admin URL aliases — (admin) route group serves paths without /admin prefix
             { source: '/admin', destination: '/dashboard', permanent: false },
             { source: '/admin/dashboard', destination: '/dashboard', permanent: false },
-            { source: '/admin/analytics', destination: '/analytics', permanent: false },
             { source: '/admin/orders', destination: '/orders', permanent: false },
             { source: '/admin/orders/:id', destination: '/orders/:id', permanent: false },
-            { source: '/admin/stitching', destination: '/production', permanent: false },
-            { source: '/admin/stitching/pending', destination: '/production', permanent: false },
             { source: '/admin/production', destination: '/production', permanent: false },
             { source: '/admin/inventory', destination: '/inventory', permanent: false },
-            { source: '/admin/inventory/alerts', destination: '/inventory', permanent: false },
+            // Legacy admin URLs → active pages
+            { source: '/admin/products/new', destination: '/inventory', permanent: false },
             { source: '/admin/products', destination: '/inventory', permanent: false },
-            { source: '/admin/products/new', destination: '/products/new', permanent: false },
-            { source: '/admin/products/:path*', destination: '/products/:path*', permanent: false },
-            { source: '/admin/customers', destination: '/customers', permanent: false },
-            { source: '/admin/measurements', destination: '/measurements', permanent: false },
-            { source: '/admin/settings', destination: '/settings', permanent: false },
-            { source: '/admin/settings/shipping', destination: '/settings/shipping', permanent: false },
-            { source: '/admin/settings/notifications', destination: '/settings/notifications', permanent: false },
-            // Legacy storefront listing path only (do not catch /products/new)
+            { source: '/admin/analytics', destination: '/dashboard', permanent: false },
+            { source: '/admin/stitching', destination: '/production', permanent: false },
+            { source: '/admin/stitching/pending', destination: '/production', permanent: false },
+            { source: '/admin/customers', destination: '/dashboard', permanent: false },
+            { source: '/admin/measurements', destination: '/dashboard', permanent: false },
+            { source: '/admin/settings', destination: '/dashboard', permanent: false },
+            { source: '/admin/settings/:path*', destination: '/dashboard', permanent: false },
             { source: '/products', destination: '/readymade', permanent: false },
         ];
     },
