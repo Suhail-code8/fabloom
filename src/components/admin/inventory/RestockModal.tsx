@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 import type { AnyProduct } from '@/types/product';
 
 interface RestockModalProps {
@@ -32,7 +33,7 @@ export default function RestockModal({ product, onClose, onSave }: RestockModalP
             await onSave(product._id as string, updates);
             onClose();
         } catch (error) {
-            console.error('Failed to restock:', error);
+            toast.error(error instanceof Error ? error.message : 'Failed to restock');
             setIsSaving(false);
         }
     };

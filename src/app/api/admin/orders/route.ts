@@ -1,43 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import dbConnect from '@/lib/db';
 import { Order } from '@/models/Order';
 
 export async function GET(request: NextRequest) {
+    const { userId } = await auth();
+    const user = await currentUser();
+
+    if (!userId || user?.publicMetadata?.role !== 'admin') {
+        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     try {
         await dbConnect();
 
-        const searchParams = request.nextUrl.searchParams;
-        const filter = searchParams.get('filter');
+        const filter = request.nextUrl.searchParams.get('filter');
+        const query: Record<string, unknown> = {};
 
-        let query: any = {};
+        if (filter === 'pending') query.status = 'pending';
+        else if (filter === 'processing') query.status = 'processing';
+        else if (filter === 'delivered') query.status = 'delivered';
 
-        // Apply filters
-        if (filter === 'stitching') {
-            // Orders with at least one item that has stitching details
-            query['items.stitchingDetails'] = { $exists: true };
-        } else if (filter === 'completed') {
-            query.status = 'delivered';
-        }
-
-        // Fetch orders
-        const orders = await Order.find(query)
-            .sort({ createdAt: -1 })
-            .lean();
+        const orders = await Order.find(query).sort({ createdAt: -1 }).lean();
 
         return NextResponse.json({
             success: true,
             count: orders.length,
             data: orders,
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Failed to fetch orders';
         console.error('Error fetching orders:', error);
-        return NextResponse.json(
-            {
-                success: false,
-                error: 'Failed to fetch orders',
-                message: error.message,
-            },
-            { status: 500 }
-        );
+        return NextResponse.json({ success: false, error: message }, { status: 500 });
     }
 }

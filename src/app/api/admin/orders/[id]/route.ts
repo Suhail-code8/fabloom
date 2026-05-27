@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import dbConnect from '@/lib/db';
 import { Order } from '@/models/Order';
-import mongoose from 'mongoose';
-import { sendStitchingStartedEmail, sendStitchingReadyEmail, sendOrderDispatchedEmail } from '@/lib/notifications/email';
+import { User } from '@/models/User';
 
 const ORDER_STATUSES = [
     'pending',
@@ -13,48 +13,39 @@ const ORDER_STATUSES = [
     'cancelled',
 ] as const;
 
-const STITCHING_STATUSES = ['pending', 'in_progress', 'completed', 'delivered'] as const;
-
 export async function GET(
-    request: NextRequest,
+    _request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    const { userId } = await auth();
+    const user = await currentUser();
+
+    if (!userId || user?.publicMetadata?.role !== 'admin') {
+        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     try {
         await dbConnect();
-
         const { id } = await params;
 
         const order = await Order.findById(id).lean();
-
         if (!order) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    error: 'Order not found',
-                },
-                { status: 404 }
-            );
+            return NextResponse.json({ success: false, error: 'Order not found' }, { status: 404 });
         }
 
-        console.log('GET Order - Items _id check:');
-        (order as any).items.forEach((item: any, i: number) => {
-            console.log(`Item ${i}: _id =`, item._id, 'name =', item.productName);
-        });
+        let customerEmail: string | null = null;
+        if ((order as any).userId && (order as any).userId !== 'guest') {
+            const dbUser = await User.findOne({ clerkId: (order as any).userId }).lean();
+            customerEmail = (dbUser as any)?.email ?? null;
+        }
 
         return NextResponse.json({
             success: true,
-            data: order,
+            data: { ...order, customerEmail },
         });
-    } catch (error: any) {
-        console.error('Error fetching order:', error);
-        return NextResponse.json(
-            {
-                success: false,
-                error: 'Failed to fetch order',
-                message: error.message,
-            },
-            { status: 500 }
-        );
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Failed to fetch order';
+        return NextResponse.json({ success: false, error: message }, { status: 500 });
     }
 }
 
@@ -62,183 +53,36 @@ export async function PATCH(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    const { userId } = await auth();
+    const user = await currentUser();
+
+    if (!userId || user?.publicMetadata?.role !== 'admin') {
+        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     try {
         await dbConnect();
-
         const { id } = await params;
         const body = await request.json();
-        const { status, stitchingStatus, itemId } = body;
+        const { status } = body;
 
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return NextResponse.json(
-                {
-                    success: false,
-                    error: 'Invalid order ID',
-                },
-                { status: 400 }
-            );
+        if (!status || !ORDER_STATUSES.includes(status)) {
+            return NextResponse.json({ success: false, error: 'Invalid status' }, { status: 400 });
         }
 
-        if (stitchingStatus !== undefined || itemId !== undefined) {
-            if (!itemId || !stitchingStatus) {
-                return NextResponse.json(
-                    {
-                        success: false,
-                        error: 'itemId and stitchingStatus are required',
-                    },
-                    { status: 400 }
-                );
-            }
+        const updated = await Order.findByIdAndUpdate(
+            id,
+            { $set: { status } },
+            { new: true, runValidators: true }
+        ).lean();
 
-            if (!STITCHING_STATUSES.includes(stitchingStatus)) {
-                return NextResponse.json(
-                    {
-                        success: false,
-                        error: 'Invalid stitching status',
-                    },
-                    { status: 400 }
-                );
-            }
-
-            if (!mongoose.Types.ObjectId.isValid(itemId)) {
-                return NextResponse.json(
-                    {
-                        success: false,
-                        error: 'Invalid item ID',
-                    },
-                    { status: 400 }
-                );
-            }
-
-            const order = await Order.findById(id);
-
-            if (!order) {
-                return NextResponse.json(
-                    {
-                        success: false,
-                        error: 'Order not found',
-                    },
-                    { status: 404 }
-                );
-            }
-
-            const item = order.items.find((orderItem: any) => {
-                return orderItem?._id?.toString() === itemId.toString();
-            });
-
-            if (!item) {
-                return NextResponse.json(
-                    {
-                        success: false,
-                        error: 'Order item not found',
-                    },
-                    { status: 404 }
-                );
-            }
-
-            if (!item.stitchingDetails) {
-                return NextResponse.json(
-                    {
-                        success: false,
-                        error: 'Selected item has no stitching details',
-                    },
-                    { status: 400 }
-                );
-            }
-
-            item.stitchingDetails.status = stitchingStatus;
-
-            if (status !== undefined) {
-                if (!ORDER_STATUSES.includes(status)) {
-                    return NextResponse.json(
-                        {
-                            success: false,
-                            error: 'Invalid order status',
-                        },
-                        { status: 400 }
-                    );
-                }
-                order.status = status;
-            }
-
-            await order.save();
-            const updatedOrder = await Order.findById(id).lean();
-
-            // Fire and forget notifications
-            const phone = order.shippingAddress.phone;
-            const customerName = order.shippingAddress.fullName;
-            const garmentName = item.productName;
-            
-            if (stitchingStatus === 'in_progress') { // Corresponds to cutting/stitching
-                sendStitchingStartedEmail('customer@example.com', { orderNumber: order.orderNumber, customerName, garmentType: garmentName }); // Hardcoded email fallback if clerk not initialized server side
-            } else if (stitchingStatus === 'completed' || stitchingStatus === 'delivered') {
-                sendStitchingReadyEmail('customer@example.com', { orderNumber: order.orderNumber, customerName, garmentType: garmentName });
-            }
-
-            return NextResponse.json({
-                success: true,
-                data: updatedOrder,
-            });
+        if (!updated) {
+            return NextResponse.json({ success: false, error: 'Order not found' }, { status: 404 });
         }
 
-        if (status !== undefined) {
-            if (!ORDER_STATUSES.includes(status)) {
-                return NextResponse.json(
-                    {
-                        success: false,
-                        error: 'Invalid order status',
-                    },
-                    { status: 400 }
-                );
-            }
-
-            const updatedOrder = (await Order.findByIdAndUpdate(
-                id,
-                { $set: { status } },
-                { new: true, runValidators: true }
-            ).lean()) as any;
-
-            if (!updatedOrder) {
-                return NextResponse.json(
-                    {
-                        success: false,
-                        error: 'Order not found',
-                    },
-                    { status: 404 }
-                );
-            }
-
-            if (status === 'shipped') {
-                sendOrderDispatchedEmail('customer@example.com', {
-                    orderNumber: updatedOrder.orderNumber,
-                    customerName: updatedOrder.shippingAddress.fullName,
-                    trackingNumber: 'TRK-PENDING', // Ideally fetched from payload
-                    courierName: 'Standard Shipping'
-                });
-            }
-
-            return NextResponse.json({
-                success: true,
-                data: updatedOrder,
-            });
-        }
-
-        return NextResponse.json(
-            {
-                success: false,
-                error: 'No update payload provided',
-            },
-            { status: 400 }
-        );
-    } catch (error: any) {
-        console.error('Error updating order:', error);
-        return NextResponse.json(
-            {
-                success: false,
-                error: 'Failed to update order',
-                message: error.message,
-            },
-            { status: 500 }
-        );
+        return NextResponse.json({ success: true, data: updated });
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Failed to update order';
+        return NextResponse.json({ success: false, error: message }, { status: 500 });
     }
 }

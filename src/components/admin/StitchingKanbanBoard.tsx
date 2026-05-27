@@ -23,11 +23,11 @@ import type { KanbanItem, StitchingStatus } from '@/app/api/admin/stitching/rout
 // COLUMNS CONFIG
 // ============================================================================
 const COLUMNS: { id: StitchingStatus; label: string; color: string }[] = [
-    { id: 'pending',       label: 'Pending',         color: 'border-gray-200 bg-gray-50 text-gray-700' },
-    { id: 'cutting',       label: 'Cutting',         color: 'border-orange-200 bg-orange-50 text-orange-700' },
-    { id: 'stitching',     label: 'Stitching',       color: 'border-blue-200 bg-blue-50 text-blue-700' },
-    { id: 'quality_check', label: 'Quality Check',   color: 'border-purple-200 bg-purple-50 text-purple-700' },
-    { id: 'ready',         label: 'Ready / Dispatched', color: 'border-green-200 bg-green-50 text-green-700' },
+    { id: 'pending',       label: 'Pending',       color: 'border-gray-200 bg-gray-50 text-gray-700' },
+    { id: 'cutting',       label: 'Cutting',       color: 'border-orange-200 bg-orange-50 text-orange-700' },
+    { id: 'stitching',     label: 'Stitching',     color: 'border-blue-200 bg-blue-50 text-blue-700' },
+    { id: 'quality_check', label: 'QC',            color: 'border-purple-200 bg-purple-50 text-purple-700' },
+    { id: 'ready',         label: 'Ready',         color: 'border-green-200 bg-green-50 text-green-700' },
 ];
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
@@ -59,7 +59,7 @@ export default function StitchingKanbanBoard() {
 
     const filteredItems = items.filter(item => {
         if (garmentFilter !== 'All' && item.garmentType.toLowerCase() !== garmentFilter.toLowerCase()) return false;
-        if (overdueOnly && item.daysSinceOrder <= 3) return false;
+        if (overdueOnly && item.daysSinceOrder <= 5) return false;
         return true;
     });
 
@@ -163,7 +163,7 @@ export default function StitchingKanbanBoard() {
                 </div>
                 <label className="flex items-center gap-2 text-xs font-bold text-gray-700 cursor-pointer select-none bg-white px-3 py-1.5 rounded-full border border-gray-200">
                     <input type="checkbox" checked={overdueOnly} onChange={(e) => setOverdueOnly(e.target.checked)} className="rounded text-[#D4A853] focus:ring-[#D4A853]" />
-                    Show Overdue Only ({'>'}3 days)
+                    Show Overdue Only ({'>'}5 days)
                 </label>
             </div>
 
@@ -244,6 +244,30 @@ export default function StitchingKanbanBoard() {
                                             <span className="text-xs font-medium text-gray-500 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
                                             <span className="text-xs font-bold text-gray-900">{val as number}</span>
                                         </div>
+                                    ))}
+                                </div>
+                            </div>
+                            {/* Status update */}
+                            <div className="mb-8">
+                                <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Update Stage</h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {COLUMNS.map((col) => (
+                                        <button
+                                            key={col.id}
+                                            type="button"
+                                            disabled={selectedItem.status === col.id}
+                                            onClick={() => {
+                                                updateStatus(selectedItem, col.id);
+                                                setSelectedItem({ ...selectedItem, status: col.id });
+                                            }}
+                                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                                                selectedItem.status === col.id
+                                                    ? 'bg-[#D4A853] text-white'
+                                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                            }`}
+                                        >
+                                            {col.label}
+                                        </button>
                                     ))}
                                 </div>
                             </div>

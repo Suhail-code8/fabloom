@@ -67,6 +67,8 @@ export const updateProductSchema = z.object({
     featured:           z.boolean().optional(),
     active:             z.boolean().optional(),
     tags:               z.array(z.string()).optional(),
+    images:             z.array(z.string()).optional(),
+    subcategory:        z.string().optional(),
     // Readymade
     sizeStock:          sizeStockSchema.optional(),
     material:           z.string().optional(),
@@ -74,6 +76,8 @@ export const updateProductSchema = z.object({
     // Fabric
     stockInMeters:      z.number().min(0).optional(),
     pricePerMeter:      z.number().min(0).optional(),
+    fabricType:         z.string().optional(),
+    width:              z.number().min(1).optional(),
     stitchingAvailable: z.boolean().optional(),
     stitchingPrice:     z.number().min(0).optional(),
     // Accessory
