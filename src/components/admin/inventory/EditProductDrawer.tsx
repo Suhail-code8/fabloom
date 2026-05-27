@@ -25,6 +25,7 @@ export default function EditProductDrawer({ product, onClose, onSave }: Props) {
     const [pricePerMeter, setPricePerMeter] = useState(String(p.pricePerMeter ?? ''));
     const [width, setWidth] = useState(String(p.width ?? ''));
     const [stock, setStock] = useState(String(p.stock ?? ''));
+    const [suitableForText, setSuitableForText] = useState((p.suitableFor || []).join(', '));
     const [sizeStock, setSizeStock] = useState({
         S: p.sizeStock?.S ?? 0,
         M: p.sizeStock?.M ?? 0,
@@ -52,18 +53,22 @@ export default function EditProductDrawer({ product, onClose, onSave }: Props) {
                 payload.material = material;
                 payload.color = color;
                 payload.sizeStock = sizeStock;
+                payload.subcategory = subcategory; // garmentType
             } else if (product.type === 'fabric') {
                 payload.pricePerMeter = parseFloat(pricePerMeter) || 0;
-                payload.price = parseFloat(pricePerMeter) || 0;
                 payload.stockInMeters = parseFloat(stockInMeters) || 0;
                 payload.fabricType = material;
                 payload.width = parseFloat(width) || 0;
-                payload.subcategory = subcategory;
+                payload.suitableFor = suitableForText
+                    .split(',')
+                    .map((s: string) => s.trim())
+                    .filter(Boolean);
             } else {
                 payload.price = parseFloat(price) || 0;
                 payload.stock = parseInt(stock) || 0;
                 payload.color = color;
                 payload.material = material;
+                payload.subcategory = subcategory; // accessoryType
             }
 
             await onSave(product._id as string, payload);
@@ -106,8 +111,12 @@ export default function EditProductDrawer({ product, onClose, onSave }: Props) {
                     {product.type === 'readymade' && (
                         <>
                             <div>
-                                <label className="text-xs font-bold text-gray-700 block mb-1">Price (PKR)</label>
+                                <label className="text-xs font-bold text-gray-700 block mb-1">Price (₹)</label>
                                 <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className={inputClass} />
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-gray-700 block mb-1">Garment Type</label>
+                                <input value={subcategory} onChange={(e) => setSubcategory(e.target.value)} className={inputClass} placeholder="e.g. kurta, thobe, shirt, pant" />
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
@@ -145,7 +154,7 @@ export default function EditProductDrawer({ product, onClose, onSave }: Props) {
                         <>
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="text-xs font-bold text-gray-700 block mb-1">Price / meter</label>
+                                    <label className="text-xs font-bold text-gray-700 block mb-1">Price per meter</label>
                                     <input type="number" value={pricePerMeter} onChange={(e) => setPricePerMeter(e.target.value)} className={inputClass} />
                                 </div>
                                 <div>
@@ -165,7 +174,7 @@ export default function EditProductDrawer({ product, onClose, onSave }: Props) {
                             </div>
                             <div>
                                 <label className="text-xs font-bold text-gray-700 block mb-1">Suitable for</label>
-                                <input value={subcategory} onChange={(e) => setSubcategory(e.target.value)} placeholder="e.g. Kurta, Thobe" className={inputClass} />
+                                <input value={suitableForText} onChange={(e) => setSuitableForText(e.target.value)} placeholder="e.g. Kurta, Thobe, Shirt, Pant" className={inputClass} />
                             </div>
                         </>
                     )}
@@ -183,8 +192,16 @@ export default function EditProductDrawer({ product, onClose, onSave }: Props) {
                                 </div>
                             </div>
                             <div>
+                                <label className="text-xs font-bold text-gray-700 block mb-1">Accessory Type</label>
+                                <input value={subcategory} onChange={(e) => setSubcategory(e.target.value)} className={inputClass} placeholder="e.g. perfume, cap, belt" />
+                            </div>
+                            <div>
                                 <label className="text-xs font-bold text-gray-700 block mb-1">Color</label>
                                 <input value={color} onChange={(e) => setColor(e.target.value)} className={inputClass} />
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-gray-700 block mb-1">Material</label>
+                                <input value={material} onChange={(e) => setMaterial(e.target.value)} className={inputClass} />
                             </div>
                         </>
                     )}

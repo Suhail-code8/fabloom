@@ -36,12 +36,12 @@ export default function OrderSummary({
                                     {item.name}
                                 </p>
                                 <div className="flex items-center gap-2 mt-1">
-                                    {item.type === 'readymade' && item.size && (
+                                    {item.itemType === 'readymade' && item.size && (
                                         <Badge variant="outline" className="text-xs">
                                             Size: {item.size}
                                         </Badge>
                                     )}
-                                    {item.type === 'fabric' && (
+                                    {item.itemType === 'fabric' && (
                                         <span className="text-xs text-gray-600">
                                             {item.meters}m
                                         </span>
@@ -59,13 +59,13 @@ export default function OrderSummary({
                             </div>
                             <div className="text-right">
                                 <p className="font-medium">
-                                    ${(
-                                        item.type === 'fabric'
-                                            ? (item.pricePerMeter * item.meters +
-                                                (item.stitchingPrice || 0)) *
-                                            item.quantity
-                                            : item.price * item.quantity
-                                    ).toFixed(2)}
+                                    {item.itemType === 'fabric'
+                                        ? `₹${(
+                                              (item.pricePerMeter * item.meters +
+                                                  (item.stitchingPrice || 0)) *
+                                              item.quantity
+                                          ).toLocaleString('en-IN')}`
+                                        : `₹${(item.price * item.quantity).toLocaleString('en-IN')}`}
                                 </p>
                             </div>
                         </div>
@@ -78,12 +78,12 @@ export default function OrderSummary({
                 <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                         <span className="text-gray-600">Subtotal</span>
-                        <span className="font-medium">${subtotal.toFixed(2)}</span>
+                    <span className="font-medium">₹{subtotal.toLocaleString('en-IN')}</span>
                     </div>
 
                     <div className="flex justify-between">
                         <span className="text-gray-600">Tax (5%)</span>
-                        <span className="font-medium">${tax.toFixed(2)}</span>
+                    <span className="font-medium">₹{tax.toLocaleString('en-IN')}</span>
                     </div>
 
                     <div className="flex justify-between">
@@ -98,7 +98,7 @@ export default function OrderSummary({
                 <div className="flex justify-between items-center">
                     <span className="text-lg font-semibold text-navy-900">Total</span>
                     <span className="text-2xl font-bold text-emerald-600">
-                        ${total.toFixed(2)}
+                        ₹{total.toLocaleString('en-IN')}
                     </span>
                 </div>
             </CardContent>

@@ -47,11 +47,13 @@ export default function ProductDetailClient({ product }: Props) {
     }, [isFabric]);
 
     // Pricing
-    const basePrice = isFabric 
-        ? (product as IFabricProduct).pricePerMeter * meters 
-        : product.price;
-    const stitchingCharge = wantsStitching ? (product as IFabricProduct).stitchingPrice : 0;
-    const totalPrice = (basePrice + stitchingCharge) * quantity;
+    const fabricPricePerMeter = isFabric ? (product as IFabricProduct).pricePerMeter : 0;
+    const fabricBase = isFabric ? fabricPricePerMeter * meters : 0;
+    const stitchingCharge =
+        isFabric && wantsStitching ? (product as IFabricProduct).stitchingPrice : 0;
+    const totalPrice = isFabric
+        ? (fabricBase + stitchingCharge) * quantity
+        : product.price * quantity;
 
     // Handlers
     const handleAddToCart = () => {
@@ -65,37 +67,57 @@ export default function ProductDetailClient({ product }: Props) {
         }
 
         setIsAdding(true);
-        
-        const cartItem: any = {
-            id: `${product._id}-${selectedSize || 'default'}-${wantsStitching ? 'stitched' : 'raw'}`,
-            productId: product._id,
-            name: product.name,
-            price: basePrice,
-            image: product.images[0],
-            quantity,
-        };
+
+        let cartItem: any;
 
         if (isReadymade) {
-            cartItem.itemType = 'readymade';
-            cartItem.size = selectedSize;
+            cartItem = {
+                itemType: 'readymade',
+                productId: product._id,
+                name: product.name,
+                image: product.images[0],
+                size: selectedSize,
+                price: product.price,
+                quantity,
+            };
         } else if (isFabric) {
-            cartItem.itemType = 'fabric';
-            cartItem.meters = meters;
             if (wantsStitching) {
-                cartItem.itemType = 'stitching';
-                cartItem.stitchingCharge = stitchingCharge;
-                cartItem.measurementProfileId = measurementProfile._id;
-                cartItem.measurementProfileName = measurementProfile.profileName;
-                cartItem.measurementSnapshot = measurementProfile.measurements;
-                cartItem.garmentType = (product as any).subcategory || 'Kurta';
-                cartItem.fabricId = product._id;
-                cartItem.fabricName = product.name;
-                cartItem.fabricImage = product.images[0];
-                cartItem.totalPrice = totalPrice;
+                cartItem = {
+                    itemType: 'stitching',
+                    fabricId: product._id,
+                    fabricName: product.name,
+                    fabricImage: product.images[0],
+                    meters,
+                    pricePerMeter: fabricPricePerMeter,
+                    garmentType: (product as any).subcategory || 'Kurta',
+                    stitchingCharge,
+                    measurementProfileId: measurementProfile._id,
+                    measurementProfileName: measurementProfile.profileName,
+                    measurementSnapshot: measurementProfile.measurements,
+                    totalPrice,
+                };
+            } else {
+                cartItem = {
+                    itemType: 'fabric',
+                    productId: product._id,
+                    name: product.name,
+                    image: product.images[0],
+                    meters,
+                    pricePerMeter: fabricPricePerMeter,
+                    fabricType: (product as IFabricProduct).fabricType,
+                    quantity,
+                };
             }
         } else {
-            cartItem.itemType = 'accessory';
-            cartItem.color = (product as IAccessoryProduct).color;
+            cartItem = {
+                itemType: 'accessory',
+                productId: product._id,
+                name: product.name,
+                image: product.images[0],
+                price: product.price,
+                quantity,
+                color: (product as IAccessoryProduct).color,
+            };
         }
 
         addItem(cartItem);
@@ -144,10 +166,28 @@ export default function ProductDetailClient({ product }: Props) {
                         <span className="w-1 h-1 rounded-full bg-gray-300" />
                         <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">{product.subcategory || product.type}</span>
                     </div>
-                    <h1 className="text-4xl lg:text-5xl font-extrabold text-[#0f1035] leading-tight tracking-tight mb-4">{product.name}</h1>
-                    <div className="flex items-baseline gap-3 mb-6">
-                        <span className="text-3xl font-extrabold text-[#0f1035]">₹{totalPrice.toLocaleString('en-IN')}</span>
-                        {isFabric && <span className="text-sm font-bold text-gray-400"> (₹{(product as IFabricProduct).pricePerMeter}/m)</span>}
+                    <h1 className="text-4xl lg:text-5xl font-extrabold text-[#0f1035] leading-tight tracking-tight mb-4">
+                        {product.name}
+                    </h1>
+                    <div className="flex flex-col gap-1 mb-6">
+                        {isFabric ? (
+                            <>
+                                <span className="text-3xl font-extrabold text-[#0f1035]">
+                                    ₹{fabricPricePerMeter.toLocaleString('en-IN')} / meter
+                                </span>
+                                <span className="text-xs font-bold text-gray-500">
+                                    Selected: {meters}m = ₹{fabricBase.toLocaleString('en-IN')}
+                                    {wantsStitching &&
+                                        ` + ₹${stitchingCharge.toLocaleString(
+                                            'en-IN'
+                                        )} stitching`}
+                                </span>
+                            </>
+                        ) : (
+                            <span className="text-3xl font-extrabold text-[#0f1035]">
+                                ₹{product.price.toLocaleString('en-IN')}
+                            </span>
+                        )}
                     </div>
                     <p className="text-gray-500 leading-relaxed max-w-xl">{product.description}</p>
                 </div>

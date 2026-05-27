@@ -14,9 +14,8 @@ export default async function AccessoriesPage() {
     // PRODUCTION HARDENING: Fetch via DAL directly
     const allAccessories: any[] = await getProductsAction({ type: 'accessory', limit: 100 });
     
-    // Filter for exactly the subcategories the client expects
-    const supported = ['hijab', 'belt', 'socks', 'wallet', 'watch', 'pocket-square'];
-    const filtered = allAccessories.filter(p => supported.includes(p.subcategory));
+    // Exclude perfumes and caps
+    const filtered = allAccessories.filter(p => !['perfume', 'cap'].includes(p.subcategory));
 
     return <AccessoriesPageClient accessories={filtered} />;
 }

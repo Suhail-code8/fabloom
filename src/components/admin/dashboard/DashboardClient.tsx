@@ -16,7 +16,7 @@ import {
 } from 'recharts';
 
 const EMPTY = {
-    metrics: { revenue: 0, totalOrders: 0, pendingStitching: 0, lowStock: 0 },
+    metrics: { todayRevenue: 0, totalOrders: 0, pendingStitching: 0, lowStockCount: 0 },
     revenueByDay: [] as { date: string; amount: number }[],
     ordersByType: [] as { name: string; value: number }[],
     recentOrders: [] as {
@@ -90,10 +90,10 @@ export default function DashboardClient() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                    { label: "Today's Revenue", value: `₹${metrics.revenue.toLocaleString('en-IN')}` },
+                    { label: "Today's Revenue", value: `₹${metrics.todayRevenue.toLocaleString('en-IN')}` },
                     { label: 'Total Orders', value: metrics.totalOrders },
                     { label: 'Pending Stitching', value: metrics.pendingStitching, warn: metrics.pendingStitching > 0 },
-                    { label: 'Low Stock', value: metrics.lowStock, warn: metrics.lowStock > 0 },
+                    { label: 'Low Stock', value: metrics.lowStockCount, warn: metrics.lowStockCount > 0 },
                 ].map((card) => (
                     <div
                         key={card.label}
@@ -148,7 +148,7 @@ export default function DashboardClient() {
                                 </PieChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="h-full flex items-center justify-center text-sm text-gray-400">No data yet</div>
+                            <div className="h-full flex items-center justify-center text-sm text-gray-400">No orders yet</div>
                         )}
                     </div>
                     {hasPie && (
@@ -172,7 +172,7 @@ export default function DashboardClient() {
                     </Link>
                 </div>
                 {recentOrders.length === 0 ? (
-                    <p className="p-8 text-center text-sm text-gray-400">No orders yet</p>
+                    <p className="p-8 text-center text-sm text-gray-400">No orders placed yet</p>
                 ) : (
                     <table className="w-full text-sm">
                         <thead>

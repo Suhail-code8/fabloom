@@ -9,11 +9,10 @@ import { STITCHING_PRICE, COLLAR_GARMENTS } from '@/types/cart';
 // ============================================================================
 
 const GARMENTS: { type: GarmentType; emoji: string; desc: string }[] = [
-    { type: 'Kurta',    emoji: '👘', desc: 'Classic Indian style' },
-    { type: 'Thobe',    emoji: '🕌', desc: 'Arabic long robe' },
-    { type: 'Kandoora', emoji: '🌙', desc: 'Gulf embroidered style' },
-    { type: 'Shirt',    emoji: '👔', desc: 'Formal / casual shirt' },
-    { type: 'Pant',     emoji: '👖', desc: 'Trousers & bottoms' },
+    { type: 'Kurta', emoji: '👘', desc: 'Classic Indian style' },
+    { type: 'Thobe', emoji: '🕌', desc: 'Arabic long robe' },
+    { type: 'Shirt', emoji: '👔', desc: 'Formal / casual shirt' },
+    { type: 'Pant', emoji: '👖', desc: 'Trousers & bottoms' },
 ];
 
 const COLLAR_OPTIONS: { type: CollarType; desc: string }[] = [

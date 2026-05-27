@@ -141,13 +141,13 @@ export default function ProductInfo({ product }: ProductInfoProps) {
                     {product.type === 'fabric' ? (
                         <>
                             <span className="text-3xl font-bold text-emerald-600">
-                                ${product.pricePerMeter}
+                                ₹{Number(product.pricePerMeter || 0).toLocaleString('en-IN')}
                             </span>
-                            <span className="text-gray-600">per meter</span>
+                            <span className="text-gray-600">/ meter</span>
                         </>
                     ) : (
                         <span className="text-3xl font-bold text-emerald-600">
-                            ${product.price}
+                            ₹{Number(product.price || 0).toLocaleString('en-IN')}
                         </span>
                     )}
                 </div>
@@ -246,10 +246,10 @@ export default function ProductInfo({ product }: ProductInfoProps) {
                     <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
                         <div className="flex items-center justify-between">
                             <span className="text-sm text-gray-700">
-                                ${product.pricePerMeter} × {meters}m
+                                ₹{Number(product.pricePerMeter || 0).toLocaleString('en-IN')} × {meters}m
                             </span>
                             <span className="text-xl font-bold text-emerald-700">
-                                = ${getFabricTotal().toFixed(2)}
+                                = ₹{getFabricTotal().toLocaleString('en-IN')}
                             </span>
                         </div>
                     </div>

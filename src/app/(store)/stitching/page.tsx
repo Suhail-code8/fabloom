@@ -1,21 +1,27 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import StitchingStepperHeader from '@/components/stitching/StitchingStepperHeader';
 import FabricSelector from '@/components/stitching/FabricSelector';
+import MetersSelector from '@/components/stitching/MetersSelector';
 import GarmentSelector from '@/components/stitching/GarmentSelector';
 import MeasurementProfilePicker from '@/components/stitching/MeasurementProfilePicker';
 import OrderSummaryBar from '@/components/stitching/OrderSummaryBar';
 import type { IFabricProduct } from '@/types/product';
 import type { IMeasurementProfile } from '@/types/cart';
+import { useStitchingStore } from '@/store/useStitchingStore';
 
 // ============================================================================
 // PAGE — fully client-rendered (state machine drives 3-step stepper)
 // ============================================================================
 
-type Step = 1 | 2 | 3;
+type Step = 1 | 2 | 3 | 4;
 
 export default function StitchingPage() {
+    const searchParams = useSearchParams();
+    const stitchingStore = useStitchingStore();
+
     const [step, setStep] = useState<Step>(1);
     const [fabrics, setFabrics] = useState<IFabricProduct[]>([]);
     const [profiles, setProfiles] = useState<IMeasurementProfile[]>([]);
@@ -34,7 +40,9 @@ export default function StitchingPage() {
         async function loadData() {
             try {
                 // Fetch fabrics
-                const fabricRes = await fetch('/api/products?type=fabric&limit=50', { signal: controller.signal });
+                const fabricRes = await fetch('/api/products?type=fabric&limit=50', {
+                    signal: controller.signal,
+                });
                 if (fabricRes.ok) {
                     const fabricData = await fabricRes.json();
                     if (isMounted) setFabrics(fabricData.data ?? []);
@@ -66,7 +74,25 @@ export default function StitchingPage() {
         };
     }, []);
 
-    const next = () => setStep((s) => Math.min(3, s + 1) as Step);
+    // Hydrate from query params (fabricId + meters) once fabrics are loaded
+    useEffect(() => {
+        if (!fabrics.length) return;
+
+        const fabricId = searchParams.get('fabricId');
+        const metersParam = searchParams.get('meters');
+
+        const fabric = fabricId ? fabrics.find((f) => f._id === fabricId) : null;
+        const meters = metersParam ? Math.max(1, parseFloat(metersParam)) : undefined;
+
+        if (fabric) {
+            stitchingStore.setFabric(fabric);
+            if (meters && !Number.isNaN(meters)) {
+                stitchingStore.setMeters(meters);
+            }
+        }
+    }, [fabrics, searchParams, stitchingStore]);
+
+    const next = () => setStep((s) => Math.min(4, s + 1) as Step);
     const back = () => setStep((s) => Math.max(1, s - 1) as Step);
 
     if (isLoading) {
@@ -103,8 +129,9 @@ export default function StitchingPage() {
 
             {/* Step content */}
             {step === 1 && <FabricSelector fabrics={fabrics} />}
-            {step === 2 && <GarmentSelector />}
-            {step === 3 && <MeasurementProfilePicker profiles={profiles} />}
+            {step === 2 && <MetersSelector />}
+            {step === 3 && <GarmentSelector />}
+            {step === 4 && <MeasurementProfilePicker profiles={profiles} />}
 
             {/* Sticky bottom bar */}
             <OrderSummaryBar

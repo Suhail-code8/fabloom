@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import StitchingKanbanBoard from '@/components/admin/StitchingKanbanBoard';
+import ProductionClient from '@/components/admin/production/ProductionClient';
 
 export const metadata: Metadata = {
     title: 'Stitching Production — Fabloom Admin',
@@ -17,7 +17,7 @@ export default function ProductionKanbanPage() {
             </div>
             
             <div className="flex-1 min-h-0 mt-4">
-                <StitchingKanbanBoard />
+                <ProductionClient />
             </div>
         </div>
     );

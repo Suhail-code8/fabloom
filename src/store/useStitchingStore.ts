@@ -17,12 +17,12 @@ interface StitchingState {
     selectedFabric: IFabricProduct | null;
     meters: number;
 
-    // Step 2 — garment
+    // Step 3 — garment
     garmentType: GarmentType | null;
     collarType: CollarType | null;
     stitchingNotes: string;
 
-    // Step 3 — measurements
+    // Step 4 — measurements
     selectedProfile: IMeasurementProfile | null;
 
     // Derived (computed, not persisted)
@@ -30,8 +30,9 @@ interface StitchingState {
     stitchingPrice: () => number;
     totalPrice: () => number;
     canProceedStep1: () => boolean;
-    canProceedStep2: () => boolean;
-    canProceedStep3: () => boolean;
+    canProceedStep2: () => boolean; // meters
+    canProceedStep3: () => boolean; // garment
+    canProceedStep4: () => boolean; // measurements
     buildOrderItem: () => StitchingOrderItem | null;
 
     // Actions
@@ -51,7 +52,6 @@ interface StitchingState {
 const STITCHING_PRICE_MAP: Record<GarmentType, number> = {
     Kurta:    350,
     Thobe:    450,
-    Kandoora: 500,
     Shirt:    300,
     Pant:     250,
 };
@@ -65,7 +65,7 @@ export const useStitchingStore = create<StitchingState>()(
         (set, get) => ({
             // ── Initial state ────────────────────────────────────────────────
             selectedFabric:  null,
-            meters:          1.5,
+            meters:          1,
             garmentType:     null,
             collarType:      null,
             stitchingNotes:  '',
@@ -90,15 +90,19 @@ export const useStitchingStore = create<StitchingState>()(
 
             // ── Step guards ──────────────────────────────────────────────────
             canProceedStep1: () => {
-                const { selectedFabric, meters } = get();
-                return !!selectedFabric && meters >= 1;
+                const { selectedFabric } = get();
+                return !!selectedFabric;
             },
 
             canProceedStep2: () => {
-                return !!get().garmentType;
+                return get().meters >= 1;
             },
 
             canProceedStep3: () => {
+                return !!get().garmentType;
+            },
+
+            canProceedStep4: () => {
                 return !!get().selectedProfile;
             },
 
@@ -138,7 +142,7 @@ export const useStitchingStore = create<StitchingState>()(
             setProfile:        (p)      => set({ selectedProfile: p }),
             reset:             ()       => set({
                 selectedFabric:  null,
-                meters:          1.5,
+                meters:          1,
                 garmentType:     null,
                 collarType:      null,
                 stitchingNotes:  '',

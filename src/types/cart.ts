@@ -13,7 +13,7 @@ export type {
 
 // ── Garment types for stitching ──────────────────────────────────────────────
 
-export type GarmentType = 'Kurta' | 'Thobe' | 'Kandoora' | 'Shirt' | 'Pant';
+export type GarmentType = 'Kurta' | 'Thobe' | 'Shirt' | 'Pant';
 
 export type CollarType = 'Mandarin' | 'Band' | 'Regular' | 'Nehru';
 
@@ -24,7 +24,6 @@ export const COLLAR_GARMENTS: GarmentType[] = ['Kurta', 'Shirt'];
 export const STITCHING_PRICE: Record<GarmentType, number> = {
     Kurta:    350,
     Thobe:    450,
-    Kandoora: 500,
     Shirt:    300,
     Pant:     250,
 };
