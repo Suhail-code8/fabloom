@@ -15,7 +15,7 @@ export default async function CapsPage() {
     const allAccessories: any[] = await getProductsAction({ type: 'accessory', limit: 100 });
     
     // Filter for caps
-    const caps = allAccessories.filter(p => ['cap', 'kufi', 'prayer', 'snapback', 'taqiyah', 'summer'].includes(p.subcategory));
+    const caps = allAccessories.filter(p => p.subcategory === 'cap' || ['kufi', 'prayer', 'snapback', 'taqiyah', 'summer'].includes(p.subcategory));
 
     // Derive unique colors with hex codes
     const colorMap: Record<string, string> = {

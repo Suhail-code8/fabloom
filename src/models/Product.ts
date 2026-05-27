@@ -45,6 +45,7 @@ export interface IFabricProduct extends IProduct {
     texture: string; // Cloudinary URL for texture image
     stitchingAvailable: boolean; // Can this fabric be stitched?
     stitchingPrice: number; // Price for stitching service
+    suitableFor?: string[];
 }
 
 // Accessory Product Interface (extends base)
@@ -135,6 +136,7 @@ const FabricProductSchema = new Schema<IFabricProduct>({
     texture: { type: String }, // Cloudinary URL
     stitchingAvailable: { type: Boolean, default: true },
     stitchingPrice: { type: Number, default: 0, min: 0 },
+    suitableFor: [{ type: String }],
 });
 
 const FabricProduct: Model<IFabricProduct> =

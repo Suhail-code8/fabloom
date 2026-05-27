@@ -9,12 +9,8 @@ import type { IFabricProduct } from '@/types/product';
 // ============================================================================
 
 function FabricCard({ fabric }: { fabric: IFabricProduct }) {
-    const { selectedFabric, meters, setFabric, setMeters } = useStitchingStore();
+    const { selectedFabric, setFabric } = useStitchingStore();
     const isSelected = selectedFabric?._id === fabric._id;
-
-    const liveCost = isSelected
-        ? (fabric.pricePerMeter * meters).toLocaleString('en-IN')
-        : null;
 
     return (
         <div
@@ -89,42 +85,7 @@ function FabricCard({ fabric }: { fabric: IFabricProduct }) {
                 </p>
             </div>
 
-            {/* Meters input — only visible when selected */}
-            {isSelected && (
-                <div
-                    className="px-3 pb-3 pt-1 border-t"
-                    style={{ borderColor: 'rgba(212,168,83,0.3)', backgroundColor: 'rgba(212,168,83,0.04)' }}
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wide block mb-1.5">
-                        Select meters
-                    </label>
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setMeters(Math.max(1, meters - 0.5))}
-                            className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold transition-all duration-150 active:scale-90"
-                            style={{ backgroundColor: '#f3f4f6', color: '#374151' }}
-                            aria-label="Decrease meters"
-                        >
-                            −
-                        </button>
-                        <span className="flex-1 text-center text-sm font-extrabold text-gray-900">
-                            {meters}m
-                        </span>
-                        <button
-                            onClick={() => setMeters(Math.min(fabric.stockInMeters, meters + 0.5))}
-                            className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold transition-all duration-150 active:scale-90"
-                            style={{ backgroundColor: '#D4A853', color: '#0f1035' }}
-                            aria-label="Increase meters"
-                        >
-                            +
-                        </button>
-                    </div>
-                    <p className="text-center mt-2 text-xs font-bold" style={{ color: '#0f1035' }}>
-                        Fabric cost: ₹{liveCost}
-                    </p>
-                </div>
-            )}
+            {/* Meters selection is Step 2 */}
         </div>
     );
 }
@@ -143,7 +104,7 @@ export default function FabricSelector({ fabrics }: FabricSelectorProps) {
             <div className="px-4 mb-4">
                 <h2 className="text-lg font-extrabold text-white">Choose a Fabric</h2>
                 <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                    Tap a fabric to select it, then set how many meters you need.
+                    Tap a fabric to select it.
                 </p>
             </div>
 

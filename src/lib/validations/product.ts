@@ -80,6 +80,7 @@ export const updateProductSchema = z.object({
     width:              z.number().min(1).optional(),
     stitchingAvailable: z.boolean().optional(),
     stitchingPrice:     z.number().min(0).optional(),
+    suitableFor:        z.array(z.string()).optional(),
     // Accessory
     stock:              z.number().min(0).optional(),
 });

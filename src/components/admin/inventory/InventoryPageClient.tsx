@@ -38,7 +38,9 @@ export default function InventoryPageClient() {
         fetcher
     );
 
-    const [tab, setTab] = useState<'all' | 'readymade' | 'fabric' | 'accessory' | 'low_stock'>('all');
+    const [tab, setTab] = useState<
+        'all' | 'readymade' | 'fabric' | 'perfumes' | 'caps' | 'accessories' | 'low_stock'
+    >('all');
     const [search, setSearch] = useState('');
     const [restockProduct, setRestockProduct] = useState<AnyProduct | null>(null);
     const [editProduct, setEditProduct] = useState<AnyProduct | null>(null);
@@ -47,9 +49,24 @@ export default function InventoryPageClient() {
     const products = useMemo(() => data?.products || [], [data?.products]);
 
     const filteredProducts = useMemo(() => {
+        const isPerfume = (p: any) =>
+            p.type === 'accessory' &&
+            (p.subcategory === 'perfume' || ['arabian', 'floral', 'fresh', 'woody', 'gift-set'].includes(p.subcategory));
+        const isCap = (p: any) =>
+            p.type === 'accessory' &&
+            (p.subcategory === 'cap' || ['kufi', 'prayer', 'snapback', 'taqiyah', 'summer'].includes(p.subcategory));
+        const isGeneralAccessory = (p: any) =>
+            p.type === 'accessory' &&
+            !['perfume', 'cap', 'arabian', 'floral', 'fresh', 'woody', 'gift-set', 'kufi', 'prayer', 'snapback', 'taqiyah', 'summer'].includes(p.subcategory);
+
         return products.filter((p) => {
             if (tab === 'low_stock' && !isLowStock(p)) return false;
-            if (tab !== 'all' && tab !== 'low_stock' && p.type !== tab) return false;
+            if (tab === 'readymade' && p.type !== 'readymade') return false;
+            if (tab === 'fabric' && p.type !== 'fabric') return false;
+            if (tab === 'perfumes' && !isPerfume(p)) return false;
+            if (tab === 'caps' && !isCap(p)) return false;
+            if (tab === 'accessories' && !isGeneralAccessory(p)) return false;
+
             if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
             return true;
         });
@@ -91,6 +108,7 @@ export default function InventoryPageClient() {
 
     const handleEditSave = async (id: string, updates: Record<string, unknown>) => {
         await patchProduct(id, updates);
+        toast.success('Product updated');
     };
 
     const handleCreateSave = async (payload: Record<string, unknown>) => {
@@ -129,7 +147,9 @@ export default function InventoryPageClient() {
                     ['all', 'All'],
                     ['readymade', 'Readymade'],
                     ['fabric', 'Fabrics'],
-                    ['accessory', 'Accessories'],
+                    ['perfumes', 'Perfumes'],
+                    ['caps', 'Caps'],
+                    ['accessories', 'Accessories'],
                     ['low_stock', 'Low Stock'],
                 ].map(([id, label]) => (
                     <button
@@ -185,7 +205,9 @@ export default function InventoryPageClient() {
                                 </td>
                                 <td className="p-4 text-sm font-bold">{stockLabel(p)}</td>
                                 <td className="p-4 text-sm font-bold">
-                                    ₹{p.price?.toLocaleString('en-IN')}
+                                    {p.type === 'fabric'
+                                        ? `₹${(p.pricePerMeter ?? 0).toLocaleString('en-IN')} / meter`
+                                        : `₹${(p.price ?? 0).toLocaleString('en-IN')}`}
                                 </td>
                                 <td className="p-4">
                                     <button

@@ -147,9 +147,9 @@ export default function StitchingKanbanBoard() {
     return (
         <div className="flex flex-col h-full">
             {/* Header / Filters */}
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+                <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
-                    {['All', 'Kurta', 'Thobe', 'Kandoora', 'Shirt', 'Pant'].map(f => (
+                    {['All', 'Kurta', 'Thobe', 'Shirt', 'Pant'].map(f => (
                         <button
                             key={f}
                             onClick={() => setGarmentFilter(f)}

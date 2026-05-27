@@ -28,16 +28,19 @@ export default function CartItem({
 
     // Calculate item total
     const getItemTotal = () => {
-        if (item.type === 'readymade') {
+        if (item.itemType === 'readymade' || item.itemType === 'accessory') {
             return item.price * item.quantity;
-        } else if (item.type === 'fabric') {
+        }
+
+        if (item.itemType === 'fabric') {
             const fabricCost = item.pricePerMeter * item.meters;
             const stitchingCost =
                 item.stitchingDetails && item.stitchingPrice ? item.stitchingPrice : 0;
             return (fabricCost + stitchingCost) * item.quantity;
-        } else {
-            return item.price * item.quantity;
         }
+
+        // Fallback for any future item types
+        return item.price * (item.quantity ?? 1);
     };
 
     return (
@@ -64,7 +67,7 @@ export default function CartItem({
                     {/* Type-specific details */}
                     <div className="mt-2 space-y-2">
                         {/* Readymade: Show size */}
-                        {item.type === 'readymade' && (
+                        {item.itemType === 'readymade' && (
                             <div className="flex items-center gap-2">
                                 <span className="text-sm text-gray-600">Size:</span>
                                 <Badge variant="outline" className="text-xs">
@@ -80,7 +83,7 @@ export default function CartItem({
                         )}
 
                         {/* Fabric: Show meters and stitching */}
-                        {item.type === 'fabric' && (
+                        {item.itemType === 'fabric' && (
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
                                     <Ruler className="h-3 w-3" />
@@ -179,7 +182,7 @@ export default function CartItem({
                         )}
 
                         {/* Accessory: Show material/color */}
-                        {item.type === 'accessory' && (
+                        {item.itemType === 'accessory' && (
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                                 {item.material && <span>• {item.material}</span>}
                                 {item.color && <span>• {item.color}</span>}
@@ -193,11 +196,11 @@ export default function CartItem({
                     {/* Price */}
                     <div className="text-right">
                         <p className="text-lg font-bold text-navy-900">
-                            ${getItemTotal().toFixed(2)}
+                            ₹{getItemTotal().toLocaleString('en-IN')}
                         </p>
-                        {item.type === 'fabric' && (
+                        {item.itemType === 'fabric' && (
                             <p className="text-xs text-gray-500">
-                                ${item.pricePerMeter}/meter × {item.meters}m
+                                ₹{item.pricePerMeter}/meter × {item.meters}m
                             </p>
                         )}
                     </div>

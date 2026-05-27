@@ -42,10 +42,16 @@ function StitchingBundleCard({ item, onRemove }: { item: StitchingCartItem; onRe
 
                     <div className="mt-3 text-xs text-gray-500 flex justify-between items-center">
                         <div className="space-y-0.5">
-                            <p>Fabric: ₹{fmtINR(item.meters * item.pricePerMeter)}</p>
-                            <p>Stitching: ₹{fmtINR(item.stitchingCharge)}</p>
+                            <p>
+                                {item.fabricName} × {item.meters}m
+                            </p>
+                            <p>
+                                + {item.garmentType} Stitching
+                            </p>
                         </div>
-                        <span className="text-sm font-extrabold text-[#0f1035]">₹{fmtINR(item.totalPrice)}</span>
+                        <span className="text-sm font-extrabold text-[#0f1035]">
+                            ₹{fmtINR(item.totalPrice)}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -107,7 +113,7 @@ function RegularItemCard({ item, onRemove, onQty }: { item: ReadymadeCartItem | 
                     {item.itemType === 'accessory' && item.color && <span className="text-[10px] font-bold text-gray-500 uppercase mt-0.5 block">Color: {item.color}</span>}
                     {item.itemType === 'fabric' && (
                         <span className="text-[10px] font-bold text-gray-500 uppercase mt-0.5 block">
-                            {item.fabricType} · {item.meters}m
+                            {item.name} × {item.meters}m = ₹{fmtINR(item.pricePerMeter * item.meters)}
                         </span>
                     )}
                 </div>
@@ -118,7 +124,9 @@ function RegularItemCard({ item, onRemove, onQty }: { item: ReadymadeCartItem | 
                         <span className="text-sm font-bold w-4 text-center">{item.quantity}</span>
                         <button onClick={() => onQty(item.quantity + 1)} className="w-6 h-6 rounded-full bg-[#D4A853] flex items-center justify-center font-bold text-[#0f1035]">+</button>
                     </div>
-                    <span className="text-sm font-extrabold text-[#0f1035]">₹{fmtINR(itemTotal)}</span>
+                    <span className="text-sm font-extrabold text-[#0f1035]">
+                        ₹{fmtINR(itemTotal)}
+                    </span>
                 </div>
             </div>
         </div>

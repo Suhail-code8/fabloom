@@ -2,13 +2,14 @@
 // ============================================================================
 
 interface StitchingStepperHeaderProps {
-    currentStep: 1 | 2 | 3;
+    currentStep: 1 | 2 | 3 | 4;
 }
 
 const STEPS = [
     { n: 1, label: 'Fabric' },
-    { n: 2, label: 'Garment' },
-    { n: 3, label: 'Measurements' },
+    { n: 2, label: 'Meters' },
+    { n: 3, label: 'Garment' },
+    { n: 4, label: 'Measurements' },
 ] as const;
 
 export default function StitchingStepperHeader({ currentStep }: StitchingStepperHeaderProps) {
@@ -28,7 +29,8 @@ export default function StitchingStepperHeader({ currentStep }: StitchingStepper
                         backgroundColor: '#D4A853',
                         width:
                             currentStep === 1 ? '0%' :
-                            currentStep === 2 ? '50%' : '100%',
+                            currentStep === 2 ? '33%' :
+                            currentStep === 3 ? '66%' : '100%',
                     }}
                     aria-hidden
                 />

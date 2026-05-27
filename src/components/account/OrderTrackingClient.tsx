@@ -224,7 +224,8 @@ export default function OrderTrackingClient({ orderId }: { orderId: string }) {
                         if (item.stitchingDetails) {
                             return <StitchingTrackingCard key={idx} item={item} />;
                         } else {
-                            // Regular readymade/accessory item
+                            // Regular readymade/accessory/fabric-only item
+                            const isFabric = item.itemType === 'fabric';
                             return (
                                 <div key={idx} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mb-4 flex gap-4 items-center">
                                     <div className="w-[60px] h-[60px] bg-gray-100 rounded-xl overflow-hidden relative flex-shrink-0">
@@ -232,7 +233,15 @@ export default function OrderTrackingClient({ orderId }: { orderId: string }) {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <h3 className="text-sm font-bold text-gray-900 truncate">{item.productName}</h3>
-                                        <p className="text-xs text-gray-500 mt-0.5">Qty: {item.quantity} {item.size ? `| Size: ${item.size}` : ''}</p>
+                                        {isFabric ? (
+                                            <p className="text-xs text-gray-500 mt-0.5">
+                                                {item.productName} × {item.meters}m
+                                            </p>
+                                        ) : (
+                                            <p className="text-xs text-gray-500 mt-0.5">
+                                                Qty: {item.quantity} {item.size ? `| Size: ${item.size}` : ''}
+                                            </p>
+                                        )}
                                     </div>
                                     <div className="text-sm font-extrabold text-[#0f1035]">
                                         ₹{item.totalPrice.toLocaleString('en-IN')}

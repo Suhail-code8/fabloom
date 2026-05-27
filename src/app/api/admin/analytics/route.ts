@@ -4,25 +4,24 @@ import dbConnect from '@/lib/db';
 import { Order } from '@/models/Order';
 import { Product } from '@/models/Product';
 
-function emptyPayload() {
-    const revenueByDay = Array.from({ length: 7 }).map((_, i) => {
+function last7DaysZeroSeries() {
+    return Array.from({ length: 7 }).map((_, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (6 - i));
-        return {
-            date: date.toISOString().slice(0, 10),
-            amount: 0,
-        };
+        return { date: date.toISOString().slice(0, 10), amount: 0 };
     });
+}
 
+function emptyPayload(lowStockCount = 0) {
     return {
         success: true,
         metrics: {
-            revenue: 0,
+            todayRevenue: 0,
             totalOrders: 0,
             pendingStitching: 0,
-            lowStock: 0,
+            lowStockCount,
         },
-        revenueByDay,
+        revenueByDay: last7DaysZeroSeries(),
         ordersByType: [] as { name: string; value: number }[],
         recentOrders: [] as {
             orderNumber: string;
@@ -31,18 +30,6 @@ function emptyPayload() {
             status: string;
         }[],
     };
-}
-
-function countLowStock(products: any[]): number {
-    let count = 0;
-    for (const p of products) {
-        if (p.type === 'fabric' && (p.stockInMeters ?? 0) < 5) count++;
-        else if (p.type === 'readymade') {
-            const sizes = p.sizeStock || {};
-            if (Object.values(sizes).some((qty: any) => (qty as number) < 2)) count++;
-        } else if (p.type === 'accessory' && (p.stock ?? 0) < 5) count++;
-    }
-    return count;
 }
 
 export async function GET() {
@@ -64,97 +51,207 @@ export async function GET() {
 
         const now = new Date();
         const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const startOf7DaysAgo = new Date(startOfToday.getTime() - 6 * 24 * 60 * 60 * 1000);
+        const startOfTomorrow = new Date(startOfToday.getTime() + 24 * 60 * 60 * 1000);
 
-        const [allOrders, allProducts] = await Promise.all([
-            Order.find().sort({ createdAt: -1 }).lean(),
-            Product.find().lean(),
+        const startOf7DaysAgo = new Date(startOfToday.getTime() - 6 * 24 * 60 * 60 * 1000);
+        const endOfToday = startOfTomorrow;
+
+        const [lowStockAgg, ordersAgg] = await Promise.all([
+            Product.aggregate([
+                {
+                    $project: {
+                        type: 1,
+                        stockInMeters: 1,
+                        stock: 1,
+                        sizeStock: 1,
+                    },
+                },
+                {
+                    $addFields: {
+                        lowStock: {
+                            $switch: {
+                                branches: [
+                                    {
+                                        case: { $eq: ['$type', 'fabric'] },
+                                        then: { $lt: [{ $ifNull: ['$stockInMeters', 0] }, 5] },
+                                    },
+                                    {
+                                        case: { $eq: ['$type', 'accessory'] },
+                                        then: { $lt: [{ $ifNull: ['$stock', 0] }, 5] },
+                                    },
+                                    {
+                                        case: { $eq: ['$type', 'readymade'] },
+                                        then: {
+                                            $or: [
+                                                { $lt: [{ $ifNull: ['$sizeStock.S', 0] }, 2] },
+                                                { $lt: [{ $ifNull: ['$sizeStock.M', 0] }, 2] },
+                                                { $lt: [{ $ifNull: ['$sizeStock.L', 0] }, 2] },
+                                                { $lt: [{ $ifNull: ['$sizeStock.XL', 0] }, 2] },
+                                                { $lt: [{ $ifNull: ['$sizeStock.XXL', 0] }, 2] },
+                                            ],
+                                        },
+                                    },
+                                ],
+                                default: false,
+                            },
+                        },
+                    },
+                },
+                { $match: { lowStock: true } },
+                { $count: 'count' },
+            ]),
+
+            Order.aggregate([
+                {
+                    $facet: {
+                        metrics: [
+                            {
+                                $group: {
+                                    _id: null,
+                                    totalOrders: { $sum: 1 },
+                                    todayRevenue: {
+                                        $sum: {
+                                            $cond: [
+                                                {
+                                                    $and: [
+                                                        { $eq: ['$paymentStatus', 'paid'] },
+                                                        { $gte: ['$createdAt', startOfToday] },
+                                                        { $lt: ['$createdAt', endOfToday] },
+                                                    ],
+                                                },
+                                                { $ifNull: ['$totalAmount', 0] },
+                                                0,
+                                            ],
+                                        },
+                                    },
+                                    pendingStitching: {
+                                        $sum: {
+                                            $cond: [
+                                                {
+                                                    $gt: [
+                                                        {
+                                                            $size: {
+                                                                $filter: {
+                                                                    input: { $ifNull: ['$items', []] },
+                                                                    as: 'it',
+                                                                    cond: {
+                                                                        $and: [
+                                                                            { $ne: ['$$it.stitchingDetails', null] },
+                                                                            { $eq: ['$$it.stitchingDetails.status', 'pending'] },
+                                                                        ],
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                        0,
+                                                    ],
+                                                },
+                                                1,
+                                                0,
+                                            ],
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                $project: {
+                                    _id: 0,
+                                    totalOrders: 1,
+                                    todayRevenue: 1,
+                                    pendingStitching: 1,
+                                },
+                            },
+                        ],
+
+                        revenueByDay: [
+                            { $match: { createdAt: { $gte: startOf7DaysAgo } } },
+                            {
+                                $group: {
+                                    _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+                                    amount: {
+                                        $sum: {
+                                            $cond: [
+                                                { $eq: ['$paymentStatus', 'paid'] },
+                                                { $ifNull: ['$totalAmount', 0] },
+                                                0,
+                                            ],
+                                        },
+                                    },
+                                },
+                            },
+                            { $project: { _id: 0, date: '$_id', amount: 1 } },
+                            { $sort: { date: 1 } },
+                        ],
+
+                        ordersByType: [
+                            { $unwind: { path: '$items', preserveNullAndEmptyArrays: false } },
+                            {
+                                $addFields: {
+                                    productType: {
+                                        $switch: {
+                                            branches: [
+                                                { case: { $eq: ['$items.itemType', 'readymade'] }, then: 'readymade' },
+                                                {
+                                                    case: {
+                                                        $and: [
+                                                            { $eq: ['$items.itemType', 'fabric'] },
+                                                            { $ne: ['$items.stitchingDetails', null] },
+                                                        ],
+                                                    },
+                                                    then: 'stitching',
+                                                },
+                                                { case: { $eq: ['$items.itemType', 'fabric'] }, then: 'fabric' },
+                                                { case: { $eq: ['$items.itemType', 'accessory'] }, then: 'accessory' },
+                                            ],
+                                            default: 'other',
+                                        },
+                                    },
+                                    qty: { $ifNull: ['$items.quantity', 1] },
+                                },
+                            },
+                            { $group: { _id: '$productType', value: { $sum: '$qty' } } },
+                            { $project: { _id: 0, name: '$_id', value: 1 } },
+                            { $sort: { value: -1 } },
+                        ],
+
+                        recentOrders: [
+                            { $sort: { createdAt: -1 } },
+                            { $limit: 5 },
+                            {
+                                $project: {
+                                    _id: 0,
+                                    orderNumber: 1,
+                                    customerName: { $ifNull: ['$shippingAddress.fullName', 'Customer'] },
+                                    total: { $ifNull: ['$totalAmount', 0] },
+                                    status: 1,
+                                },
+                            },
+                        ],
+                    },
+                },
+            ]),
         ]);
 
-        if (allOrders.length === 0) {
-            return NextResponse.json({
-                ...emptyPayload(),
-                metrics: {
-                    revenue: 0,
-                    totalOrders: 0,
-                    pendingStitching: 0,
-                    lowStock: countLowStock(allProducts as any[]),
-                },
-            });
+        const lowStockCount = lowStockAgg?.[0]?.count ?? 0;
+
+        const agg = ordersAgg?.[0] ?? null;
+        const metricsRow = agg?.metrics?.[0] ?? null;
+
+        if (!metricsRow) {
+            return NextResponse.json(emptyPayload(lowStockCount));
         }
 
-        const ordersToday = (allOrders as any[]).filter(
-            (o) => new Date(o.createdAt) >= startOfToday
-        );
-        const todayRevenue = ordersToday.reduce(
-            (sum, o) => sum + (Number(o.totalAmount) || 0),
-            0
-        );
-
-        let pendingStitching = 0;
-        let rmCount = 0;
-        let stCount = 0;
-        let fbCount = 0;
-        let acCount = 0;
-
-        for (const order of allOrders as any[]) {
-            const items = Array.isArray(order.items) ? order.items : [];
-            for (const item of items) {
-                const qty = Number(item.quantity) || 1;
-                if (item.itemType === 'readymade') rmCount += qty;
-                else if (item.itemType === 'accessory') acCount += qty;
-                else if (item.itemType === 'fabric' && item.stitchingDetails) stCount++;
-                else if (item.itemType === 'fabric') fbCount++;
-
-                if (
-                    item.stitchingDetails &&
-                    ['pending', 'cutting', 'stitching', 'quality_check'].includes(
-                        item.stitchingDetails.status
-                    )
-                ) {
-                    pendingStitching++;
-                }
-            }
-        }
-
-        const revenueByDay = Array.from({ length: 7 }).map((_, i) => {
-            const date = new Date(startOf7DaysAgo.getTime() + i * 24 * 60 * 60 * 1000);
-            return { date: date.toISOString().slice(0, 10), amount: 0 };
-        });
-
-        for (const order of allOrders as any[]) {
-            const created = new Date(order.createdAt);
-            if (created >= startOf7DaysAgo) {
-                const dayIndex = Math.floor(
-                    (created.getTime() - startOf7DaysAgo.getTime()) / (24 * 60 * 60 * 1000)
-                );
-                if (dayIndex >= 0 && dayIndex < 7) {
-                    revenueByDay[dayIndex].amount += Number(order.totalAmount) || 0;
-                }
-            }
-        }
-
-        const ordersByType = [
-            { name: 'Readymade', value: rmCount },
-            { name: 'Stitching', value: stCount },
-            { name: 'Fabrics', value: fbCount },
-            { name: 'Accessories', value: acCount },
-        ].filter((e) => e.value > 0);
-
-        const recentOrders = (allOrders as any[]).slice(0, 5).map((o) => ({
-            orderNumber: o.orderNumber,
-            customerName: o.shippingAddress?.fullName || 'Customer',
-            total: Number(o.totalAmount) || 0,
-            status: o.status,
-        }));
+        const revenueByDay = agg.revenueByDay ?? [];
+        const ordersByType = (agg.ordersByType ?? []).filter((e: any) => e?.value > 0);
+        const recentOrders = agg.recentOrders ?? [];
 
         return NextResponse.json({
             success: true,
             metrics: {
-                revenue: todayRevenue,
-                totalOrders: allOrders.length,
-                pendingStitching,
-                lowStock: countLowStock(allProducts as any[]),
+                todayRevenue: metricsRow.todayRevenue ?? 0,
+                totalOrders: metricsRow.totalOrders ?? 0,
+                pendingStitching: metricsRow.pendingStitching ?? 0,
+                lowStockCount,
             },
             revenueByDay,
             ordersByType,
@@ -162,6 +259,6 @@ export async function GET() {
         });
     } catch (error: unknown) {
         console.error('Analytics Error:', error);
-        return NextResponse.json(emptyPayload());
+        return NextResponse.json(emptyPayload(0));
     }
 }

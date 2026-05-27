@@ -165,9 +165,8 @@ export default function FabricDetailDrawer({ fabric, onClose }: FabricDetailDraw
                                 </h2>
                                 <div className="flex-shrink-0 text-right">
                                     <p className="text-xl font-extrabold" style={{ color: '#0f1035' }}>
-                                        ₹{fabric.pricePerMeter}
+                                        ₹{fabric.pricePerMeter} / meter
                                     </p>
-                                    <p className="text-[10px] text-gray-400">per meter</p>
                                 </div>
                             </div>
 
