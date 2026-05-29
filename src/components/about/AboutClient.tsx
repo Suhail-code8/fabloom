@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 // ============================================================================
 // DATA CONSTANTS
@@ -60,9 +61,15 @@ export default function AboutClient() {
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4A853]/50 to-transparent" />
                 
                 <div className="relative z-10 max-w-2xl mx-auto">
-                    <div className="w-16 h-1 bg-[#D4A853] mx-auto mb-8 rounded-full" />
-                    <h1 className="text-5xl md:text-6xl font-serif tracking-tight text-[#D4A853] mb-6">Fabloom</h1>
-                    <p className="text-lg md:text-xl font-medium text-gray-300 tracking-wide">Where tradition meets precision tailoring.</p>
+                    <Image
+                        src="/logo.jpeg"
+                        alt="Fabloom Kandoras"
+                        width={80}
+                        height={80}
+                        className="rounded-full mx-auto mb-6 object-cover border-2 border-[#D4A853]"
+                    />
+                    <h1 className="text-5xl md:text-6xl font-serif tracking-tight text-[#D4A853] mb-6">Fabloom Kandoras</h1>
+                    <p className="text-lg md:text-xl font-medium text-gray-300 tracking-wide">Premium Islamic Fashion · Delivered Across India</p>
                 </div>
                 
                 <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4A853]/50 to-transparent" />
@@ -73,13 +80,16 @@ export default function AboutClient() {
                 <section className="py-16 px-6">
                     <div className="pl-6 border-l-4 border-[#D4A853] max-w-2xl mx-auto">
                         <h2 className="text-xs font-extrabold text-[#D4A853] uppercase tracking-widest mb-3">Our Story</h2>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-6">Born in Kerala. <br/>Crafted for the modern wardrobe.</h3>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-6">Born in Koduvally. <br/>Crafted for the modern wardrobe.</h3>
                         <div className="space-y-4 text-sm text-gray-600 leading-relaxed font-medium">
                             <p>
-                                Founded in 2021 in the vibrant heart of Kerala, Fabloom began with a simple mission: to bridge the gap between premium traditional fabrics and the perfect, personalized fit. We realized that buying beautiful fabrics often meant facing the hassle of finding a reliable tailor.
+                                Fabloom Kandoras brings the finest Islamic fashion from the heart of Koduvally, Kerala — straight to your door. From handcrafted Saudi and Emirati kandoras to premium fabrics with expert stitching, every piece reflects our commitment to quality and authenticity.
                             </p>
                             <p>
-                                "Fabloom"—a portmanteau of Fabric and Bloom—represents the transformation of raw, high-quality textiles into blossoming garments tailored exactly to your body. Today, our network of master tailors with over a decade of experience ensures that every stitch is a testament to quality.
+                                Shop online and get it delivered across India with absolute ease. Our online-first store is designed to give you a seamless shopping experience, from choosing premium fabrics to entering your measurements.
+                            </p>
+                            <p>
+                                Prefer to visit us? Our Koduvally store welcomes walk-in customers every day 9AM-9PM.
                             </p>
                         </div>
                     </div>
@@ -202,11 +212,11 @@ export default function AboutClient() {
                         <p className="text-sm text-gray-300 mb-8 max-w-md mx-auto leading-relaxed">Our support team is here to help you measure, track, or customize your order.</p>
                         
                         <a 
-                            href="https://wa.me/918086071591" 
+                            href="https://wa.me/919544073317" 
                             target="_blank" rel="noopener noreferrer"
                             className="inline-flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold text-sm px-8 py-4 rounded-full active:scale-95 transition-transform hover:bg-[#20bd5a] shadow-lg shadow-[#25D366]/20 w-full md:w-auto"
                         >
-                            <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                            <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" /></svg>
                             Message on WhatsApp
                         </a>
 
@@ -217,11 +227,11 @@ export default function AboutClient() {
                             </div>
                             <div>
                                 <p className="font-bold text-white mb-1">Working Hours</p>
-                                <p>Mon - Sat, 9:00 AM - 6:00 PM</p>
+                                <p>Every day, 9:00 AM - 9:00 PM</p>
                             </div>
                             <div>
                                 <p className="font-bold text-white mb-1">Headquarters</p>
-                                <p>Kochi, Kerala, India - 682001</p>
+                                <p>Koduvally, Kerala, India</p>
                             </div>
                         </div>
                     </div>

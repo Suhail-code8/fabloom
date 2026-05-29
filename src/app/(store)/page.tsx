@@ -17,9 +17,9 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export const metadata = {
-    title: 'Fabloom — Premium Custom Tailoring & Fashion',
+    title: 'Fabloom Kandoras — Premium Islamic Fashion',
     description:
-        'Shop readymade kurtas, thobes, custom-stitched garments, premium fabrics, perfumes, and accessories. Tailored to you. Delivered to your door.',
+        'Shop premium kandoras, thobes, kurthas and quality fabrics online. Custom stitching available. Fast delivery across India. Based in Koduvally, Kerala.',
 };
 
 export default async function StorefrontPage() {
@@ -80,10 +80,10 @@ export default async function StorefrontPage() {
 
                 {/* Footer micro-note */}
                 <p
-                    className="text-center text-[10px] px-6 pb-2"
+                    className="text-center text-[10px] px-6 pb-4 pt-2"
                     style={{ color: 'rgba(255,255,255,0.25)' }}
                 >
-                    © {new Date().getFullYear()} Fabloom · Crafted with ♥ for premium fashion
+                    © 2025 Fabloom Kandoras · Crafted for premium fashion
                 </p>
 
             </div>

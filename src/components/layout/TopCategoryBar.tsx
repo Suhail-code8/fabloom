@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 // ============================================================================
@@ -80,22 +81,33 @@ const CATEGORIES: CategoryItem[] = [
     { id: 'accessories', label: 'More', href: '/accessories', icon: <GridIcon /> },
 ];
 
-// ============================================================================
-// COMPONENT
-// ============================================================================
-
 export default function TopCategoryBar() {
     const pathname = usePathname();
 
     return (
         <nav
-            className="w-full px-2 py-3 border-b border-white/10"
+            className="w-full px-4 py-3 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             style={{ backgroundColor: 'var(--brand-primary)' }}
             aria-label="Product categories"
         >
+            <div className="flex items-center gap-2 flex-shrink-0">
+                <Link href="/" className="flex items-center gap-2">
+                    <Image
+                        src="/logo.jpeg"
+                        alt="Fabloom Kandoras"
+                        width={32}
+                        height={32}
+                        className="rounded-full"
+                    />
+                    <span className="font-serif text-lg font-bold text-gold-500">
+                        Fabloom Kandoras
+                    </span>
+                </Link>
+            </div>
+
             {/* Horizontally scrollable row — hide scrollbar cross-browser */}
             <ul
-                className="flex gap-1 overflow-x-auto"
+                className="flex gap-1 overflow-x-auto no-scrollbar"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 {CATEGORIES.map((cat) => {

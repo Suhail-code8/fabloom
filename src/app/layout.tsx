@@ -12,16 +12,28 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
     title: {
-        template: '%s | Fabloom',
-        default: 'Fabloom — Custom Tailoring & Premium Fashion',
+        template: '%s | Fabloom Kandoras',
+        default: 'Fabloom Kandoras — Premium Islamic Fashion',
     },
-    description: 'Shop readymade kurtas, thobes, kandooras and premium fabrics. Custom stitching with your measurements. Fast delivery across India.',
-    keywords: ['custom tailoring', 'kurta', 'thobe', 'kandoora', 'linen fabric', 'Kerala tailoring', 'Muslim fashion'],
+    description: 'Shop premium kandoras, thobes, kurthas and quality fabrics online. Custom stitching available. Fast delivery across India. Based in Koduvally, Kerala.',
+    keywords: ['custom tailoring', 'kurta', 'thobe', 'kandora', 'kandoora', 'linen fabric', 'Kerala tailoring', 'Muslim fashion', 'Koduvally tailoring'],
+    icons: {
+        icon: '/logo.jpeg',
+        apple: '/logo.jpeg',
+    },
     openGraph: {
         type: 'website',
         locale: 'en_IN',
-        url: 'https://fabloom.in',
-        siteName: 'Fabloom',
+        url: 'https://fablooom.vercel.app',
+        siteName: 'Fabloom Kandoras',
+        images: [
+            {
+                url: '/logo.jpeg',
+                width: 512,
+                height: 512,
+                alt: 'Fabloom Kandoras Logo',
+            }
+        ]
     },
     robots: {
         index: true,
@@ -49,7 +61,8 @@ export default function RootLayout({
                     <meta name="theme-color" content="#0f1035" />
                     <meta name="apple-mobile-web-app-capable" content="yes" />
                     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-                    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+                    <link rel="apple-touch-icon" href="/logo.jpeg" />
+                    <link rel="icon" href="/logo.jpeg" />
                 </head>
                 <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`} suppressHydrationWarning>
                     {children}

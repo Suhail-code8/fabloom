@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Menu, Search, ShoppingCart, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -44,10 +45,17 @@ export default function Navbar() {
             <div className="container mx-auto px-4">
                 <div className="flex h-16 items-center justify-between">
                     {/* Left: Brand Logo */}
-                    <Link href="/" className="flex items-center">
-                        <h1 className="font-serif text-2xl font-bold text-gold-600 hover:text-gold-700 transition-colors">
-                            Fabloom
-                        </h1>
+                    <Link href="/" className="flex items-center gap-2">
+                        <Image
+                            src="/logo.jpeg"
+                            alt="Fabloom Kandoras"
+                            width={32}
+                            height={32}
+                            className="rounded-full"
+                        />
+                        <span className="font-serif text-2xl font-bold text-gold-600 hover:text-gold-700 transition-colors">
+                            Fabloom Kandoras
+                        </span>
                     </Link>
 
                     {/* Center: Desktop Navigation */}
@@ -112,11 +120,18 @@ export default function Navbar() {
                                     <Link
                                         href="/"
                                         onClick={() => setIsOpen(false)}
-                                        className="flex items-center mb-4"
+                                        className="flex items-center gap-2 mb-4"
                                     >
-                                        <h2 className="font-serif text-2xl font-bold text-gold-600">
-                                            Fabloom
-                                        </h2>
+                                        <Image
+                                            src="/logo.jpeg"
+                                            alt="Fabloom Kandoras"
+                                            width={32}
+                                            height={32}
+                                            className="rounded-full"
+                                        />
+                                        <span className="font-serif text-2xl font-bold text-gold-600">
+                                            Fabloom Kandoras
+                                        </span>
                                     </Link>
 
                                     {/* Mobile Navigation Links */}
