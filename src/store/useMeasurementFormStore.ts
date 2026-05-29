@@ -4,21 +4,34 @@ import { create } from 'zustand';
 // TYPES
 // ============================================================================
 
-export type GarmentTypeOption = 'kurta' | 'thobe' | 'kandoora' | 'shirt' | 'pant';
+export type GarmentTypeOption = 
+    | 'saudi_kandora' 
+    | 'emirati_kandora' 
+    | 'chinese_kandora' 
+    | 'pleat_kandora' 
+    | 'jubba' 
+    | 'pleat_jubba' 
+    | 'kurta' 
+    | 'shirt';
 
 export interface MeasurementValues {
-    // Step 2 — body
-    chest:       number | '';
-    waist:       number | '';
-    hip:         number | '';
-    // Step 3 — upper
-    shoulder:    number | '';
+    length:       number | '';
+    shoulder:     number | '';
     sleeveLength: number | '';
-    neck:        number | '';
-    // Step 4 — length
-    shirtLength: number | '';
-    inseam:      number | '';
-    thobeLength: number | '';
+    loose1:       number | '';
+    loose2:       number | '';
+    chest:        number | '';
+    waist:        number | '';
+    bottom:       number | '';
+    neck:         number | '';
+}
+
+export interface PreferenceValues {
+    neckType:      'cut_neck' | 'full_neck' | 'qathari' | '';
+    fitPreference: 'slim' | 'medium' | 'loose' | '';
+    cuffType:      'simple' | 'button' | 'french' | '';
+    chestFinish:   number | '';
+    waistFinish:   number | '';
 }
 
 interface MeasurementFormState {
@@ -27,20 +40,24 @@ interface MeasurementFormState {
     garmentTypes:  GarmentTypeOption[];
     setAsDefault:  boolean;
 
-    // Steps 2–4
+    // Steps 2
     measurements: MeasurementValues;
 
+    // Step 3
+    preferences: PreferenceValues;
+
     // Nav
-    step: 1 | 2 | 3 | 4 | 5;
+    step: 1 | 2 | 3 | 4;
 
     // Actions
     setProfileName:   (name: string) => void;
     toggleGarment:    (g: GarmentTypeOption) => void;
     setAsDefaultToggle: (v: boolean) => void;
     setMeasurement:   (key: keyof MeasurementValues, value: number | '') => void;
+    setPreference:    (key: keyof PreferenceValues, value: any) => void;
     nextStep:         () => void;
     prevStep:         () => void;
-    goToStep:         (s: 1|2|3|4|5) => void;
+    goToStep:         (s: 1|2|3|4) => void;
     reset:            () => void;
     loadProfile:      (profile: any) => void;
 
@@ -58,10 +75,15 @@ interface MeasurementFormState {
 // DEFAULT MEASUREMENTS
 // ============================================================================
 
-const EMPTY: MeasurementValues = {
-    chest: '', waist: '', hip: '',
-    shoulder: '', sleeveLength: '', neck: '',
-    shirtLength: '', inseam: '', thobeLength: '',
+const EMPTY_MEASUREMENTS: MeasurementValues = {
+    length: '', shoulder: '', sleeveLength: '',
+    loose1: '', loose2: '', chest: '',
+    waist: '', bottom: '', neck: '',
+};
+
+const EMPTY_PREFERENCES: PreferenceValues = {
+    neckType: '', fitPreference: '', cuffType: '',
+    chestFinish: '', waistFinish: '',
 };
 
 // ============================================================================
@@ -72,7 +94,8 @@ export const useMeasurementFormStore = create<MeasurementFormState>()((set, get)
     profileName:  '',
     garmentTypes: [],
     setAsDefault: false,
-    measurements: { ...EMPTY },
+    measurements: { ...EMPTY_MEASUREMENTS },
+    preferences:  { ...EMPTY_PREFERENCES },
     step: 1,
 
     setProfileName:   (name) => set({ profileName: name }),
@@ -83,64 +106,68 @@ export const useMeasurementFormStore = create<MeasurementFormState>()((set, get)
     setAsDefaultToggle: (v) => set({ setAsDefault: v }),
     setMeasurement:   (key, value) =>
         set((s) => ({ measurements: { ...s.measurements, [key]: value } })),
-    nextStep: () => set((s) => ({ step: Math.min(5, s.step + 1) as any })),
+    setPreference:    (key, value) =>
+        set((s) => ({ preferences: { ...s.preferences, [key]: value } })),
+    nextStep: () => set((s) => ({ step: Math.min(4, s.step + 1) as any })),
     prevStep: () => set((s) => ({ step: Math.max(1, s.step - 1) as any })),
     goToStep: (s) => set({ step: s }),
-    reset:    () => set({ profileName: '', garmentTypes: [], setAsDefault: false, measurements: { ...EMPTY }, step: 1 }),
+    reset:    () => set({ profileName: '', garmentTypes: [], setAsDefault: false, measurements: { ...EMPTY_MEASUREMENTS }, preferences: { ...EMPTY_PREFERENCES }, step: 1 }),
     loadProfile: (profile: any) => {
         set({
             profileName: profile.profileName || '',
             garmentTypes: profile.garmentTypes || [],
             setAsDefault: profile.isDefault || false,
-            measurements: { ...EMPTY, ...(profile.measurements || {}) },
+            measurements: { ...EMPTY_MEASUREMENTS, ...(profile.measurements || {}) },
+            preferences:  { ...EMPTY_PREFERENCES, ...(profile.preferences || {}) },
             step: 1
         });
     },
 
-    needsInseam:      () => get().garmentTypes.includes('pant'),
-    needsThobeLength: () => get().garmentTypes.some((g) => g === 'thobe' || g === 'kandoora'),
+    needsInseam:      () => false, // kept for signature compatibility but unused in 9-point system
+    needsThobeLength: () => false, // unused
 
     canProceedStep1: () => {
         const { profileName, garmentTypes } = get();
         return profileName.trim().length >= 2 && garmentTypes.length > 0;
     },
     canProceedStep2: () => {
-        const { chest, waist } = get().measurements;
-        return chest !== '' && waist !== '';
+        const m = get().measurements;
+        return Object.values(m).every((val) => val !== '');
     },
     canProceedStep3: () => {
-        const { shoulder, sleeveLength, neck } = get().measurements;
-        return shoulder !== '' && sleeveLength !== '' && neck !== '';
+        const p = get().preferences;
+        return p.neckType !== '' && p.fitPreference !== '' && p.cuffType !== '';
     },
-    canProceedStep4: () => {
-        const { shirtLength, inseam, thobeLength } = get().measurements;
-        const { needsInseam, needsThobeLength } = get();
-        const inseamOk = needsInseam()    ? inseam !== ''      : true;
-        const thobeOk  = needsThobeLength()? thobeLength !== '' : true;
-        return shirtLength !== '' && inseamOk && thobeOk;
-    },
+    canProceedStep4: () => true,
 
     buildPayload: () => {
-        const { profileName, garmentTypes, setAsDefault, measurements } = get();
+        const { profileName, garmentTypes, setAsDefault, measurements, preferences } = get();
         if (!profileName || !garmentTypes.length) return null;
         const m = measurements;
+        const p = preferences;
 
         return {
             profileName: profileName.trim(),
             garmentTypes,
             isDefault: setAsDefault,
             measurements: {
-                neck:         m.neck         !== '' ? m.neck         : undefined,
-                chest:        m.chest        !== '' ? m.chest        : undefined,
-                waist:        m.waist        !== '' ? m.waist        : undefined,
-                hip:          m.hip          !== '' ? m.hip          : undefined,
+                length:       m.length       !== '' ? m.length       : undefined,
                 shoulder:     m.shoulder     !== '' ? m.shoulder     : undefined,
                 sleeveLength: m.sleeveLength !== '' ? m.sleeveLength : undefined,
-                shirtLength:  m.shirtLength  !== '' ? m.shirtLength  : undefined,
-                thobeLength:  m.thobeLength  !== '' ? m.thobeLength  : undefined,
-                inseam:       m.inseam       !== '' ? m.inseam       : undefined,
-                pantLength:   m.inseam       !== '' ? m.inseam       : undefined, // legacy support
+                loose1:       m.loose1       !== '' ? m.loose1       : undefined,
+                loose2:       m.loose2       !== '' ? m.loose2       : undefined,
+                chest:        m.chest        !== '' ? m.chest        : undefined,
+                waist:        m.waist        !== '' ? m.waist        : undefined,
+                bottom:       m.bottom       !== '' ? m.bottom       : undefined,
+                neck:         m.neck         !== '' ? m.neck         : undefined,
             },
+            preferences: {
+                neckType:      p.neckType      !== '' ? p.neckType      : undefined,
+                fitPreference: p.fitPreference !== '' ? p.fitPreference : undefined,
+                cuffType:      p.cuffType      !== '' ? p.cuffType      : undefined,
+                chestFinish:   p.chestFinish   !== '' ? p.chestFinish   : undefined,
+                waistFinish:   p.waistFinish   !== '' ? p.waistFinish   : undefined,
+            }
         };
     },
 }));
