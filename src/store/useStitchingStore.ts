@@ -50,10 +50,14 @@ interface StitchingState {
 // ============================================================================
 
 const STITCHING_PRICE_MAP: Record<GarmentType, number> = {
-    Kurta:    350,
-    Thobe:    450,
-    Shirt:    300,
-    Pant:     250,
+    'Saudi Kandora':   850,
+    'Emirati Kandora': 1000,
+    'Chinese Kandora': 600,
+    'Pleat Kandora':   600,
+    'Jubba':           350,
+    'Pleat Jubba':     400,
+    'Kurta':           350,
+    'Shirt':           350,
 };
 
 // ============================================================================

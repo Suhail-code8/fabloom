@@ -112,13 +112,26 @@ export default function StitchingPage() {
             style={{ backgroundColor: '#0f1035' }}
         >
             {/* Page title */}
-            <div className="px-4 pt-5 pb-2">
+            <div className="px-4 pt-5 pb-4">
                 <h1 className="text-2xl font-extrabold text-white leading-tight">
                     Custom Stitching
                 </h1>
-                <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                    Tailored to your exact measurements — step by step.
+                <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                    Bespoke tailoring for Saudi, Emirati, Chinese styles & more.
                 </p>
+            </div>
+
+            {/* Premium Info Box */}
+            <div className="mx-4 mb-6 p-4 rounded-2xl bg-white/5 border border-[#D4A853]/20 flex items-start gap-3">
+                <span className="text-[#D4A853] text-lg mt-0.5">✨</span>
+                <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#D4A853] mb-1">
+                        Exclusive Added Service
+                    </h3>
+                    <p className="text-xs leading-relaxed text-white/70">
+                        Add custom stitching to any premium fabric purchase in your order. Our expert tailors will craft the perfect fit according to your measurements.
+                    </p>
+                </div>
             </div>
 
             {/* Stepper indicator */}

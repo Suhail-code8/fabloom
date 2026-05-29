@@ -13,19 +13,31 @@ export type {
 
 // ── Garment types for stitching ──────────────────────────────────────────────
 
-export type GarmentType = 'Kurta' | 'Thobe' | 'Shirt' | 'Pant';
+export type GarmentType =
+    | 'Saudi Kandora'
+    | 'Emirati Kandora'
+    | 'Chinese Kandora'
+    | 'Pleat Kandora'
+    | 'Jubba'
+    | 'Pleat Jubba'
+    | 'Kurta'
+    | 'Shirt';
 
 export type CollarType = 'Mandarin' | 'Band' | 'Regular' | 'Nehru';
 
 // Garments that allow collar selection
 export const COLLAR_GARMENTS: GarmentType[] = ['Kurta', 'Shirt'];
 
-// Base stitching price by garment type (₹)
+// Stitching price by garment type (₹) — Fabloom Kandoras rates
 export const STITCHING_PRICE: Record<GarmentType, number> = {
-    Kurta:    350,
-    Thobe:    450,
-    Shirt:    300,
-    Pant:     250,
+    'Saudi Kandora':   850,
+    'Emirati Kandora': 1000,
+    'Chinese Kandora': 600,
+    'Pleat Kandora':   600,
+    'Jubba':           350,
+    'Pleat Jubba':     400,
+    'Kurta':           350,
+    'Shirt':           350,
 };
 
 // ── Measurement profile (mirrors UserMeasurementProfile model) ───────────────

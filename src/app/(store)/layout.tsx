@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import TopCategoryBar from '@/components/layout/TopCategoryBar';
 import BottomNav from '@/components/layout/BottomNav';
+import Footer from '@/components/layout/Footer';
 
 // ============================================================================
 // STORE ROOT LAYOUT — Server Component
@@ -31,6 +32,7 @@ export default function StoreLayout({ children }: { children: ReactNode }) {
                 {/* pb-20 leaves room for the fixed BottomNav (80px) */}
                 <main className="flex-1 overflow-y-auto pb-20">
                     {children}
+                    <Footer />
                 </main>
 
                 {/* ── Fixed bottom navigation ── */}

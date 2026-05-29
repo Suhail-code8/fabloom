@@ -40,11 +40,11 @@ export default function TailoringCTA() {
 
                 {/* Text */}
                 <div className="relative z-10 mb-5">
-                    <h2 className="text-xl font-extrabold text-white leading-tight mb-1">
-                        Have your own fabric?
+                    <h2 className="text-xl font-extrabold text-white leading-tight mb-1.5">
+                        Add Expert Stitching to Your Order
                     </h2>
-                    <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
-                        Get it stitched to your exact measurements — by master tailors.
+                    <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
+                        Browse our premium fabric collection and add custom stitching — tailored to your exact measurements by our expert team.
                     </p>
                 </div>
 
@@ -67,11 +67,11 @@ export default function TailoringCTA() {
 
                 {/* CTA button */}
                 <Link
-                    href="/stitching"
+                    href="/fabrics"
                     className="relative z-10 inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 active:scale-95"
                     style={{ backgroundColor: '#D4A853', color: '#0f1035' }}
                 >
-                    Start Now
+                    Browse Fabrics
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12" />
                         <polyline points="12 5 19 12 12 19" />
