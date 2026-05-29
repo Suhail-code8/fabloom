@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         }
 
         const body = await req.json();
-        const { profileName, garmentTypes, measurements, isDefault = false } = body;
+        const { profileName, garmentTypes, measurements, preferences, isDefault = false } = body;
 
         // Basic validation
         if (!profileName || !garmentTypes || !Array.isArray(garmentTypes) || garmentTypes.length === 0 || !measurements) {
@@ -66,6 +66,7 @@ export async function POST(req: NextRequest) {
             profileName: profileName.trim(),
             garmentTypes: garmentTypes.map(g => g.toLowerCase()),
             measurements,
+            preferences,
             isDefault,
         });
 

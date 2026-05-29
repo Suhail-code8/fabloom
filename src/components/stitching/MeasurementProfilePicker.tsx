@@ -6,12 +6,12 @@ import { useStitchingStore } from '@/store/useStitchingStore';
 import type { IMeasurementProfile } from '@/types/cart';
 import MeasurementFormDrawer from './MeasurementFormDrawer';
 
-function MeasRow({ label, value }: { label: string; value?: number }) {
-    if (!value) return null;
+function MeasRow({ label, value }: { label: string; value?: number | string }) {
+    if (!value || value === 0) return null;
     return (
         <span className="flex items-center gap-1 text-[10px]" style={{ color: 'rgba(0,0,0,0.55)' }}>
             <span className="font-semibold text-gray-700">{label}</span>
-            {value}&quot;
+            <span className="capitalize">{typeof value === 'string' ? value.replace('_', ' ') : `${value}cm`}</span>
         </span>
     );
 }
@@ -64,17 +64,23 @@ function ProfileCard({
                 </div>
             </div>
             <div className="flex flex-wrap gap-x-3 gap-y-1 pt-3 border-t" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
-                <MeasRow label="Neck"      value={m.neck} />
-                <MeasRow label="Chest"     value={m.chest} />
-                <MeasRow label="Waist"     value={m.waist} />
-                <MeasRow label="Hip"       value={m.hip} />
+                <MeasRow label="Length"    value={m.length} />
                 <MeasRow label="Shoulder"  value={m.shoulder} />
                 <MeasRow label="Sleeve"    value={m.sleeveLength} />
-                <MeasRow label="Length"    value={m.shirtLength} />
-                <MeasRow label="Thobe L"   value={m.thobeLength} />
-                <MeasRow label="Inseam"    value={m.inseam} />
-                <MeasRow label="Pant L"    value={m.pantLength} />
+                <MeasRow label="Loose 1"   value={m.loose1} />
+                <MeasRow label="Loose 2"   value={m.loose2} />
+                <MeasRow label="Chest"     value={m.chest} />
+                <MeasRow label="Waist"     value={m.waist} />
+                <MeasRow label="Bottom"    value={m.bottom} />
+                <MeasRow label="Neck"      value={m.neck} />
             </div>
+            {profile.preferences && (
+                <div className="flex flex-wrap gap-x-3 gap-y-1 pt-2 mt-2 border-t" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
+                    <MeasRow label="Neck:" value={profile.preferences.neckType} />
+                    <MeasRow label="Fit:" value={profile.preferences.fitPreference} />
+                    <MeasRow label="Cuff:" value={profile.preferences.cuffType} />
+                </div>
+            )}
         </div>
     );
 }
@@ -122,23 +128,35 @@ export default function MeasurementProfilePicker({
                     <p className="text-sm text-white opacity-60">No profiles saved yet.</p>
                 </div>
             )}
-            <button
-                className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-sm font-bold transition-all duration-200 active:scale-98"
-                style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1.5px dashed rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.65)' }}
-                onClick={() => setIsDrawerOpen(true)}
-                aria-label="Add a new measurement profile"
+            <div className="flex items-center justify-between mt-2">
+                <button
+                    className="flex items-center justify-center gap-2 flex-1 py-4 rounded-2xl text-sm font-bold transition-all duration-200 active:scale-98"
+                    style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1.5px dashed rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.65)' }}
+                    onClick={() => setIsDrawerOpen(true)}
+                    aria-label="Add a new measurement profile"
+                >
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+                        <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" />
+                    </svg>
+                    Add New Profile
+                </button>
+            </div>
+            
+            <a 
+                href="/measure-guide" 
+                target="_blank" 
+                rel="noreferrer"
+                className="text-xs text-center font-bold uppercase tracking-wider text-[#D4A853] hover:underline mt-2"
             >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-                    <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" />
-                </svg>
-                Add New Profile
-            </button>
+                Need help measuring?
+            </a>
 
             <MeasurementFormDrawer 
                 open={isDrawerOpen} 
                 onClose={() => setIsDrawerOpen(false)}
-                onSuccess={() => {
+                onSuccess={(newProfile) => {
                     setIsDrawerOpen(false);
+                    handleSelect(newProfile);
                     router.refresh();
                 }}
             />

@@ -43,17 +43,23 @@ export const STITCHING_PRICE: Record<GarmentType, number> = {
 // ── Measurement profile (mirrors UserMeasurementProfile model) ───────────────
 
 export interface IMeasurements {
-    neck?: number;
-    chest?: number;
-    waist?: number;
-    hip?: number;
+    length?: number;
     shoulder?: number;
     sleeveLength?: number;
-    shirtLength?: number;
-    thobeLength?: number;
-    pantLength?: number;
-    pantWaist?: number;
-    inseam?: number;
+    loose1?: number;
+    loose2?: number;
+    chest?: number;
+    waist?: number;
+    bottom?: number;
+    neck?: number;
+}
+
+export interface IPreferences {
+    neckType?: 'cut_neck' | 'full_neck' | 'qathari' | '';
+    fitPreference?: 'slim' | 'medium' | 'loose' | '';
+    cuffType?: 'simple' | 'button' | 'french' | '';
+    chestFinish?: number | '';
+    waistFinish?: number | '';
 }
 
 export interface IMeasurementProfile {
@@ -61,6 +67,7 @@ export interface IMeasurementProfile {
     profileName: string;
     garmentTypes: string[];
     measurements: IMeasurements;
+    preferences?: IPreferences;
     isDefault: boolean;
 }
 

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMeasurementFormStore } from '@/store/useMeasurementFormStore';
-import { Step1Profile, Step2Body, Step3Upper, Step4Length, Step5Review } from '@/components/measurements/MeasurementSteps';
+import { Step1Profile, Step2Measurements, Step3Preferences, Step4Review } from '@/components/measurements/MeasurementSteps';
 import useSWR from 'swr';
 import { toast } from 'sonner';
 
@@ -98,19 +98,19 @@ function MeasurementFormContent() {
                         </svg>
                     </button>
                     <span className="text-xs font-bold uppercase tracking-widest text-[#D4A853]">
-                        Step {step} of 5
+                        Step {step} of 4
                     </span>
                     <div className="w-9" /> {/* spacer for centering */}
                 </div>
 
                 {/* Progress Dots */}
                 <div className="flex gap-2 justify-center">
-                    {[1, 2, 3, 4, 5].map((s) => (
+                    {[1, 2, 3, 4].map((s) => (
                         <div
                             key={s}
                             className="h-1.5 rounded-full transition-all duration-300"
                             style={{
-                                width: s === step ? '24px' : '6px',
+                                width: s === step ? '32px' : '8px',
                                 backgroundColor: s <= step ? '#D4A853' : 'rgba(255,255,255,0.1)',
                             }}
                         />
@@ -128,14 +128,13 @@ function MeasurementFormContent() {
             {/* Step Content */}
             <div className="flex-1 px-4 py-6 overflow-y-auto" style={{ paddingBottom: '120px' }}>
                 {step === 1 && <Step1Profile />}
-                {step === 2 && <Step2Body />}
-                {step === 3 && <Step3Upper />}
-                {step === 4 && <Step4Length />}
-                {step === 5 && <Step5Review onSubmit={handleSubmit} isSubmitting={isSubmitting} />}
+                {step === 2 && <Step2Measurements />}
+                {step === 3 && <Step3Preferences />}
+                {step === 4 && <Step4Review onSubmit={handleSubmit} isSubmitting={isSubmitting} />}
             </div>
 
             {/* Bottom Sticky Action Bar */}
-            {step < 5 && (
+            {step < 4 && (
                 <div
                     className="fixed bottom-0 left-0 right-0 p-4 border-t"
                     style={{

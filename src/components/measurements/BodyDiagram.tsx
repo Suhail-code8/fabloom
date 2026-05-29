@@ -2,19 +2,20 @@
 // Props: highlightedMeasurement controls which line pulses gold
 
 export type HighlightedMeasurement =
+    | 'length'
+    | 'shoulder'
+    | 'sleeveLength'
+    | 'loose1'
+    | 'loose2'
     | 'chest'
     | 'waist'
-    | 'hip'
-    | 'shoulder'
-    | 'sleeve'
+    | 'bottom'
     | 'neck'
-    | 'length'
-    | 'inseam'
-    | 'thobeLength'
     | null;
 
 interface BodyDiagramProps {
     highlighted: HighlightedMeasurement;
+    onSelectPoint?: (point: HighlightedMeasurement) => void;
 }
 
 // ============================================================================
@@ -35,7 +36,7 @@ function lineWidth(active: boolean) { return active ? 2.5 : 1.5; }
 function PulseDot({ cx, cy, active }: { cx: number; cy: number; active: boolean }) {
     if (!active) return null;
     return (
-        <g>
+        <g style={{ pointerEvents: 'none' }}>
             <circle cx={cx} cy={cy} r={4} fill={GOLD} opacity={0.9}>
                 <animate attributeName="r"    values="4;7;4"   dur="1.4s" repeatCount="indefinite" />
                 <animate attributeName="opacity" values="0.9;0.3;0.9" dur="1.4s" repeatCount="indefinite" />
@@ -49,126 +50,152 @@ function PulseDot({ cx, cy, active }: { cx: number; cy: number; active: boolean 
 // COMPONENT
 // ============================================================================
 
-export default function BodyDiagram({ highlighted }: BodyDiagramProps) {
+export default function BodyDiagram({ highlighted, onSelectPoint }: BodyDiagramProps) {
     const h = highlighted;
 
+    const isLength   = h === 'length';
+    const isShoulder = h === 'shoulder';
+    const isSleeve   = h === 'sleeveLength';
+    const isLoose1   = h === 'loose1';
+    const isLoose2   = h === 'loose2';
     const isChest    = h === 'chest';
     const isWaist    = h === 'waist';
-    const isHip      = h === 'hip';
-    const isShoulder = h === 'shoulder';
-    const isSleeve   = h === 'sleeve';
+    const isBottom   = h === 'bottom';
     const isNeck     = h === 'neck';
-    const isLength   = h === 'length' || h === 'thobeLength';
-    const isInseam   = h === 'inseam';
+
+    const handleClick = (point: HighlightedMeasurement) => {
+        if (onSelectPoint) onSelectPoint(point);
+    };
 
     return (
         <svg
-            viewBox="0 0 120 280"
-            width="120"
+            viewBox="0 0 140 280"
+            width="140"
             height="280"
-            aria-label="Body measurement diagram"
+            aria-label="Kandora measurement diagram"
             role="img"
             style={{ overflow: 'visible' }}
         >
             {/* ── HEAD ── */}
-            <ellipse cx="60" cy="22" rx="14" ry="17"
-                stroke={BODY} strokeWidth="1.8" fill="none" />
+            <ellipse cx="70" cy="22" rx="14" ry="17" stroke={BODY} strokeWidth="1.8" fill="none" />
 
             {/* ── NECK ── */}
-            <line x1="53" y1="38" x2="53" y2="50" stroke={BODY} strokeWidth="1.5" />
-            <line x1="67" y1="38" x2="67" y2="50" stroke={BODY} strokeWidth="1.5" />
+            <line x1="63" y1="38" x2="63" y2="50" stroke={BODY} strokeWidth="1.5" />
+            <line x1="77" y1="38" x2="77" y2="50" stroke={BODY} strokeWidth="1.5" />
 
-            {/* Neck measurement arc */}
-            <path d="M 48 44 Q 60 36 72 44"
-                stroke={lineColor(isNeck)} strokeWidth={lineWidth(isNeck)}
-                fill="none" strokeDasharray={isNeck ? 'none' : '3 2'} strokeLinecap="round" />
-            <PulseDot cx={48} cy={44} active={isNeck} />
-            <PulseDot cx={72} cy={44} active={isNeck} />
+            {/* 9. NECK measurement */}
+            <g onClick={() => handleClick('neck')} style={{ cursor: 'pointer' }}>
+                <path d="M 58 44 Q 70 36 82 44"
+                    stroke={lineColor(isNeck)} strokeWidth={lineWidth(isNeck)}
+                    fill="none" strokeDasharray={isNeck ? 'none' : '3 2'} strokeLinecap="round" />
+                <PulseDot cx={58} cy={44} active={isNeck} />
+                <PulseDot cx={82} cy={44} active={isNeck} />
+                {/* Hitbox */}
+                <rect x="53" y="34" width="34" height="15" fill="transparent" />
+            </g>
 
-            {/* ── TORSO OUTLINE ── */}
+            {/* ── KANDORA OUTLINE ── */}
             {/* Shoulders */}
-            <line x1="53" y1="50" x2="20" y2="58" stroke={BODY} strokeWidth="1.8" />
-            <line x1="67" y1="50" x2="100" y2="58" stroke={BODY} strokeWidth="1.8" />
-
-            {/* Torso sides */}
-            <path d="M 20 58 C 16 80 18 100 22 130" stroke={BODY} strokeWidth="1.8" fill="none" />
-            <path d="M 100 58 C 104 80 102 100 98 130" stroke={BODY} strokeWidth="1.8" fill="none" />
-
-            {/* Hips */}
-            <path d="M 22 130 Q 30 140 35 155" stroke={BODY} strokeWidth="1.8" fill="none" />
-            <path d="M 98 130 Q 90 140 85 155" stroke={BODY} strokeWidth="1.8" fill="none" />
-
-            {/* Crotch */}
-            <path d="M 35 155 Q 60 160 85 155" stroke={BODY} strokeWidth="1.8" fill="none" />
-
-            {/* ── SHOULDER measurement ── */}
-            <line x1="20" y1="55" x2="100" y2="55"
-                stroke={lineColor(isShoulder)} strokeWidth={lineWidth(isShoulder)}
-                strokeDasharray={isShoulder ? 'none' : '4 2'} strokeLinecap="round" />
-            <PulseDot cx={20} cy={55} active={isShoulder} />
-            <PulseDot cx={100} cy={55} active={isShoulder} />
-
-            {/* ── CHEST measurement ── */}
-            <line x1="21" y1="73" x2="99" y2="73"
-                stroke={lineColor(isChest)} strokeWidth={lineWidth(isChest)}
-                strokeDasharray={isChest ? 'none' : '4 2'} strokeLinecap="round" />
-            <PulseDot cx={21} cy={73} active={isChest} />
-            <PulseDot cx={99} cy={73} active={isChest} />
-
-            {/* ── WAIST measurement ── */}
-            <line x1="20" y1="100" x2="100" y2="100"
-                stroke={lineColor(isWaist)} strokeWidth={lineWidth(isWaist)}
-                strokeDasharray={isWaist ? 'none' : '4 2'} strokeLinecap="round" />
-            <PulseDot cx={20} cy={100} active={isWaist} />
-            <PulseDot cx={100} cy={100} active={isWaist} />
-
-            {/* ── HIP measurement ── */}
-            <line x1="22" y1="122" x2="98" y2="122"
-                stroke={lineColor(isHip)} strokeWidth={lineWidth(isHip)}
-                strokeDasharray={isHip ? 'none' : '4 2'} strokeLinecap="round" />
-            <PulseDot cx={22} cy={122} active={isHip} />
-            <PulseDot cx={98} cy={122} active={isHip} />
+            <path d="M 63 50 L 30 58 M 77 50 L 110 58" stroke={BODY} strokeWidth="1.8" />
+            
+            {/* Body flowing down to ankles */}
+            <path d="M 30 58 C 25 80 25 150 20 255" stroke={BODY} strokeWidth="1.8" fill="none" />
+            <path d="M 110 58 C 115 80 115 150 120 255" stroke={BODY} strokeWidth="1.8" fill="none" />
+            
+            {/* Bottom Hem */}
+            <path d="M 20 255 Q 70 260 120 255" stroke={BODY} strokeWidth="1.8" fill="none" />
 
             {/* ── ARMS ── */}
             {/* Left arm */}
-            <path d="M 20 58 L 8 100 L 10 130" stroke={BODY} strokeWidth="1.5" fill="none" />
+            <path d="M 30 58 L 15 110 L 12 140 L 22 140 L 25 110" stroke={BODY} strokeWidth="1.5" fill="none" />
             {/* Right arm */}
-            <path d="M 100 58 L 112 100 L 110 130" stroke={BODY} strokeWidth="1.5" fill="none" />
+            <path d="M 110 58 L 125 110 L 128 140 L 118 140 L 115 110" stroke={BODY} strokeWidth="1.5" fill="none" />
 
-            {/* ── SLEEVE measurement ── */}
-            <line x1="20" y1="58" x2="10" y2="130"
-                stroke={lineColor(isSleeve)} strokeWidth={lineWidth(isSleeve)}
-                strokeDasharray={isSleeve ? 'none' : '3 2'} strokeLinecap="round" />
-            <PulseDot cx={20} cy={58} active={isSleeve} />
-            <PulseDot cx={10} cy={130} active={isSleeve} />
+            {/* 2. SHOULDER measurement */}
+            <g onClick={() => handleClick('shoulder')} style={{ cursor: 'pointer' }}>
+                <line x1="30" y1="55" x2="110" y2="55"
+                    stroke={lineColor(isShoulder)} strokeWidth={lineWidth(isShoulder)}
+                    strokeDasharray={isShoulder ? 'none' : '4 2'} strokeLinecap="round" />
+                <PulseDot cx={30} cy={55} active={isShoulder} />
+                <PulseDot cx={110} cy={55} active={isShoulder} />
+                <rect x="25" y="45" width="90" height="20" fill="transparent" />
+            </g>
 
-            {/* ── LEGS ── */}
-            {/* Left leg */}
-            <line x1="35" y1="155" x2="32" y2="255" stroke={BODY} strokeWidth="1.8" />
-            <line x1="32" y1="255" x2="38" y2="255" stroke={BODY} strokeWidth="1.5" />
-            {/* Right leg */}
-            <line x1="85" y1="155" x2="88" y2="255" stroke={BODY} strokeWidth="1.8" />
-            <line x1="88" y1="255" x2="82" y2="255" stroke={BODY} strokeWidth="1.5" />
+            {/* 6. CHEST measurement */}
+            <g onClick={() => handleClick('chest')} style={{ cursor: 'pointer' }}>
+                <line x1="28" y1="75" x2="112" y2="75"
+                    stroke={lineColor(isChest)} strokeWidth={lineWidth(isChest)}
+                    strokeDasharray={isChest ? 'none' : '4 2'} strokeLinecap="round" />
+                <PulseDot cx={28} cy={75} active={isChest} />
+                <PulseDot cx={112} cy={75} active={isChest} />
+                <rect x="20" y="65" width="100" height="20" fill="transparent" />
+            </g>
 
-            {/* ── SHIRT/KURTA LENGTH ── (vertical line on right) */}
-            <line x1="108" y1="50" x2="108" y2="155"
-                stroke={lineColor(isLength)} strokeWidth={lineWidth(isLength)}
-                strokeDasharray={isLength ? 'none' : '3 2'} strokeLinecap="round" />
-            {isLength && (
-                <>
-                    <line x1="103" y1="50"  x2="113" y2="50"  stroke={GOLD} strokeWidth="1.5" />
-                    <line x1="103" y1="155" x2="113" y2="155" stroke={GOLD} strokeWidth="1.5" />
-                </>
-            )}
-            <PulseDot cx={108} cy={50}  active={isLength} />
-            <PulseDot cx={108} cy={155} active={isLength} />
+            {/* 7. WAIST measurement */}
+            <g onClick={() => handleClick('waist')} style={{ cursor: 'pointer' }}>
+                <line x1="27" y1="105" x2="113" y2="105"
+                    stroke={lineColor(isWaist)} strokeWidth={lineWidth(isWaist)}
+                    strokeDasharray={isWaist ? 'none' : '4 2'} strokeLinecap="round" />
+                <PulseDot cx={27} cy={105} active={isWaist} />
+                <PulseDot cx={113} cy={105} active={isWaist} />
+                <rect x="20" y="95" width="100" height="20" fill="transparent" />
+            </g>
 
-            {/* ── INSEAM ── (inside right leg) */}
-            <line x1="85" y1="155" x2="88" y2="255"
-                stroke={lineColor(isInseam)} strokeWidth={lineWidth(isInseam)}
-                strokeDasharray={isInseam ? 'none' : '3 2'} strokeLinecap="round" />
-            <PulseDot cx={85} cy={155} active={isInseam} />
-            <PulseDot cx={88} cy={255} active={isInseam} />
+            {/* 8. BOTTOM measurement (across hem) */}
+            <g onClick={() => handleClick('bottom')} style={{ cursor: 'pointer' }}>
+                <line x1="20" y1="250" x2="120" y2="250"
+                    stroke={lineColor(isBottom)} strokeWidth={lineWidth(isBottom)}
+                    strokeDasharray={isBottom ? 'none' : '4 2'} strokeLinecap="round" />
+                <PulseDot cx={20} cy={250} active={isBottom} />
+                <PulseDot cx={120} cy={250} active={isBottom} />
+                <rect x="15" y="240" width="110" height="20" fill="transparent" />
+            </g>
+
+            {/* 1. LENGTH measurement (full length neck to bottom) */}
+            <g onClick={() => handleClick('length')} style={{ cursor: 'pointer' }}>
+                <line x1="12" y1="44" x2="12" y2="255"
+                    stroke={lineColor(isLength)} strokeWidth={lineWidth(isLength)}
+                    strokeDasharray={isLength ? 'none' : '3 2'} strokeLinecap="round" />
+                {isLength && (
+                    <>
+                        <line x1="8" y1="44"  x2="16" y2="44"  stroke={GOLD} strokeWidth="1.5" />
+                        <line x1="8" y1="255" x2="16" y2="255" stroke={GOLD} strokeWidth="1.5" />
+                    </>
+                )}
+                <PulseDot cx={12} cy={44}  active={isLength} />
+                <PulseDot cx={12} cy={255} active={isLength} />
+                <rect x="0" y="40" width="24" height="220" fill="transparent" />
+            </g>
+
+            {/* 3. SLEEVE LENGTH (arrow along right sleeve) */}
+            <g onClick={() => handleClick('sleeveLength')} style={{ cursor: 'pointer' }}>
+                <line x1="110" y1="58" x2="128" y2="140"
+                    stroke={lineColor(isSleeve)} strokeWidth={lineWidth(isSleeve)}
+                    strokeDasharray={isSleeve ? 'none' : '3 2'} strokeLinecap="round" />
+                <PulseDot cx={110} cy={58} active={isSleeve} />
+                <PulseDot cx={128} cy={140} active={isSleeve} />
+                <polygon points="105,58 135,140 120,145 100,65" fill="transparent" />
+            </g>
+
+            {/* 4. LOOSE 1 (Upper Arm, circle on left sleeve) */}
+            <g onClick={() => handleClick('loose1')} style={{ cursor: 'pointer' }}>
+                <ellipse cx="23" cy="85" rx="9" ry="4" transform="rotate(-15 23 85)"
+                    stroke={lineColor(isLoose1)} strokeWidth={lineWidth(isLoose1)}
+                    fill="none" strokeDasharray={isLoose1 ? 'none' : '2 2'} />
+                <PulseDot cx={14} cy={82} active={isLoose1} />
+                <PulseDot cx={31} cy={87} active={isLoose1} />
+                <circle cx="23" cy="85" r="15" fill="transparent" />
+            </g>
+
+            {/* 5. LOOSE 2 (Wrist/Cuff, circle on left sleeve) */}
+            <g onClick={() => handleClick('loose2')} style={{ cursor: 'pointer' }}>
+                <ellipse cx="17" cy="130" rx="6" ry="3" transform="rotate(-10 17 130)"
+                    stroke={lineColor(isLoose2)} strokeWidth={lineWidth(isLoose2)}
+                    fill="none" strokeDasharray={isLoose2 ? 'none' : '2 2'} />
+                <PulseDot cx={11} cy={129} active={isLoose2} />
+                <PulseDot cx={23} cy={131} active={isLoose2} />
+                <circle cx="17" cy="130" r="15" fill="transparent" />
+            </g>
         </svg>
     );
 }

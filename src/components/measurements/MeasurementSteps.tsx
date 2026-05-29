@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useMeasurementFormStore } from '@/store/useMeasurementFormStore';
-import type { GarmentTypeOption, MeasurementValues } from '@/store/useMeasurementFormStore';
+import type { GarmentTypeOption, MeasurementValues, PreferenceValues } from '@/store/useMeasurementFormStore';
 import BodyDiagram from './BodyDiagram';
 import type { HighlightedMeasurement } from './BodyDiagram';
 
@@ -14,11 +14,14 @@ export function Step1Profile() {
     const { profileName, setProfileName, garmentTypes, toggleGarment, setAsDefault, setAsDefaultToggle } = useMeasurementFormStore();
 
     const GARMENTS: { id: GarmentTypeOption; label: string }[] = [
-        { id: 'kurta',    label: 'Kurta' },
-        { id: 'thobe',    label: 'Thobe' },
-        { id: 'kandoora', label: 'Kandoora' },
-        { id: 'shirt',    label: 'Shirt' },
-        { id: 'pant',     label: 'Pant' },
+        { id: 'saudi_kandora',   label: 'Saudi Kandora' },
+        { id: 'emirati_kandora', label: 'Emirati Kandora' },
+        { id: 'chinese_kandora', label: 'Chinese Kandora' },
+        { id: 'pleat_kandora',   label: 'Pleat Kandora' },
+        { id: 'jubba',           label: 'Jubba' },
+        { id: 'pleat_jubba',     label: 'Pleat Jubba' },
+        { id: 'kurta',           label: 'Kurta' },
+        { id: 'shirt',           label: 'Shirt' },
     ];
 
     return (
@@ -38,7 +41,7 @@ export function Step1Profile() {
                     type="text"
                     value={profileName}
                     onChange={(e) => setProfileName(e.target.value)}
-                    placeholder="e.g. My Kurta, Father's Thobe"
+                    placeholder="e.g. My Kandora, Father's Thobe"
                     className="w-full px-4 py-4 rounded-2xl text-sm font-bold transition-all duration-200 outline-none"
                     style={{
                         backgroundColor: 'rgba(255,255,255,0.05)',
@@ -113,7 +116,8 @@ interface MeasureInputProps {
 function MeasureInput({ id, label, instruction, range, value, onChange, onFocus, isActive }: MeasureInputProps) {
     return (
         <div
-            className="p-4 rounded-2xl transition-all duration-300"
+            id={`measure-${id}`}
+            className="p-4 rounded-2xl transition-all duration-300 scroll-m-24"
             style={{
                 backgroundColor: isActive ? 'rgba(212,168,83,0.08)' : 'rgba(255,255,255,0.03)',
                 border: isActive ? '1.5px solid #D4A853' : '1.5px solid rgba(255,255,255,0.08)',
@@ -147,7 +151,7 @@ function MeasureInput({ id, label, instruction, range, value, onChange, onFocus,
                         className="w-full bg-transparent text-right text-lg font-bold text-white outline-none placeholder-gray-600"
                         placeholder="0.0"
                     />
-                    <span className="text-xs font-bold" style={{ color: '#D4A853' }}>in</span>
+                    <span className="text-xs font-bold" style={{ color: '#D4A853' }}>cm</span>
                 </div>
             </div>
         </div>
@@ -155,73 +159,41 @@ function MeasureInput({ id, label, instruction, range, value, onChange, onFocus,
 }
 
 // ============================================================================
-// STEP 2: BODY (Chest, Waist, Hip)
+// STEP 2: BODY MEASUREMENTS
 // ============================================================================
 
-export function Step2Body() {
+export function Step2Measurements() {
     const { measurements, setMeasurement } = useMeasurementFormStore();
-    const [active, setActive] = useState<HighlightedMeasurement>('chest');
+    const [active, setActive] = useState<HighlightedMeasurement>('length');
+
+    const handleSelectPoint = (point: HighlightedMeasurement) => {
+        setActive(point);
+        if (point) {
+            document.getElementById(`measure-${point}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    };
 
     return (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex justify-center mb-2">
-                <BodyDiagram highlighted={active} />
+            <div className="flex justify-center mb-2 sticky top-0 z-10 py-4 bg-[#0f1035]/90 backdrop-blur-sm">
+                <BodyDiagram highlighted={active} onSelectPoint={handleSelectPoint} />
             </div>
             <div className="flex flex-col gap-3">
                 <MeasureInput
-                    id="chest"
-                    label="Chest Circumference"
-                    instruction="Measure around the fullest part of your chest, keeping tape horizontal."
-                    range="34-48 in"
-                    value={measurements.chest}
-                    onChange={(v) => setMeasurement('chest', v)}
-                    onFocus={() => setActive('chest')}
-                    isActive={active === 'chest'}
+                    id="length"
+                    label="1. Length"
+                    instruction="Full garment length from neck base to bottom hem."
+                    range="120-160 cm"
+                    value={measurements.length}
+                    onChange={(v) => setMeasurement('length', v)}
+                    onFocus={() => setActive('length')}
+                    isActive={active === 'length'}
                 />
-                <MeasureInput
-                    id="waist"
-                    label="Waist Circumference"
-                    instruction="Measure around your natural waistline, where your trousers sit."
-                    range="28-44 in"
-                    value={measurements.waist}
-                    onChange={(v) => setMeasurement('waist', v)}
-                    onFocus={() => setActive('waist')}
-                    isActive={active === 'waist'}
-                />
-                <MeasureInput
-                    id="hip"
-                    label="Hip Circumference"
-                    instruction="Measure around the fullest part of your hips."
-                    range="36-50 in"
-                    value={measurements.hip}
-                    onChange={(v) => setMeasurement('hip', v)}
-                    onFocus={() => setActive('hip')}
-                    isActive={active === 'hip'}
-                />
-            </div>
-        </div>
-    );
-}
-
-// ============================================================================
-// STEP 3: UPPER (Shoulder, Sleeve, Neck)
-// ============================================================================
-
-export function Step3Upper() {
-    const { measurements, setMeasurement } = useMeasurementFormStore();
-    const [active, setActive] = useState<HighlightedMeasurement>('shoulder');
-
-    return (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex justify-center mb-2">
-                <BodyDiagram highlighted={active} />
-            </div>
-            <div className="flex flex-col gap-3">
                 <MeasureInput
                     id="shoulder"
-                    label="Shoulder Width"
-                    instruction="Measure across the back from the edge of one shoulder tip to the other."
-                    range="16-22 in"
+                    label="2. Shoulder"
+                    instruction="Measure across the back from one shoulder edge to the other."
+                    range="40-55 cm"
                     value={measurements.shoulder}
                     onChange={(v) => setMeasurement('shoulder', v)}
                     onFocus={() => setActive('shoulder')}
@@ -229,19 +201,69 @@ export function Step3Upper() {
                 />
                 <MeasureInput
                     id="sleeveLength"
-                    label="Sleeve Length"
+                    label="3. Sleeve Length"
                     instruction="Measure from the shoulder seam down to the wrist bone."
-                    range="22-28 in"
+                    range="58-72 cm"
                     value={measurements.sleeveLength}
                     onChange={(v) => setMeasurement('sleeveLength', v)}
-                    onFocus={() => setActive('sleeve')}
-                    isActive={active === 'sleeve'}
+                    onFocus={() => setActive('sleeveLength')}
+                    isActive={active === 'sleeveLength'}
+                />
+                <MeasureInput
+                    id="loose1"
+                    label="4. Loose 1 (Upper Arm)"
+                    instruction="Measure around the fullest part of your upper arm."
+                    range="30-45 cm"
+                    value={measurements.loose1}
+                    onChange={(v) => setMeasurement('loose1', v)}
+                    onFocus={() => setActive('loose1')}
+                    isActive={active === 'loose1'}
+                />
+                <MeasureInput
+                    id="loose2"
+                    label="5. Loose 2 (Wrist/Lower Arm)"
+                    instruction="Measure around your forearm just above the wrist bone."
+                    range="24-36 cm"
+                    value={measurements.loose2}
+                    onChange={(v) => setMeasurement('loose2', v)}
+                    onFocus={() => setActive('loose2')}
+                    isActive={active === 'loose2'}
+                />
+                <MeasureInput
+                    id="chest"
+                    label="6. Chest"
+                    instruction="Measure around the fullest part of your chest."
+                    range="85-130 cm"
+                    value={measurements.chest}
+                    onChange={(v) => setMeasurement('chest', v)}
+                    onFocus={() => setActive('chest')}
+                    isActive={active === 'chest'}
+                />
+                <MeasureInput
+                    id="waist"
+                    label="7. Waist"
+                    instruction="Measure around your natural waistline."
+                    range="70-120 cm"
+                    value={measurements.waist}
+                    onChange={(v) => setMeasurement('waist', v)}
+                    onFocus={() => setActive('waist')}
+                    isActive={active === 'waist'}
+                />
+                <MeasureInput
+                    id="bottom"
+                    label="8. Bottom Width"
+                    instruction="Measure the desired width across the bottom hem of your garment — how wide you want the opening at the bottom."
+                    range="60-90 cm"
+                    value={measurements.bottom}
+                    onChange={(v) => setMeasurement('bottom', v)}
+                    onFocus={() => setActive('bottom')}
+                    isActive={active === 'bottom'}
                 />
                 <MeasureInput
                     id="neck"
-                    label="Neck Circumference"
-                    instruction="Measure around the base of your neck, leaving room for two fingers."
-                    range="14-18 in"
+                    label="9. Neck"
+                    instruction="Measure around the base of your neck, leaving room for a finger."
+                    range="36-48 cm"
                     value={measurements.neck}
                     onChange={(v) => setMeasurement('neck', v)}
                     onFocus={() => setActive('neck')}
@@ -253,55 +275,113 @@ export function Step3Upper() {
 }
 
 // ============================================================================
-// STEP 4: LENGTHS
+// STEP 3: STYLE PREFERENCES
 // ============================================================================
 
-export function Step4Length() {
-    const { measurements, setMeasurement, needsInseam, needsThobeLength } = useMeasurementFormStore();
-    const [active, setActive] = useState<HighlightedMeasurement>('length');
+export function Step3Preferences() {
+    const { preferences, setPreference } = useMeasurementFormStore();
+    const [showFinishing, setShowFinishing] = useState(false);
 
-    const showInseam = needsInseam();
-    const showThobe = needsThobeLength();
+    const PreferenceCard = ({ title, options, stateKey }: { title: string, options: {id: string, label: string}[], stateKey: keyof PreferenceValues }) => (
+        <div className="mb-6">
+            <h3 className="text-sm font-bold text-white mb-3 uppercase tracking-widest">{title}</h3>
+            <div className="grid grid-cols-3 gap-3">
+                {options.map((opt) => {
+                    const active = preferences[stateKey] === opt.id;
+                    return (
+                        <button
+                            key={opt.id}
+                            onClick={() => setPreference(stateKey, opt.id)}
+                            className="p-3 rounded-xl text-xs font-bold transition-all duration-200 text-center flex flex-col items-center justify-center h-16"
+                            style={{
+                                backgroundColor: active ? '#D4A853' : 'rgba(255,255,255,0.03)',
+                                color: active ? '#0f1035' : 'rgba(255,255,255,0.7)',
+                                border: active ? '1.5px solid #D4A853' : '1.5px solid rgba(255,255,255,0.08)',
+                            }}
+                        >
+                            {opt.label}
+                        </button>
+                    );
+                })}
+            </div>
+        </div>
+    );
 
     return (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex justify-center mb-2">
-                <BodyDiagram highlighted={active} />
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-right-4 duration-500 pb-10">
+            <div>
+                <h2 className="text-xl font-extrabold text-white mb-1">Style Preferences</h2>
+                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                    Select your preferred style and fit options.
+                </p>
             </div>
-            <div className="flex flex-col gap-3">
-                <MeasureInput
-                    id="shirtLength"
-                    label="Shirt / Kurta Length"
-                    instruction="Measure from the base of the back neck down to desired length."
-                    range="38-46 in"
-                    value={measurements.shirtLength}
-                    onChange={(v) => setMeasurement('shirtLength', v)}
-                    onFocus={() => setActive('length')}
-                    isActive={active === 'length'}
-                />
-                {showInseam && (
-                    <MeasureInput
-                        id="inseam"
-                        label="Pant Inseam"
-                        instruction="Measure from the crotch seam to the bottom of the leg."
-                        range="28-36 in"
-                        value={measurements.inseam}
-                        onChange={(v) => setMeasurement('inseam', v)}
-                        onFocus={() => setActive('inseam')}
-                        isActive={active === 'inseam'}
-                    />
-                )}
-                {showThobe && (
-                    <MeasureInput
-                        id="thobeLength"
-                        label="Thobe / Kandoora Length"
-                        instruction="Measure from the shoulder down to the ankles."
-                        range="54-62 in"
-                        value={measurements.thobeLength}
-                        onChange={(v) => setMeasurement('thobeLength', v)}
-                        onFocus={() => setActive('thobeLength')}
-                        isActive={active === 'thobeLength'}
-                    />
+
+            <PreferenceCard 
+                title="Neck Type"
+                stateKey="neckType"
+                options={[
+                    { id: 'cut_neck', label: 'Cut Neck' },
+                    { id: 'full_neck', label: 'Full Neck' },
+                    { id: 'qathari', label: 'Qathari' }
+                ]}
+            />
+
+            <PreferenceCard 
+                title="Fit Preference"
+                stateKey="fitPreference"
+                options={[
+                    { id: 'slim', label: 'Slim Fit' },
+                    { id: 'medium', label: 'Medium Fit' },
+                    { id: 'loose', label: 'Loose Fit' }
+                ]}
+            />
+
+            <PreferenceCard 
+                title="Cuff Type"
+                stateKey="cuffType"
+                options={[
+                    { id: 'simple', label: 'Simple' },
+                    { id: 'button', label: 'Button' },
+                    { id: 'french', label: 'French Cuff' }
+                ]}
+            />
+
+            <div className="mt-4 border border-white/10 rounded-2xl overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.02)' }}>
+                <button 
+                    onClick={() => setShowFinishing(!showFinishing)}
+                    className="w-full p-4 flex items-center justify-between text-sm font-bold text-white transition-colors hover:bg-white/5"
+                >
+                    Customise fit further (optional)
+                    <svg className={`w-4 h-4 transition-transform duration-300 ${showFinishing ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                
+                {showFinishing && (
+                    <div className="p-4 border-t border-white/10 flex flex-col gap-4 animate-in slide-in-from-top-2">
+                        <p className="text-xs text-white/50 mb-2">Leave blank to let our tailor decide based on your fit preference.</p>
+                        
+                        <div className="flex items-center justify-between gap-4">
+                            <label className="text-sm text-white/80">Chest finish (cm)</label>
+                            <input
+                                type="number"
+                                placeholder="Auto"
+                                value={preferences.chestFinish}
+                                onChange={(e) => setPreference('chestFinish', e.target.value === '' ? '' : parseFloat(e.target.value))}
+                                className="w-24 bg-white/5 border border-white/10 rounded-lg p-2 text-right text-white font-bold outline-none focus:border-[#D4A853]"
+                            />
+                        </div>
+                        <div className="flex items-center justify-between gap-4">
+                            <label className="text-sm text-white/80">Waist finish (cm)</label>
+                            <input
+                                type="number"
+                                placeholder="Auto"
+                                value={preferences.waistFinish}
+                                onChange={(e) => setPreference('waistFinish', e.target.value === '' ? '' : parseFloat(e.target.value))}
+                                className="w-24 bg-white/5 border border-white/10 rounded-lg p-2 text-right text-white font-bold outline-none focus:border-[#D4A853]"
+                            />
+                        </div>
+                    </div>
                 )}
             </div>
         </div>
@@ -309,19 +389,19 @@ export function Step4Length() {
 }
 
 // ============================================================================
-// STEP 5: REVIEW
+// STEP 4: REVIEW
 // ============================================================================
 
-export function Step5Review({ onSubmit, isSubmitting }: { onSubmit: () => void, isSubmitting: boolean }) {
-    const { profileName, garmentTypes, setAsDefault, measurements, goToStep, needsInseam, needsThobeLength } = useMeasurementFormStore();
+export function Step4Review({ onSubmit, isSubmitting }: { onSubmit: () => void, isSubmitting: boolean }) {
+    const { profileName, garmentTypes, setAsDefault, measurements, preferences, goToStep } = useMeasurementFormStore();
 
-    const renderRow = (label: string, value: number | '', step: 1|2|3|4|5) => {
+    const renderRow = (label: string, value: number | string | '', step: 1|2|3|4) => {
         if (value === '') return null;
         return (
             <div className="flex items-center justify-between py-2.5 border-b border-white/5 last:border-0">
                 <span className="text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>{label}</span>
                 <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-white">{value}</span>
+                    <span className="text-sm font-bold text-white capitalize">{value.toString().replace('_', ' ')}</span>
                     <button onClick={() => goToStep(step)} className="text-[10px] font-bold text-[#D4A853] uppercase tracking-wider px-2 py-1 bg-[#D4A853]/10 rounded-md">Edit</button>
                 </div>
             </div>
@@ -333,7 +413,7 @@ export function Step5Review({ onSubmit, isSubmitting }: { onSubmit: () => void, 
             <div>
                 <h2 className="text-xl font-extrabold text-white mb-1">Review & Save</h2>
                 <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                    Double-check your measurements before saving.
+                    Double-check your measurements and preferences before saving.
                 </p>
             </div>
 
@@ -345,7 +425,7 @@ export function Step5Review({ onSubmit, isSubmitting }: { onSubmit: () => void, 
                 </div>
                 <div className="flex flex-wrap gap-1 mb-2">
                     {garmentTypes.map(g => (
-                        <span key={g} className="text-[9px] uppercase tracking-widest px-2 py-0.5 rounded bg-white/10 text-white/70">{g}</span>
+                        <span key={g} className="text-[9px] uppercase tracking-widest px-2 py-0.5 rounded bg-white/10 text-white/70">{g.replace('_', ' ')}</span>
                     ))}
                 </div>
                 {setAsDefault && <p className="text-[10px] text-[#D4A853]">✓ Set as default for these garments</p>}
@@ -353,15 +433,26 @@ export function Step5Review({ onSubmit, isSubmitting }: { onSubmit: () => void, 
 
             {/* Measurements Summary */}
             <div className="p-4 rounded-2xl" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
-                {renderRow('Chest', measurements.chest, 2)}
-                {renderRow('Waist', measurements.waist, 2)}
-                {renderRow('Hip', measurements.hip, 2)}
-                {renderRow('Shoulder Width', measurements.shoulder, 3)}
-                {renderRow('Sleeve Length', measurements.sleeveLength, 3)}
-                {renderRow('Neck', measurements.neck, 3)}
-                {renderRow('Shirt/Kurta Length', measurements.shirtLength, 4)}
-                {needsInseam() && renderRow('Pant Inseam', measurements.inseam, 4)}
-                {needsThobeLength() && renderRow('Thobe Length', measurements.thobeLength, 4)}
+                <h4 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-2">Measurements (cm)</h4>
+                {renderRow('1. Length', measurements.length, 2)}
+                {renderRow('2. Shoulder', measurements.shoulder, 2)}
+                {renderRow('3. Sleeve Length', measurements.sleeveLength, 2)}
+                {renderRow('4. Loose 1', measurements.loose1, 2)}
+                {renderRow('5. Loose 2', measurements.loose2, 2)}
+                {renderRow('6. Chest', measurements.chest, 2)}
+                {renderRow('7. Waist', measurements.waist, 2)}
+                {renderRow('8. Bottom', measurements.bottom, 2)}
+                {renderRow('9. Neck', measurements.neck, 2)}
+            </div>
+
+            {/* Preferences Summary */}
+            <div className="p-4 rounded-2xl" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
+                <h4 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-2">Style Preferences</h4>
+                {renderRow('Neck Type', preferences.neckType, 3)}
+                {renderRow('Fit Preference', preferences.fitPreference, 3)}
+                {renderRow('Cuff Type', preferences.cuffType, 3)}
+                {preferences.chestFinish !== '' && renderRow('Chest Finish (cm)', preferences.chestFinish, 3)}
+                {preferences.waistFinish !== '' && renderRow('Waist Finish (cm)', preferences.waistFinish, 3)}
             </div>
 
             <button
