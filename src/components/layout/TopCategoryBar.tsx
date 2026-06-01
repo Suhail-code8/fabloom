@@ -91,17 +91,30 @@ export default function TopCategoryBar() {
             aria-label="Product categories"
         >
             <div className="flex items-center gap-2 flex-shrink-0">
-                <Link href="/" className="flex items-center gap-2">
+                <Link href="/" className="flex items-center gap-2.5">
                     <Image
                         src="/logo.jpeg"
-                        alt="Fabloom Kandoras"
-                        width={32}
-                        height={32}
-                        className="rounded-full"
+                        alt="FK"
+                        width={36}
+                        height={36}
+                        className="rounded-full ring-1 ring-[#D4A853]/40"
                     />
-                    <span className="font-serif text-lg font-bold text-gold-500">
-                        Fabloom Kandoras
-                    </span>
+                    <div className="flex flex-col leading-tight">
+                        <span 
+                            className="text-[15px] font-bold tracking-wide"
+                            style={{ 
+                                color: '#D4A853',
+                                fontFamily: 'var(--font-playfair, serif)',
+                                letterSpacing: '0.04em'
+                            }}>
+                            Fabloom
+                        </span>
+                        <span 
+                            className="text-[10px] font-medium tracking-widest uppercase"
+                            style={{ color: 'rgba(212,168,83,0.65)' }}>
+                            Kandoras
+                        </span>
+                    </div>
                 </Link>
             </div>
 
