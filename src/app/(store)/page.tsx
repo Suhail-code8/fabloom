@@ -33,7 +33,7 @@ export default async function StorefrontPage() {
 
     return (
         <div
-            className="min-h-full"
+            className="min-h-full brand-bg-pattern"
             style={{ backgroundColor: '#0f1035' }}
         >
             {/* 1 ── Sticky search bar */}

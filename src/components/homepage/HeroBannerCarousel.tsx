@@ -58,9 +58,9 @@ export default function HeroBannerCarousel() {
         <div className="relative w-full select-none overflow-hidden" style={{ height: '220px' }}>
             {/* Slide track */}
             <div
-                className="w-full h-full rounded-2xl mx-auto overflow-hidden"
+                className="w-full h-full rounded-2xl mx-auto overflow-hidden bg-cover bg-center relative"
                 style={{
-                    background: banner.gradient,
+                    backgroundImage: banner.imageUrl ? `url(${banner.imageUrl})` : 'none',
                     transition: isDragging ? 'none' : 'background 0.6s ease',
                     userSelect: 'none',
                 }}
@@ -68,12 +68,14 @@ export default function HeroBannerCarousel() {
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
             >
-                {/* Decorative circles */}
-                <div className="absolute top-[-40px] right-[-40px] w-40 h-40 rounded-full opacity-10 bg-white pointer-events-none" />
-                <div className="absolute bottom-[-30px] left-[-20px] w-28 h-28 rounded-full opacity-10 bg-white pointer-events-none" />
+                {/* Gradient Overlay */}
+                <div 
+                    className="absolute inset-0"
+                    style={{ background: banner.gradient }}
+                />
 
                 {/* Content */}
-                <div className="relative z-10 flex flex-col justify-center h-full px-7 pt-2 pb-10">
+                <div className="relative z-10 flex flex-col justify-center h-full px-7 pt-2 pb-10 w-2/3">
                     {/* Badge */}
                     <span
                         className="inline-block self-start text-[10px] font-bold tracking-widest px-2.5 py-1 rounded-full mb-3"
@@ -87,7 +89,7 @@ export default function HeroBannerCarousel() {
 
                     {/* Title */}
                     <h2
-                        className="text-2xl font-extrabold leading-tight mb-1"
+                        className="text-xl font-extrabold leading-tight mb-1"
                         style={{ color: banner.textColor }}
                     >
                         {banner.title}
@@ -95,7 +97,7 @@ export default function HeroBannerCarousel() {
 
                     {/* Subtitle */}
                     <p
-                        className="text-sm leading-snug mb-5 max-w-[220px] opacity-90"
+                        className="text-xs leading-snug mb-5 max-w-[220px] opacity-90"
                         style={{ color: banner.textColor }}
                     >
                         {banner.subtitle}
