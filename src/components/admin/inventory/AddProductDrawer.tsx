@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import ImageUpload from '@/components/ImageUpload';
+import ImageUploader from '@/components/admin/ImageUploader';
 
 interface Props {
     onClose: () => void;
@@ -121,30 +121,10 @@ export default function AddProductDrawer({ onClose, onSave }: Props) {
                                 </div>
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-gray-700 block mb-2">Images ({images.length} added)</label>
-                                <ImageUpload
-                                    variant="dropzone"
-                                    onUploadSuccess={(url) =>
-                                        setImages((prev) => [...prev, url])
-                                    }
+                                <ImageUploader
+                                    images={images}
+                                    onChange={setImages}
                                 />
-                                
-                                {images.length > 0 && (
-                                    <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
-                                        {images.map((img, i) => (
-                                            <div key={i} className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-100 shrink-0">
-                                                <img src={img} alt="preview" className="w-full h-full object-cover" />
-                                                <button 
-                                                    type="button"
-                                                    onClick={() => setImages(images.filter((_, idx) => idx !== i))}
-                                                    className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5"
-                                                >
-                                                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
                             </div>
                         </div>
                     )}

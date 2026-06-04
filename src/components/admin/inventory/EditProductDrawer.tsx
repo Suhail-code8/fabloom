@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import type { AnyProduct } from '@/types/product';
+import ImageUploader from '@/components/admin/ImageUploader';
 
 interface Props {
     product: AnyProduct;
@@ -17,7 +18,7 @@ export default function EditProductDrawer({ product, onClose, onSave }: Props) {
     const [name, setName] = useState(p.name || '');
     const [description, setDescription] = useState(p.description || '');
     const [price, setPrice] = useState(String(p.price ?? ''));
-    const [imagesText, setImagesText] = useState((p.images || []).join('\n'));
+    const [images, setImages] = useState<string[]>(p.images || []);
     const [material, setMaterial] = useState(p.material || p.fabricType || '');
     const [color, setColor] = useState(p.color || '');
     const [subcategory, setSubcategory] = useState(p.subcategory || '');
@@ -37,11 +38,6 @@ export default function EditProductDrawer({ product, onClose, onSave }: Props) {
     async function handleSave() {
         setSaving(true);
         try {
-            const images = imagesText
-                .split('\n')
-                .map((s: string) => s.trim())
-                .filter(Boolean);
-
             const payload: Record<string, unknown> = {
                 name,
                 description,
@@ -104,8 +100,8 @@ export default function EditProductDrawer({ product, onClose, onSave }: Props) {
                         <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className={inputClass} />
                     </div>
                     <div>
-                        <label className="text-xs font-bold text-gray-700 block mb-1">Image URLs (one per line)</label>
-                        <textarea value={imagesText} onChange={(e) => setImagesText(e.target.value)} rows={3} className={inputClass} />
+                        <label className="text-xs font-bold text-gray-700 block mb-1">Images</label>
+                        <ImageUploader images={images} onChange={setImages} />
                     </div>
 
                     {product.type === 'readymade' && (
