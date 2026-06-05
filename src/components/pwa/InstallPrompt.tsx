@@ -54,7 +54,10 @@ export default function InstallPrompt() {
     if (!showPrompt) return null;
 
     return (
-        <div className="fixed bottom-20 left-4 right-4 z-[100] animate-in fade-in slide-in-from-bottom-10 duration-500">
+        <div
+            className="fixed left-4 right-4 z-[100] animate-in fade-in slide-in-from-bottom-10 duration-500"
+            style={{ bottom: 'calc(var(--store-bottom-nav-h) + 1rem)' }}
+        >
             <div className="bg-[#0f1035] border border-white/10 rounded-2xl p-6 shadow-2xl">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="w-12 h-12 bg-[#D4A853] rounded-xl flex items-center justify-center text-2xl">

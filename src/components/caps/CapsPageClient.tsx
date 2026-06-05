@@ -26,6 +26,7 @@ function CapCard({ cap }: { cap: ICapProduct }) {
     const [selectedColor, setSelectedColor] = useState(cap.colorVariants?.[0]?.name ?? '');
 
     return (
+        <div className="h-full">
         <AccessoryCard
             product={cap}
             aspectClass="aspect-[4/5]"
@@ -55,6 +56,7 @@ function CapCard({ cap }: { cap: ICapProduct }) {
                 </div>
             )}
         </AccessoryCard>
+        </div>
     );
 }
 
@@ -155,7 +157,7 @@ export default function CapsPageClient({
     }, [caps, activeFilter, colorFilter]);
 
     return (
-        <div className="min-h-screen pb-20" style={{ backgroundColor: '#0f1035' }}>
+        <div className="min-h-screen" style={{ backgroundColor: '#0f1035' }}>
             <div className="px-4 pt-5 pb-3">
                 <h1 className="text-2xl font-extrabold text-white">Caps & Headwear</h1>
                 <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.5)' }}>
@@ -164,7 +166,7 @@ export default function CapsPageClient({
             </div>
 
             {/* Sub-category filter */}
-            <div className="sticky z-20 border-b border-white/10 py-2.5" style={{ top: '72px', backgroundColor: '#0f1035' }}>
+            <div className="store-sticky-subnav border-b border-white/10 py-2.5 min-h-[var(--store-subnav-h)]" style={{ backgroundColor: '#0f1035' }}>
                 <div className="flex gap-2 overflow-x-auto px-4" style={{ scrollbarWidth: 'none' }}>
                     {CAP_FILTERS.map((p) => (
                         <button
@@ -198,8 +200,12 @@ export default function CapsPageClient({
                             <h2 id={`cap-${section.id}`} className="text-base font-extrabold text-white mb-0.5">{section.title}</h2>
                             <p className="text-[11px] mb-2" style={{ color: 'rgba(255,255,255,0.45)' }}>{section.subtitle}</p>
                             <div className="h-0.5 w-8 rounded-full mb-3" style={{ backgroundColor: '#D4A853' }} />
-                            <div className="grid grid-cols-2 gap-3">
-                                {items.map((c) => <CapCard key={c._id} cap={c} />)}
+                            <div className="store-product-grid">
+                                {items.map((c) => (
+                                    <div key={c._id} className="h-full min-h-0">
+                                        <CapCard cap={c} />
+                                    </div>
+                                ))}
                             </div>
                         </section>
                     );

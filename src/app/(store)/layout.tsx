@@ -10,32 +10,31 @@ import Footer from '@/components/layout/Footer';
 export default function StoreLayout({ children }: { children: ReactNode }) {
     return (
         <>
-            {/* Brand CSS variables scoped to the storefront shell */}
             <style>{`
                 :root {
                     --brand-primary: #0f1035;
                     --brand-gold: #D4A853;
                     --brand-gold-light: #f0d080;
+                    --store-header-h: 110px;
+                    --store-subnav-h: 50px;
+                    --store-bottom-nav-h: 80px;
+                    --store-scroll-with-subnav: 160px;
                 }
             `}</style>
 
             <div
-                className="flex flex-col min-h-screen"
+                className="flex flex-col min-h-screen w-full overflow-x-hidden md:max-w-2xl md:mx-auto lg:max-w-6xl lg:mx-auto"
                 style={{ backgroundColor: 'var(--brand-primary)' }}
             >
-                {/* ── Sticky top category bar ── */}
-                <header className="sticky top-0 z-40">
+                <header id="store-header" className="sticky top-0 z-40 shrink-0">
                     <TopCategoryBar />
                 </header>
 
-                {/* ── Scrollable content area ── */}
-                {/* pb-20 leaves room for the fixed BottomNav (80px) */}
-                <main className="flex-1 overflow-y-auto pb-20">
+                <main className="flex-1 store-pb-nav overflow-x-hidden">
                     {children}
                     <Footer />
                 </main>
 
-                {/* ── Fixed bottom navigation ── */}
                 <BottomNav />
             </div>
         </>

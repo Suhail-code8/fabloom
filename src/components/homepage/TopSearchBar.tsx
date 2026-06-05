@@ -38,7 +38,7 @@ export default function TopSearchBar() {
 
     return (
         <div
-            className="sticky top-0 z-30 px-4 py-3"
+            className="sticky top-[var(--store-header-h)] z-30 px-4 py-3"
             style={{ backgroundColor: '#0f1035' }}
         >
             {/* Greeting row */}

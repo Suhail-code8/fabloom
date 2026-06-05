@@ -199,9 +199,8 @@ export default function CartPageClient() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-96 lg:pb-12">
-            {/* Header */}
-            <div className="bg-white px-4 py-4 border-b border-gray-100 sticky top-0 z-10 flex justify-between items-center">
+        <div className="min-h-screen bg-gray-50 store-pb-action-nav lg:pb-12">
+            <div className="bg-white px-4 py-4 border-b border-gray-100 flex justify-between items-center">
                 <h1 className="text-xl font-extrabold text-[#0f1035]">Shopping Cart</h1>
                 <button onClick={clearCart} className="text-xs font-bold text-gray-400 hover:text-gray-900">Clear all</button>
             </div>
@@ -246,7 +245,7 @@ export default function CartPageClient() {
                 </div>
 
                 {/* Right Column / Bottom Sheet - Order Summary */}
-                <div className="fixed bottom-20 left-0 right-0 z-40 bg-white border-t border-gray-100 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] p-4 rounded-t-3xl lg:static lg:w-96 lg:rounded-2xl lg:shadow-sm lg:border">
+                <div className="store-action-bar bg-white border-t border-gray-100 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] p-4 rounded-t-3xl lg:static lg:w-96 lg:rounded-2xl lg:shadow-sm lg:border lg:pb-0">
                     <h3 className="text-sm font-extrabold text-gray-900 mb-4 hidden lg:block">Order Summary</h3>
                     
                     <div className="flex gap-2 mb-4">

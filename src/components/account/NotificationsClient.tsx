@@ -30,7 +30,7 @@ export default function NotificationsClient() {
     const prefs = data?.preferences || { whatsapp: true, email: true, promotional: false };
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20">
+        <div className="min-h-screen bg-gray-50">
             {/* Header */}
             <div className="bg-white px-4 py-4 border-b border-gray-100 flex items-center gap-3 sticky top-0 z-10 shadow-sm">
                 <button onClick={() => window.history.back()} className="p-1 active:scale-90 transition-transform">

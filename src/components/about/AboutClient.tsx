@@ -49,7 +49,7 @@ export default function AboutClient() {
     const [openFaq, setOpenFaq] = useState<number | null>(null);
 
     return (
-        <div className="min-h-screen bg-gray-50 font-sans pb-20">
+        <div className="min-h-screen bg-gray-50 font-sans">
             
             {/* 1. HERO SECTION */}
             <section className="relative bg-[#0f1035] text-white py-24 px-6 overflow-hidden flex flex-col items-center justify-center text-center">

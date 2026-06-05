@@ -212,37 +212,35 @@ export default function ReadymadeCard({
     return (
         <Link
             href={`/readymade/${product.slug || product._id}`}
-            className="relative block rounded-2xl overflow-hidden bg-white active:opacity-90 transition-opacity duration-150"
+            className="flex flex-col h-full rounded-2xl overflow-hidden bg-white active:opacity-90 transition-opacity duration-150"
             aria-label={product.name}
             onMouseEnter={() => setShowQuickAdd(true)}
             onMouseLeave={() => setShowQuickAdd(false)}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
         >
-            {/* Image */}
-            <div className="relative w-full overflow-hidden bg-gray-50" style={{ paddingBottom: '125%' }}>
+            <div className="aspect-[3/4] relative flex-shrink-0 overflow-hidden bg-gray-50">
                 <img
                     src={product.images?.[0] ?? '/placeholder-product.jpg'}
                     alt={product.name}
                     className="absolute inset-0 w-full h-full object-cover"
                 />
-
-                {/* Wishlist */}
                 <WishlistButton productId={product._id} />
-
-                {/* Quick Add — overlays bottom of image */}
                 <QuickAddButton product={product} visible={showQuickAdd} />
             </div>
 
-            {/* Info */}
-            <div className="px-2.5 pt-2 pb-3 flex flex-col gap-1.5">
-                <p className="text-xs font-semibold text-gray-900 truncate leading-snug">
+            <div className="flex flex-col flex-1 p-3 min-h-0">
+                <p className="text-xs font-semibold text-gray-900 line-clamp-2 leading-snug">
                     {product.name}
                 </p>
-                <p className="text-sm font-extrabold" style={{ color: '#0f1035' }}>
-                    ₹{product.price.toLocaleString('en-IN')}
-                </p>
-                <SizeDots sizeStock={product.sizeStock} />
+                <div className="flex-1 min-h-[1.25rem] mt-1">
+                    <SizeDots sizeStock={product.sizeStock} />
+                </div>
+                <div className="mt-auto pt-2">
+                    <p className="text-sm font-extrabold" style={{ color: '#0f1035' }}>
+                        ₹{product.price.toLocaleString('en-IN')}
+                    </p>
+                </div>
             </div>
         </Link>
     );

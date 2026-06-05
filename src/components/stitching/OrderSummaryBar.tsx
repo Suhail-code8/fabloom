@@ -51,11 +51,10 @@ export default function OrderSummaryBar({ currentStep, onNext, onBack }: {
 
     return (
         <div
-            className="fixed bottom-20 left-0 right-0 z-40 border-t"
+            className="store-action-bar-flush border-t"
             style={{
                 backgroundColor: '#0f1035',
                 borderColor: 'rgba(255,255,255,0.1)',
-                paddingBottom: 'env(safe-area-inset-bottom, 12px)',
             }}
         >
             {/* Price breakdown */}

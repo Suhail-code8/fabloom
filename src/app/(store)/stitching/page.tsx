@@ -108,7 +108,7 @@ export default function StitchingPage() {
 
     return (
         <div
-            className="min-h-screen pb-56"
+            className="min-h-screen store-pb-no-nav pb-36"
             style={{ backgroundColor: '#0f1035' }}
         >
             {/* Page title */}

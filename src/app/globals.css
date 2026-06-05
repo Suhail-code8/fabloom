@@ -60,6 +60,70 @@
 
   :root {
     --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --store-header-h: 110px;
+    --store-subnav-h: 50px;
+    --store-bottom-nav-h: 80px;
+    --store-scroll-with-subnav: 160px;
+  }
+}
+
+@layer utilities {
+  .store-sticky-subnav {
+    position: sticky;
+    top: var(--store-header-h);
+    z-index: 30;
+  }
+
+  .store-action-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    padding-bottom: calc(var(--store-bottom-nav-h) + var(--safe-area-bottom));
+  }
+
+  .store-action-bar-flush {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    padding-bottom: max(12px, var(--safe-area-bottom));
+  }
+
+  .store-pb-nav {
+    padding-bottom: calc(var(--store-bottom-nav-h) + 1rem);
+  }
+
+  .store-pb-action-nav {
+    padding-bottom: calc(var(--store-bottom-nav-h) * 2 + 1rem);
+  }
+
+  .store-pb-no-nav {
+    padding-bottom: 1.5rem;
+  }
+
+  main.store-pb-nav:has(.store-pb-action-nav),
+  main.store-pb-nav:has(.store-pb-no-nav) {
+    padding-bottom: 0;
+  }
+
+  .store-product-grid {
+    @apply grid gap-3 items-stretch;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 768px) {
+    .store-product-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .store-product-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
   }
 }
 

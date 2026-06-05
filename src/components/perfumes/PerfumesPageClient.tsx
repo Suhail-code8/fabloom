@@ -54,11 +54,10 @@ function PerfumeCard({ perfume }: { perfume: IPerfumeProduct }) {
 
     return (
         <div
-            className="flex flex-col rounded-2xl overflow-hidden bg-white transition-all duration-150"
+            className="flex flex-col h-full rounded-2xl overflow-hidden bg-white transition-all duration-150"
             style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.09)' }}
         >
-            {/* Image — square */}
-            <div className="relative aspect-square bg-gray-50 overflow-hidden">
+            <div className="relative aspect-[3/4] flex-shrink-0 bg-gray-50 overflow-hidden">
                 {perfume.images?.[0] ? (
                     <img src={perfume.images[0]} alt={perfume.name} className="absolute inset-0 w-full h-full object-cover" />
                 ) : (
@@ -78,31 +77,30 @@ function PerfumeCard({ perfume }: { perfume: IPerfumeProduct }) {
                 )}
             </div>
 
-            {/* Info */}
-            <div className="px-3 pt-2 pb-3">
-                <p className="text-xs font-bold text-gray-900 line-clamp-2 leading-snug min-h-[32px]">{perfume.name}</p>
-                <div className="flex items-center justify-between mt-1">
+            <div className="flex flex-col flex-1 p-3 min-h-0">
+                <p className="text-xs font-bold text-gray-900 line-clamp-2 leading-snug">{perfume.name}</p>
+                <div className="flex-1 min-h-[1rem] mt-1">
+                    <button
+                        type="button"
+                        onClick={() => setShowNotes((v) => !v)}
+                        className="text-xs font-semibold flex items-center gap-1 min-h-[44px] active:opacity-70"
+                        style={{ color: '#D4A853' }}
+                    >
+                        {showNotes ? 'Hide' : 'View'} fragrance notes
+                        <svg className="w-3 h-3 transition-transform" style={{ transform: showNotes ? 'rotate(180deg)' : 'none' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    {showNotes && perfume.fragranceNotes && <NotesPyramid notes={perfume.fragranceNotes} />}
+                </div>
+                <div className="mt-auto pt-2 flex items-center justify-between gap-2">
                     <p className="text-sm font-extrabold" style={{ color: '#0f1035' }}>₹{perfume.price.toLocaleString('en-IN')}</p>
                     {perfume.concentration && (
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#f3f4f6', color: '#6b7280' }}>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#f3f4f6', color: '#6b7280' }}>
                             {perfume.concentration}
                         </span>
                     )}
                 </div>
-
-                {/* Notes toggle */}
-                <button
-                    onClick={() => setShowNotes((v) => !v)}
-                    className="mt-2 text-[10px] font-semibold flex items-center gap-1 active:opacity-70"
-                    style={{ color: '#D4A853' }}
-                >
-                    {showNotes ? 'Hide' : 'View'} fragrance notes
-                    <svg className="w-3 h-3 transition-transform" style={{ transform: showNotes ? 'rotate(180deg)' : 'none' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
-                        <polyline points="6 9 12 15 18 9" />
-                    </svg>
-                </button>
-
-                {showNotes && perfume.fragranceNotes && <NotesPyramid notes={perfume.fragranceNotes} />}
             </div>
         </div>
     );
@@ -143,7 +141,7 @@ export default function PerfumesPageClient({ perfumes }: { perfumes: IPerfumePro
             </div>
 
             {/* Filter pills */}
-            <div className="sticky z-20 border-b border-white/10 py-2.5 mb-5" style={{ top: '72px', backgroundColor: '#0f1035' }}>
+            <div className="store-sticky-subnav border-b border-white/10 py-2.5 mb-5 min-h-[var(--store-subnav-h)]" style={{ backgroundColor: '#0f1035' }}>
                 <div className="flex gap-2 overflow-x-auto px-4" style={{ scrollbarWidth: 'none' }}>
                     {PILLS.map((p) => (
                         <button
@@ -172,9 +170,11 @@ export default function PerfumesPageClient({ perfumes }: { perfumes: IPerfumePro
                             <h2 id={`perf-${section.id}`} className="text-base font-extrabold text-white mb-0.5">{section.title}</h2>
                             <p className="text-[11px] mb-2" style={{ color: 'rgba(255,255,255,0.45)' }}>{section.subtitle}</p>
                             <div className="h-0.5 w-8 rounded-full mb-3" style={{ backgroundColor: '#D4A853' }} />
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="store-product-grid">
                                 {items.map((p) => (
-                                    <PerfumeCard key={p._id} perfume={p as any} />
+                                    <div key={p._id} className="h-full min-h-0">
+                                        <PerfumeCard perfume={p as any} />
+                                    </div>
                                 ))}
                             </div>
                         </section>

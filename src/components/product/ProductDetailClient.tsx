@@ -127,7 +127,7 @@ export default function ProductDetailClient({ product }: Props) {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 pb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 pb-4 lg:pb-0">
             
             {/* Left: Image Gallery (5/12 cols) */}
             <div className="lg:col-span-5 flex flex-col gap-4">
@@ -284,7 +284,7 @@ export default function ProductDetailClient({ product }: Props) {
                 </div>
 
                 {/* ADD TO CART ACTION */}
-                <div className="flex flex-col gap-4 mt-auto pt-4 border-t border-gray-100 bg-white fixed bottom-20 left-0 right-0 z-40 px-4 pb-4 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.06)] lg:static lg:px-0 lg:pb-0 lg:rounded-none lg:shadow-none lg:pt-8 lg:bg-transparent">
+                <div className="flex flex-col gap-4 mt-auto pt-4 border-t border-gray-100 bg-white store-action-bar px-4 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.06)] lg:static lg:px-0 lg:pb-0 lg:rounded-none lg:shadow-none lg:pt-8 lg:bg-transparent">
                     <button 
                         onClick={handleAddToCart}
                         disabled={isAdding}

@@ -71,7 +71,7 @@ export default function MeasureGuidePage() {
     ];
 
     return (
-        <div className="min-h-screen bg-[#0f1035] pb-24">
+        <div className="min-h-screen bg-[#0f1035]">
             <div className="px-4 pt-12 pb-8">
                 <h1 className="text-3xl font-black text-white leading-tight mb-2 uppercase tracking-wide">
                     How to Take Your Measurements

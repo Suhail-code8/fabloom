@@ -91,10 +91,9 @@ export default function ProductCard({ product }: ProductCardProps) {
     };
 
     return (
-        <Card className="group overflow-hidden hover:shadow-lg transition-shadow duration-300">
-            {/* Image */}
-            <CardHeader className="p-0 relative">
-                <div className="relative aspect-square overflow-hidden bg-gray-100">
+        <Card className="group flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <CardHeader className="p-0 relative flex-shrink-0">
+                <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
                     <Image
                         src={product.images[0] || '/placeholder.png'}
                         alt={product.name}
@@ -115,8 +114,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </div>
             </CardHeader>
 
-            {/* Content */}
-            <CardContent className="p-4 space-y-3">
+            <CardContent className="p-4 flex flex-col flex-1 space-y-3">
                 {/* Title */}
                 <h3 className="font-serif text-lg font-bold text-navy-900 line-clamp-1">
                     {product.name}
@@ -172,14 +170,11 @@ export default function ProductCard({ product }: ProductCardProps) {
                     )}
                 </div>
 
-                {/* Price */}
-                <div className="pt-2 border-t">
-                    {getPriceDisplay()}
-                </div>
+                <div className="flex-1" />
             </CardContent>
 
-            {/* Footer */}
-            <CardFooter className="p-4 pt-0">
+            <CardFooter className="p-4 pt-0 mt-auto border-t">
+                <div className="w-full mb-3">{getPriceDisplay()}</div>
                 {product.type === 'fabric' && product.stitchingAvailable ? (
                     <div className="w-full flex gap-2">
                         <Link href={`/${((product as any).productType || product.type) === 'fabric' ? 'fabrics' : ((product as any).productType || product.type) === 'readymade' ? 'readymade' : 'accessories'}/${(product as any).slug || product._id}`} className="flex-1">
