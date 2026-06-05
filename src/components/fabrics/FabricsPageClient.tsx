@@ -51,9 +51,11 @@ function FabricSection({
             </div>
 
             {/* 2-column grid */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="store-product-grid">
                 {items.map((f) => (
-                    <FabricCard key={f._id} fabric={f} onOpenDrawer={onOpenDrawer} />
+                    <div key={f._id} className="h-full min-h-0">
+                        <FabricCard fabric={f} onOpenDrawer={onOpenDrawer} />
+                    </div>
                 ))}
             </div>
         </section>

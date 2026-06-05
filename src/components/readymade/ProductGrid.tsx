@@ -41,16 +41,16 @@ export default function ProductGrid({
 
     const gridClass =
         columns === 3
-            ? 'grid grid-cols-3 gap-2'
+            ? 'store-product-grid !grid-cols-3 md:!grid-cols-3 lg:!grid-cols-3 gap-2'
             : cardStyle === 'landscape'
             ? 'flex flex-col gap-3'
-            : 'grid grid-cols-2 gap-3';
+            : 'store-product-grid';
 
     return (
         <section
             ref={sectionRef}
             id={sectionId}
-            className="scroll-mt-[112px]" // offset for sticky header height
+            className="scroll-mt-[var(--store-scroll-with-subnav)]"
             aria-labelledby={`${sectionId}-heading`}
         >
             {/* Section header */}
@@ -86,11 +86,12 @@ export default function ProductGrid({
             {/* Grid */}
             <div className={`${gridClass} px-4`}>
                 {filtered.map((product) => (
-                    <ReadymadeCard
-                        key={product._id}
-                        product={product}
-                        cardStyle={cardStyle}
-                    />
+                    <div key={product._id} className="h-full min-h-0">
+                        <ReadymadeCard
+                            product={product}
+                            cardStyle={cardStyle}
+                        />
+                    </div>
                 ))}
             </div>
         </section>

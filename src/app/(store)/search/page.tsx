@@ -19,8 +19,8 @@ export default function SearchPage() {
     const products: any[] = data?.data || [];
 
     return (
-        <div className="min-h-screen bg-[#0f1035] pb-20">
-            <div className="px-4 pt-5 pb-4 flex items-center justify-between gap-3 sticky top-0 z-10">
+        <div className="min-h-screen bg-[#0f1035]">
+            <div className="px-4 pt-5 pb-4 flex items-center justify-between gap-3">
                 <h1 className="text-2xl font-extrabold text-white">Search</h1>
                 <span className="text-xs font-bold" style={{ color: 'rgba(255,255,255,0.65)' }}>
                     {q ? `Results for “${q}”` : 'Type a query'}
@@ -53,7 +53,7 @@ export default function SearchPage() {
                 )}
 
                 {q && !isLoading && !error && products.length > 0 && (
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="store-product-grid">
                         {products.map((p: any) => {
                             const href =
                                 p.type === 'readymade'
@@ -71,22 +71,23 @@ export default function SearchPage() {
                                 <Link
                                     key={p._id}
                                     href={href}
-                                    className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm active:scale-[0.98] transition-transform"
+                                    className="flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm active:scale-[0.98] transition-transform"
                                     aria-label={p.name}
                                 >
-                                    <div className="relative aspect-square bg-gray-50">
+                                    <div className="relative aspect-[3/4] flex-shrink-0 bg-gray-50">
                                         <Image
                                             src={p.images?.[0] || '/placeholder-product.jpg'}
                                             alt={p.name}
                                             fill
                                             className="object-cover"
+                                            sizes="(max-width: 768px) 50vw, 25vw"
                                         />
                                     </div>
-                                    <div className="px-3 pt-2.5 pb-3">
-                                        <p className="text-xs font-bold text-gray-900 line-clamp-2 leading-snug">
+                                    <div className="flex flex-col flex-1 p-3 min-h-0">
+                                        <p className="text-xs font-bold text-gray-900 line-clamp-2 leading-snug flex-1">
                                             {p.name}
                                         </p>
-                                        <p className="text-sm font-extrabold text-[#D4A853] mt-1">{priceLabel}</p>
+                                        <p className="text-sm font-extrabold text-[#D4A853] mt-auto pt-2">{priceLabel}</p>
                                     </div>
                                 </Link>
                             );

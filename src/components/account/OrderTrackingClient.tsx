@@ -143,7 +143,7 @@ export default function OrderTrackingClient({ orderId }: { orderId: string }) {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20">
+        <div className="min-h-screen bg-gray-50">
             {/* Header */}
             <div className="bg-[#0f1035] text-white pt-12 pb-24 px-4 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-[0.02] rounded-full translate-x-20 -translate-y-20 blur-3xl pointer-events-none" />

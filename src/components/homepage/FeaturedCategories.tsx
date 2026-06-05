@@ -57,7 +57,7 @@ export default function FeaturedCategories() {
             </div>
 
             {/* 3×2 grid */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 items-stretch">
                 {FEATURED_CATEGORIES.map((cat) => (
                     <CategoryGridCard 
                         key={cat.id} 

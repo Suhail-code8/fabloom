@@ -409,7 +409,7 @@ export function Step4Review({ onSubmit, isSubmitting }: { onSubmit: () => void, 
     };
 
     return (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-right-4 duration-500 pb-20">
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-right-4 duration-500 store-pb-no-nav">
             <div>
                 <h2 className="text-xl font-extrabold text-white mb-1">Review & Save</h2>
                 <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>

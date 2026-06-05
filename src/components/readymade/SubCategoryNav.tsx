@@ -47,11 +47,8 @@ export default function SubCategoryNav({
 
     return (
         <div
-            className="sticky z-20 flex items-center gap-2 py-2.5 border-b border-white/10"
-            style={{
-                top: '72px', // below TopCategoryBar
-                backgroundColor: '#0f1035',
-            }}
+            className="store-sticky-subnav flex items-center gap-2 py-2.5 border-b border-white/10 min-h-[var(--store-subnav-h)]"
+            style={{ backgroundColor: '#0f1035' }}
         >
             {/* Scrollable pills */}
             <div

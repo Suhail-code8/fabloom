@@ -123,12 +123,11 @@ export default function AccessoryCard({
         <Wrapper
             href={href ?? '#'}
             onClick={onClick}
-            className="group relative flex flex-col rounded-2xl overflow-hidden bg-white cursor-pointer transition-all duration-150 active:scale-98"
+            className="group relative flex flex-col h-full rounded-2xl overflow-hidden bg-white cursor-pointer transition-all duration-150 active:scale-98"
             style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}
             aria-label={product.name}
         >
-            {/* Image */}
-            <div className={`relative w-full ${aspectClass} overflow-hidden bg-gray-50`}>
+            <div className={`relative w-full flex-shrink-0 ${aspectClass} overflow-hidden bg-gray-50`}>
                 <WishlistButton productId={product._id} />
                 <img
                     src={product.images?.[0] ?? '/placeholder-product.jpg'}
@@ -159,17 +158,16 @@ export default function AccessoryCard({
                 )}
             </div>
 
-            {/* Info */}
-            <div className="px-3 pt-2.5 pb-3">
-                <p className="text-xs font-bold text-gray-900 leading-snug line-clamp-2 min-h-[32px]">
+            <div className="flex flex-col flex-1 p-3 min-h-0">
+                <p className="text-xs font-bold text-gray-900 leading-snug line-clamp-2">
                     {product.name}
                 </p>
-                <p className="text-sm font-extrabold mt-1" style={{ color: '#0f1035' }}>
-                    ₹{product.price.toLocaleString('en-IN')}
-                </p>
-
-                {/* Extra slot — children (color swatches, size pills, etc.) */}
-                {children && <div className="mt-2">{children}</div>}
+                {children && <div className="flex-1 mt-2">{children}</div>}
+                <div className={children ? 'mt-auto pt-2' : 'mt-auto pt-2 flex-1 flex flex-col justify-end'}>
+                    <p className="text-sm font-extrabold" style={{ color: '#0f1035' }}>
+                        ₹{product.price.toLocaleString('en-IN')}
+                    </p>
+                </div>
             </div>
         </Wrapper>
     );

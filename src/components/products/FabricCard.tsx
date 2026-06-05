@@ -120,13 +120,12 @@ export default function FabricCard({ fabric, onOpenDrawer }: FabricCardProps) {
 
     return (
         <div
-            className="flex flex-col rounded-2xl overflow-hidden bg-white transition-all duration-150 active:scale-98"
+            className="flex flex-col h-full rounded-2xl overflow-hidden bg-white transition-all duration-150 active:scale-98"
             style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }}
         >
-            {/* Texture image — 1:1 square, hero */}
             <button
-                className="relative w-full cursor-pointer overflow-hidden bg-gray-50"
-                style={{ paddingBottom: '100%' }}
+                type="button"
+                className="aspect-[3/4] relative flex-shrink-0 w-full cursor-pointer overflow-hidden bg-gray-50"
                 onClick={() => onOpenDrawer(fabric)}
                 aria-label={`View ${fabric.name} details`}
             >
@@ -169,51 +168,47 @@ export default function FabricCard({ fabric, onOpenDrawer }: FabricCardProps) {
                 )}
             </button>
 
-            {/* Info block */}
-            <div className="px-3 pt-2.5 pb-1">
-                <p className="text-xs font-bold text-gray-900 leading-snug line-clamp-1">
+            <div className="flex flex-col flex-1 p-3 min-h-0">
+                <p className="text-xs font-bold text-gray-900 leading-snug line-clamp-2">
                     {fabric.name}
                 </p>
-                <div className="flex items-center justify-between mt-1">
+                <div className="flex-1 min-h-[1rem] mt-1">
+                    <StockBadge stock={fabric.stockInMeters} />
+                    {fabric.gsm && (
+                        <span className="text-[10px] text-gray-400 block mt-1">{fabric.gsm} GSM</span>
+                    )}
+                </div>
+                <div className="mt-auto pt-2 flex flex-col gap-2">
                     <p className="text-sm font-extrabold" style={{ color: '#0f1035' }}>
                         ₹{fabric.pricePerMeter}
                         <span className="text-[10px] font-medium text-gray-400">/m</span>
                     </p>
-                    {fabric.gsm && (
-                        <span className="text-[10px] text-gray-400">{fabric.gsm} GSM</span>
+                    {fabric.stitchingAvailable && (
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                router.push(`/stitching?fabricId=${fabric._id}`);
+                            }}
+                            className="w-full flex items-center justify-center gap-1.5 py-2.5 min-h-[44px] rounded-xl text-xs font-bold transition-all duration-200 active:scale-95"
+                            style={{
+                                backgroundColor: 'rgba(212,168,83,0.1)',
+                                border: '1.5px solid rgba(212,168,83,0.35)',
+                                color: '#92650a',
+                            }}
+                            aria-label={`Get ${fabric.name} stitched`}
+                        >
+                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="6" cy="6" r="3" /><circle cx="6" cy="18" r="3" />
+                                <line x1="20" y1="4" x2="8.12" y2="15.88" />
+                                <line x1="14.47" y1="14.48" x2="20" y2="20" />
+                                <line x1="8.12" y1="8.12" x2="12" y2="12" />
+                            </svg>
+                            Add Stitching
+                        </button>
                     )}
                 </div>
-                <div className="mt-1.5">
-                    <StockBadge stock={fabric.stockInMeters} />
-                </div>
             </div>
-
-            {/* Add stitching chip */}
-            {fabric.stitchingAvailable && (
-                <div className="px-3 pb-3 pt-1">
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`/stitching?fabricId=${fabric._id}`);
-                        }}
-                        className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11px] font-bold transition-all duration-200 active:scale-95"
-                        style={{
-                            backgroundColor: 'rgba(212,168,83,0.1)',
-                            border: '1.5px solid rgba(212,168,83,0.35)',
-                            color: '#92650a',
-                        }}
-                        aria-label={`Get ${fabric.name} stitched`}
-                    >
-                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="6" cy="6" r="3" /><circle cx="6" cy="18" r="3" />
-                            <line x1="20" y1="4" x2="8.12" y2="15.88" />
-                            <line x1="14.47" y1="14.48" x2="20" y2="20" />
-                            <line x1="8.12" y1="8.12" x2="12" y2="12" />
-                        </svg>
-                        Add Stitching
-                    </button>
-                </div>
-            )}
         </div>
     );
 }

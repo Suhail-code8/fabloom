@@ -60,7 +60,7 @@ export default function AccountClient() {
     const stats = data?.stats;
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20">
+        <div className="min-h-screen bg-gray-50">
             {/* Header Profile */}
             <div className="bg-[#0f1035] text-white pt-10 pb-8 px-4 flex flex-col items-center text-center relative overflow-hidden">
                 {/* Backdrop effect removed as noise.png is missing */}

@@ -28,8 +28,8 @@ interface FabricFilterBarProps {
 export default function FabricFilterBar({ active, onChange }: FabricFilterBarProps) {
     return (
         <div
-            className="sticky z-20 border-b border-white/10 py-2.5"
-            style={{ top: '72px', backgroundColor: '#0f1035' }}
+            className="store-sticky-subnav border-b border-white/10 py-2.5 min-h-[var(--store-subnav-h)]"
+            style={{ backgroundColor: '#0f1035' }}
         >
             <div
                 className="flex gap-2 overflow-x-auto px-4"

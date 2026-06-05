@@ -212,7 +212,7 @@ export default function CheckoutPageClient() {
     const accessoryItems = useMemo(() => items.filter(i => i.itemType === 'accessory'), [items]);
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-24">
+        <div className="min-h-screen bg-gray-50 store-pb-no-nav pb-28">
             {/* Header */}
             <div className="bg-white px-4 py-4 border-b border-gray-100 flex items-center gap-3 sticky top-0 z-10">
                 {step < 4 && (
