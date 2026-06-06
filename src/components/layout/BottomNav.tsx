@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/useCartStore';
+import { useUser } from '@clerk/nextjs';
 
 // ============================================================================
 // TYPES
@@ -72,6 +73,8 @@ const NAV_TABS: NavTab[] = [
 
 export default function BottomNav() {
     const pathname = usePathname();
+    const router = useRouter();
+    const { isSignedIn } = useUser();
     
     const totalItems = useCartStore((state) => 
         state.items.reduce((total, item: any) => {
@@ -88,7 +91,7 @@ export default function BottomNav() {
 
     return (
         <nav
-            className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10"
+            className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 md:left-1/2 md:-translate-x-1/2 md:max-w-2xl md:w-full lg:max-w-6xl"
             style={{
                 backgroundColor: 'var(--brand-primary)',
                 paddingBottom: 'env(safe-area-inset-bottom, 0px)',
@@ -108,6 +111,12 @@ export default function BottomNav() {
                         <li key={tab.href} className="flex-1">
                             <Link
                                 href={tab.href}
+                                onClick={(e) => {
+                                    if (tab.href === '/cart' && !isSignedIn) {
+                                        e.preventDefault();
+                                        router.push('/sign-in');
+                                    }
+                                }}
                                 className="relative flex flex-col items-center justify-center gap-0.5 py-2 min-h-[56px] w-full transition-all duration-200 active:scale-95 select-none"
                                 aria-current={isActive ? 'page' : undefined}
                                 aria-label={tab.label}

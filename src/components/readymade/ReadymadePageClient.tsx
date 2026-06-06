@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { ReadymadeFilterProvider } from '@/components/readymade/ReadymadeFilterContext';
 import SubCategoryNav from '@/components/readymade/SubCategoryNav';
+import StoreSubnavStack from '@/components/layout/StoreSubnavStack';
 import ProductGrid from '@/components/readymade/ProductGrid';
 import FilterSheet from '@/components/readymade/FilterSheet';
 import type { IReadymadeProduct } from '@/types/product';
@@ -17,8 +18,6 @@ interface SectionDef {
     title: string;
     subtitle?: string;
     items: IReadymadeProduct[];
-    columns: 2 | 3;
-    cardStyle: 'portrait' | 'landscape';
 }
 
 interface ReadymadePageClientProps {
@@ -99,25 +98,18 @@ function PageInner({ sections }: { sections: SectionDef[] }) {
 
     return (
         <>
-            {/* Sticky sub-category pill nav */}
-            <SubCategoryNav
-                pills={pills as any}
-                activeSection={activeSection}
-                onPillClick={onPillClick}
-                onFilterOpen={() => setFilterOpen(true)}
-            />
+            <StoreSubnavStack
+                title="Readymade"
+                subtitle="Premium fits — delivered ready to wear"
+            >
+                <SubCategoryNav
+                    pills={pills as any}
+                    activeSection={activeSection}
+                    onPillClick={onPillClick}
+                    onFilterOpen={() => setFilterOpen(true)}
+                />
+            </StoreSubnavStack>
 
-            {/* Page header */}
-            <div className="px-4 pt-5 pb-4">
-                <h1 className="text-2xl font-extrabold text-white leading-tight">
-                    Readymade
-                </h1>
-                <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                    Premium fits — delivered ready to wear
-                </p>
-            </div>
-
-            {/* Sections */}
             <div className="flex flex-col gap-8">
                 {sections.map((section) => (
                     <ProductGrid
@@ -127,8 +119,6 @@ function PageInner({ sections }: { sections: SectionDef[] }) {
                         title={section.title}
                         subtitle={section.subtitle}
                         items={section.items}
-                        columns={section.columns}
-                        cardStyle={section.cardStyle}
                     />
                 ))}
             </div>
@@ -159,8 +149,6 @@ export default function ReadymadePageClient({
             title: 'Kurta',
             subtitle: 'Timeless everyday silhouettes',
             items: kurtas,
-            columns: 2,
-            cardStyle: 'portrait',
         },
         {
             id: 'kandoora',
@@ -168,8 +156,6 @@ export default function ReadymadePageClient({
             title: 'Kandoora & Jubba',
             subtitle: 'Elegant Gulf-style pieces',
             items: kandooras,
-            columns: 2,
-            cardStyle: 'portrait',
         },
         {
             id: 'thobe',
@@ -177,8 +163,6 @@ export default function ReadymadePageClient({
             title: 'Thobe',
             subtitle: 'Classic Arabic styling',
             items: thobes,
-            columns: 2,
-            cardStyle: 'portrait',
         },
         {
             id: 'shirts',
@@ -186,8 +170,6 @@ export default function ReadymadePageClient({
             title: 'Casual Shirts',
             subtitle: 'Modern cuts for everyday',
             items: shirts,
-            columns: 3,
-            cardStyle: 'portrait',
         },
         {
             id: 'pants',
@@ -195,8 +177,6 @@ export default function ReadymadePageClient({
             title: 'Pants & Bottoms',
             subtitle: 'Comfortable fits from waist to ankle',
             items: pants,
-            columns: 2,
-            cardStyle: 'landscape',
         },
         {
             id: 'readymade',
@@ -204,8 +184,6 @@ export default function ReadymadePageClient({
             title: 'New Arrivals',
             subtitle: 'Recently added readymade pieces',
             items: products.filter(p => p.subcategory === 'readymade' || !['kurta', 'kandoora', 'thobe', 'shirt', 'pants', 'coord-set'].includes(p.subcategory || '')),
-            columns: 2,
-            cardStyle: 'portrait',
         },
     ];
 

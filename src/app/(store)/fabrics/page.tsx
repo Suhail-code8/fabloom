@@ -32,7 +32,7 @@ export default async function FabricsPage() {
     const fabrics = await getProductsAction({ type: 'fabric', limit: 100 });
 
     return (
-        <div className="min-h-full" style={{ backgroundColor: '#0f1035' }}>
+        <div style={{ backgroundColor: '#0f1035' }}>
             <FabricsPageClient allFabrics={fabrics} />
         </div>
     );

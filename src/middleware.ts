@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 const isProtectedRoute = createRouteMatcher([
     '/account(.*)',
     '/wishlist(.*)',
+    '/cart(.*)',
     '/checkout(.*)',
     '/api/user(.*)',
     '/api/measurements(.*)'

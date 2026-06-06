@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import type { ICapProduct, CapSubcategory } from '@/types/product';
 import AccessoryCard from '@/components/products/AccessoryCard';
 import ColorSwatchGroup from '@/components/products/ColorSwatchGroup';
+import StoreSubnavStack from '@/components/layout/StoreSubnavStack';
 
 // ============================================================================
 // FILTER BAR
@@ -157,35 +158,31 @@ export default function CapsPageClient({
     }, [caps, activeFilter, colorFilter]);
 
     return (
-        <div className="min-h-screen" style={{ backgroundColor: '#0f1035' }}>
-            <div className="px-4 pt-5 pb-3">
-                <h1 className="text-2xl font-extrabold text-white">Caps & Headwear</h1>
-                <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                    {caps.length} styles · Kufi to Snapback
-                </p>
-            </div>
-
-            {/* Sub-category filter */}
-            <div className="store-sticky-subnav border-b border-white/10 py-2.5 min-h-[var(--store-subnav-h)]" style={{ backgroundColor: '#0f1035' }}>
-                <div className="flex gap-2 overflow-x-auto px-4" style={{ scrollbarWidth: 'none' }}>
-                    {CAP_FILTERS.map((p) => (
-                        <button
-                            key={p.id}
-                            onClick={() => setActiveFilter(p.id)}
-                            className="flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold min-h-[36px] transition-all active:scale-95"
-                            style={{
-                                backgroundColor: activeFilter === p.id ? '#D4A853' : 'rgba(255,255,255,0.08)',
-                                color: activeFilter === p.id ? '#0f1035' : 'rgba(255,255,255,0.65)',
-                                border: activeFilter === p.id ? '1.5px solid #D4A853' : '1.5px solid rgba(255,255,255,0.1)',
-                            }}
-                        >
-                            {p.label}
-                        </button>
-                    ))}
+        <div style={{ backgroundColor: '#0f1035' }}>
+            <StoreSubnavStack
+                title="Caps & Headwear"
+                subtitle={`${caps.length} styles · Kufi to Snapback`}
+            >
+                <div className="py-2 pb-2.5">
+                    <div className="flex gap-2 overflow-x-auto px-4" style={{ scrollbarWidth: 'none' }}>
+                        {CAP_FILTERS.map((p) => (
+                            <button
+                                key={p.id}
+                                onClick={() => setActiveFilter(p.id)}
+                                className="flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold min-h-[36px] transition-all active:scale-95"
+                                style={{
+                                    backgroundColor: activeFilter === p.id ? '#D4A853' : 'rgba(255,255,255,0.08)',
+                                    color: activeFilter === p.id ? '#0f1035' : 'rgba(255,255,255,0.65)',
+                                    border: activeFilter === p.id ? '1.5px solid #D4A853' : '1.5px solid rgba(255,255,255,0.1)',
+                                }}
+                            >
+                                {p.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            </StoreSubnavStack>
 
-            {/* Color filter bar */}
             <div className="pt-4">
                 <ColorFilterBar allColors={allColors} selected={colorFilter} onSelect={setColorFilter} />
             </div>

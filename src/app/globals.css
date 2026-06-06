@@ -63,12 +63,13 @@
     --store-header-h: 110px;
     --store-subnav-h: 50px;
     --store-bottom-nav-h: 80px;
-    --store-scroll-with-subnav: 160px;
+    --store-subnav-stack-h: 100px;
+    --store-scroll-with-subnav: calc(var(--store-header-h) + var(--store-subnav-stack-h));
   }
 }
 
 @layer utilities {
-  .store-sticky-subnav {
+  .store-subnav-stack {
     position: sticky;
     top: var(--store-header-h);
     z-index: 30;

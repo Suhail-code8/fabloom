@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import FabricFilterBar from '@/components/fabrics/FabricFilterBar';
+import StoreSubnavStack from '@/components/layout/StoreSubnavStack';
 import FabricCard from '@/components/products/FabricCard';
 import FabricDetailDrawer from '@/components/fabrics/FabricDetailDrawer';
 import type { IFabricProduct, FabricSubcategory } from '@/types/product';
@@ -95,18 +96,13 @@ export default function FabricsPageClient({ allFabrics }: FabricsPageClientProps
 
     return (
         <>
-            {/* Sticky filter bar */}
-            <FabricFilterBar active={activeFilter} onChange={setActiveFilter} />
+            <StoreSubnavStack
+                title="Fabrics"
+                subtitle={`${allFabrics.length} fabrics available · Buy by the meter`}
+            >
+                <FabricFilterBar active={activeFilter} onChange={setActiveFilter} />
+            </StoreSubnavStack>
 
-            {/* Page header */}
-            <div className="px-4 pt-5 pb-4">
-                <h1 className="text-2xl font-extrabold text-white leading-tight">Fabrics</h1>
-                <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                    {allFabrics.length} fabrics available · Buy by the meter
-                </p>
-            </div>
-
-            {/* Sections */}
             <div className="flex flex-col gap-8 pb-8">
                 {visibleSections.map((s) => (
                     <FabricSection

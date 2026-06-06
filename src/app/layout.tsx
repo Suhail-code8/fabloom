@@ -64,7 +64,7 @@ export default function RootLayout({
                     <link rel="apple-touch-icon" href="/logo.jpeg" />
                     <link rel="icon" href="/logo.jpeg" />
                 </head>
-                <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`} suppressHydrationWarning>
+                <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-[#0f1035]`} suppressHydrationWarning>
                     {children}
                     <Toaster position="top-center" richColors theme="dark" />
                     <InstallPrompt />

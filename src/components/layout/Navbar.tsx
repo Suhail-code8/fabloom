@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Menu, Search, ShoppingCart, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/store/useCartStore";
 import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
@@ -115,6 +115,7 @@ export default function Navbar() {
                                 </Button>
                             </SheetTrigger>
                             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                                <SheetTitle className="sr-only">Navigation menu</SheetTitle>
                                 <div className="flex flex-col space-y-4 mt-8">
                                     {/* Mobile Logo */}
                                     <Link
