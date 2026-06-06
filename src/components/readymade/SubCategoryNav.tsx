@@ -1,7 +1,6 @@
 'use client';
 
 import { type RefObject } from 'react';
-import { usePathname } from 'next/navigation';
 import { useReadymadeFilters } from '@/components/readymade/ReadymadeFilterContext';
 
 // ============================================================================
@@ -46,10 +45,7 @@ export default function SubCategoryNav({
     const { activeFilterCount } = useReadymadeFilters();
 
     return (
-        <div
-            className="store-sticky-subnav flex items-center gap-2 py-2.5 border-b border-white/10 min-h-[var(--store-subnav-h)]"
-            style={{ backgroundColor: '#0f1035' }}
-        >
+        <div className="flex items-center gap-2 py-2 pb-2.5">
             {/* Scrollable pills */}
             <div
                 className="flex-1 flex gap-2 overflow-x-auto pl-4"

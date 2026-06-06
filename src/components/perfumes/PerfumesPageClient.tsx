@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import type { IPerfumeProduct, FragranceFamily } from '@/types/product';
+import StoreSubnavStack from '@/components/layout/StoreSubnavStack';
 
 // ============================================================================
 // FILTER BAR
@@ -131,36 +132,31 @@ export default function PerfumesPageClient({ perfumes }: { perfumes: IPerfumePro
     });
 
     return (
-        <div className="min-h-screen" style={{ backgroundColor: '#0f1035' }}>
-            {/* Header */}
-            <div className="px-4 pt-5 pb-3">
-                <h1 className="text-2xl font-extrabold text-white">Perfumes</h1>
-                <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                    {perfumes.length} fragrances · Arabian Oud to Fresh Citrus
-                </p>
-            </div>
-
-            {/* Filter pills */}
-            <div className="store-sticky-subnav border-b border-white/10 py-2.5 mb-5 min-h-[var(--store-subnav-h)]" style={{ backgroundColor: '#0f1035' }}>
-                <div className="flex gap-2 overflow-x-auto px-4" style={{ scrollbarWidth: 'none' }}>
-                    {PILLS.map((p) => (
-                        <button
-                            key={p.id}
-                            onClick={() => setActive(p.id)}
-                            className="flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold min-h-[36px] transition-all duration-200 active:scale-95"
-                            style={{
-                                backgroundColor: active === p.id ? '#D4A853' : 'rgba(255,255,255,0.08)',
-                                color: active === p.id ? '#0f1035' : 'rgba(255,255,255,0.65)',
-                                border: active === p.id ? '1.5px solid #D4A853' : '1.5px solid rgba(255,255,255,0.1)',
-                            }}
-                        >
-                            {p.label}
-                        </button>
-                    ))}
+        <div style={{ backgroundColor: '#0f1035' }}>
+            <StoreSubnavStack
+                title="Perfumes"
+                subtitle={`${perfumes.length} fragrances · Arabian Oud to Fresh Citrus`}
+            >
+                <div className="py-2 pb-2.5">
+                    <div className="flex gap-2 overflow-x-auto px-4" style={{ scrollbarWidth: 'none' }}>
+                        {PILLS.map((p) => (
+                            <button
+                                key={p.id}
+                                onClick={() => setActive(p.id)}
+                                className="flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold min-h-[36px] transition-all duration-200 active:scale-95"
+                                style={{
+                                    backgroundColor: active === p.id ? '#D4A853' : 'rgba(255,255,255,0.08)',
+                                    color: active === p.id ? '#0f1035' : 'rgba(255,255,255,0.65)',
+                                    border: active === p.id ? '1.5px solid #D4A853' : '1.5px solid rgba(255,255,255,0.1)',
+                                }}
+                            >
+                                {p.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            </StoreSubnavStack>
 
-            {/* Sections */}
             <div className="flex flex-col gap-8 pb-8">
                 {SECTIONS.map((section) => {
                     const items = filtered.filter((p) => p.subcategory === section.id);

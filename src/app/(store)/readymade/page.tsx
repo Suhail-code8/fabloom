@@ -35,7 +35,7 @@ export default async function ReadymadePage() {
     const getSub = (sub: string) => products.filter(p => p.subcategory === sub);
 
     return (
-        <div className="min-h-full" style={{ backgroundColor: '#0f1035' }}>
+        <div style={{ backgroundColor: '#0f1035' }}>
             <ReadymadePageClient 
                 products={products}
                 kurtas={getSub('kurta')}

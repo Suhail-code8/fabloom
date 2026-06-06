@@ -27,10 +27,7 @@ interface FabricFilterBarProps {
 
 export default function FabricFilterBar({ active, onChange }: FabricFilterBarProps) {
     return (
-        <div
-            className="store-sticky-subnav border-b border-white/10 py-2.5 min-h-[var(--store-subnav-h)]"
-            style={{ backgroundColor: '#0f1035' }}
-        >
+        <div className="py-2 pb-2.5">
             <div
                 className="flex gap-2 overflow-x-auto px-4"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}

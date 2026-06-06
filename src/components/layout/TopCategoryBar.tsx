@@ -86,90 +86,92 @@ export default function TopCategoryBar() {
 
     return (
         <nav
-            className="w-full min-h-[var(--store-header-h)] px-3 py-2 border-b border-white/10 flex flex-row items-center gap-2"
+            className="w-full min-h-[var(--store-header-h)] border-b border-white/10 flex items-center"
             style={{ backgroundColor: 'var(--brand-primary)' }}
             aria-label="Product categories"
         >
-            <div className="flex items-center gap-2 flex-shrink-0">
-                <Link href="/" className="flex items-center gap-2">
-                    <Image
-                        src="/logo.jpeg"
-                        alt="FK"
-                        width={32}
-                        height={32}
-                        className="rounded-full ring-1 ring-[#D4A853]/40 md:w-9 md:h-9"
-                    />
-                    <div className="hidden sm:flex flex-col leading-tight">
-                        <span
-                            className="text-sm font-bold tracking-wide"
-                            style={{
-                                color: '#D4A853',
-                                fontFamily: 'var(--font-playfair, serif)',
-                                letterSpacing: '0.04em',
-                            }}
-                        >
-                            Fabloom
-                        </span>
-                        <span
-                            className="text-[9px] font-medium tracking-widest uppercase"
-                            style={{ color: 'rgba(212,168,83,0.65)' }}
-                        >
-                            Kandoras
-                        </span>
-                    </div>
-                </Link>
-            </div>
-
-            <ul
-                className="flex flex-1 gap-0.5 overflow-x-auto no-scrollbar md:overflow-visible md:flex-wrap md:justify-end md:gap-2"
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-                {CATEGORIES.map((cat) => {
-                    const isActive =
-                        cat.href === '/'
-                            ? pathname === '/'
-                            : pathname.startsWith(cat.href);
-
-                    return (
-                        <li key={cat.id} className="flex-shrink-0">
-                            <Link
-                                href={cat.href}
-                                className="flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] md:min-w-[72px] md:min-h-[72px] px-1.5 py-1.5 md:px-2 md:py-2 rounded-xl transition-all duration-200 active:scale-95 select-none"
-                                aria-current={isActive ? 'page' : undefined}
+            <div className="w-full md:max-w-2xl md:mx-auto lg:max-w-6xl px-3 py-2 flex flex-row items-center gap-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
+                    <Link href="/" className="flex items-center gap-2">
+                        <Image
+                            src="/logo.jpeg"
+                            alt="FK"
+                            width={32}
+                            height={32}
+                            className="rounded-full ring-1 ring-[#D4A853]/40 md:w-9 md:h-9"
+                        />
+                        <div className="hidden sm:flex flex-col leading-tight">
+                            <span
+                                className="text-sm font-bold tracking-wide"
+                                style={{
+                                    color: '#D4A853',
+                                    fontFamily: 'var(--font-playfair, serif)',
+                                    letterSpacing: '0.04em',
+                                }}
                             >
-                                <span
-                                    className={[
-                                        'flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full transition-all duration-200',
-                                        isActive ? 'ring-2 bg-white/5' : 'bg-white/5',
-                                    ].join(' ')}
-                                    style={
-                                        isActive
-                                            ? { boxShadow: '0 0 0 2px var(--brand-gold)' }
-                                            : {}
-                                    }
+                                Fabloom
+                            </span>
+                            <span
+                                className="text-[9px] font-medium tracking-widest uppercase"
+                                style={{ color: 'rgba(212,168,83,0.65)' }}
+                            >
+                                Kandoras
+                            </span>
+                        </div>
+                    </Link>
+                </div>
+
+                <ul
+                    className="flex flex-1 gap-0.5 overflow-x-auto no-scrollbar md:justify-end md:gap-1 lg:gap-2"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                    {CATEGORIES.map((cat) => {
+                        const isActive =
+                            cat.href === '/'
+                                ? pathname === '/'
+                                : pathname.startsWith(cat.href);
+
+                        return (
+                            <li key={cat.id} className="flex-shrink-0">
+                                <Link
+                                    href={cat.href}
+                                    className="flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] md:min-w-[72px] md:min-h-[72px] px-1.5 py-1.5 md:px-2 md:py-2 rounded-xl transition-all duration-200 active:scale-95 select-none"
+                                    aria-current={isActive ? 'page' : undefined}
                                 >
                                     <span
+                                        className={[
+                                            'flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full transition-all duration-200',
+                                            isActive ? 'ring-2 bg-white/5' : 'bg-white/5',
+                                        ].join(' ')}
+                                        style={
+                                            isActive
+                                                ? { boxShadow: '0 0 0 2px var(--brand-gold)' }
+                                                : {}
+                                        }
+                                    >
+                                        <span
+                                            style={{
+                                                color: isActive ? 'var(--brand-gold)' : 'rgba(255,255,255,0.6)',
+                                            }}
+                                        >
+                                            {cat.icon}
+                                        </span>
+                                    </span>
+
+                                    <span
+                                        className="text-[9px] md:text-[10px] font-medium leading-tight text-center max-w-[56px] md:max-w-[64px] truncate transition-colors duration-200"
                                         style={{
-                                            color: isActive ? 'var(--brand-gold)' : 'rgba(255,255,255,0.6)',
+                                            color: isActive ? 'var(--brand-gold)' : 'rgba(255,255,255,0.55)',
                                         }}
                                     >
-                                        {cat.icon}
+                                        {cat.label}
                                     </span>
-                                </span>
-
-                                <span
-                                    className="text-[9px] md:text-[10px] font-medium leading-tight text-center max-w-[56px] md:max-w-[64px] truncate transition-colors duration-200"
-                                    style={{
-                                        color: isActive ? 'var(--brand-gold)' : 'rgba(255,255,255,0.55)',
-                                    }}
-                                >
-                                    {cat.label}
-                                </span>
-                            </Link>
-                        </li>
-                    );
-                })}
-            </ul>
+                                </Link>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </div>
 
             <style>{`
                 nav ul::-webkit-scrollbar { display: none; }

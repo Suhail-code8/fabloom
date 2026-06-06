@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { 
     Sheet, 
-    SheetContent, 
+    SheetContent,
+    SheetTitle,
 } from '@/components/ui/sheet';
 import { useMeasurementFormStore } from '@/store/useMeasurementFormStore';
 import { Step1Profile, Step2Measurements, Step3Preferences, Step4Review } from '@/components/measurements/MeasurementSteps';
@@ -78,6 +79,7 @@ export default function MeasurementFormDrawer({
     return (
         <Sheet open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
             <SheetContent side="bottom" className="h-[95vh] sm:max-w-xl sm:mx-auto rounded-t-3xl border-none bg-[#0f1035] p-0 flex flex-col overflow-hidden">
+                <SheetTitle className="sr-only">New measurement profile</SheetTitle>
                 {/* Header & Progress */}
                 <div className="flex-none px-4 pt-6 pb-4 bg-[#0f1035] z-10 border-b border-white/5">
                     <div className="flex items-center justify-between mb-4">
