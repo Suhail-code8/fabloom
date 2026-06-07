@@ -58,11 +58,12 @@ export default function RootLayout({
             <html lang="en" suppressHydrationWarning>
                 <head>
                     <link rel="manifest" href="/manifest.json" />
-                    <meta name="theme-color" content="#0f1035" />
+                    <meta name="theme-color" content="#0d4a3a" />
                     <meta name="apple-mobile-web-app-capable" content="yes" />
                     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-                    <link rel="apple-touch-icon" href="/logo.jpeg" />
-                    <link rel="icon" href="/logo.jpeg" />
+                    <meta name="apple-mobile-web-app-title" content="Fabloom" />
+                    <link rel="apple-touch-icon" href="/icons/icon-512.png" />
+                    <link rel="icon" href="/icons/icon-192.png" />
                 </head>
                 <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-[#0f1035]`} suppressHydrationWarning>
                     {children}

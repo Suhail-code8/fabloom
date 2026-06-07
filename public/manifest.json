@@ -1,11 +1,11 @@
 {
   "name": "Fabloom Kandoras",
-  "short_name": "Fabloom Kandoras",
-  "description": "Premium Islamic Fashion",
+  "short_name": "Fabloom",
+  "description": "Premium Islamic Fashion — Kandoras, Fabrics & Custom Stitching",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f1035",
-  "theme_color": "#D4A853",
+  "background_color": "#0d4a3a",
+  "theme_color": "#0d4a3a",
   "orientation": "portrait",
   "icons": [
     {
@@ -25,12 +25,12 @@
     {
       "name": "Browse Fabrics",
       "url": "/fabrics",
-      "icons": [{ "src": "/logo.jpeg", "sizes": "192x192" }]
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "My Orders",
       "url": "/account/orders",
-      "icons": [{ "src": "/logo.jpeg", "sizes": "192x192" }]
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
