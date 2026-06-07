@@ -12,10 +12,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { itemId, status, adminNotes } = await req.json();
+    const { itemId, status, adminNotes, stitchingStatus } = await req.json();
 
-    if (!itemId) {
-        return NextResponse.json({ error: 'itemId is required' }, { status: 400 });
+    if (!itemId && !stitchingStatus) {
+        return NextResponse.json({ error: 'itemId or stitchingStatus is required' }, { status: 400 });
     }
 
     await dbConnect();
@@ -26,6 +26,46 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
+    // 1. Handle Order-Level Update
+    if (stitchingStatus && !itemId) {
+        let updatedCount = 0;
+        let lastStatus = null;
+        for (const item of order.items) {
+            if (item.stitchingDetails) {
+                lastStatus = item.stitchingDetails.status;
+                item.stitchingDetails.status = stitchingStatus;
+                updatedCount++;
+            }
+        }
+        await order.save();
+
+        // Trigger WhatsApp notifications if applicable (we just trigger one per order)
+        try {
+            if (updatedCount > 0 && stitchingStatus !== lastStatus) {
+                const phone = order.shippingAddress.phone;
+                const customerName = order.shippingAddress.fullName;
+                if (stitchingStatus === 'ready') {
+                    void sendStitchingReady(phone, {
+                        orderNumber: order.orderNumber,
+                        customerName,
+                        garmentType: 'Order Items',
+                    });
+                } else if (stitchingStatus === 'cutting' && lastStatus === 'pending') {
+                    void sendStitchingStarted(phone, {
+                        orderNumber: order.orderNumber,
+                        customerName,
+                        garmentType: 'Order Items',
+                    });
+                }
+            }
+        } catch (e) {
+            // Ignore notification failures
+        }
+
+        return NextResponse.json({ success: true, order });
+    }
+
+    // 2. Handle Item-Level Update
     const item = order.items.id(itemId);
     if (!item || !item.stitchingDetails) {
         return NextResponse.json({ error: 'Stitching item not found' }, { status: 404 });
@@ -43,8 +83,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     await order.save();
 
-    // WhatsApp notification stub: fire-and-forget on stage changes.
-    // Never block production moves on external notification failures.
+    // WhatsApp notification stub for single item
     try {
         const nextStatus = item.stitchingDetails.status;
         if (status && nextStatus !== previousStatus) {
@@ -63,7 +102,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
                     customerName,
                     garmentType,
                 });
-            } else {
+            } else if (nextStatus === 'cutting' && previousStatus === 'pending') {
                 void sendStitchingStarted(phone, {
                     orderNumber: order.orderNumber,
                     customerName,
