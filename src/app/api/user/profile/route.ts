@@ -19,18 +19,30 @@ export async function GET() {
         const email = clerkUser.emailAddresses?.[0]?.emailAddress || `${userId}@placeholder.local`;
         const name = clerkUser.fullName || clerkUser.firstName || 'User';
 
-        // Ensure user exists
-        const user = await User.findOneAndUpdate(
-            { clerkId: userId },
-            {
-                $setOnInsert: {
+        let user = await User.findOne({ clerkId: userId }).lean();
+
+        if (!user) {
+            // Check if a user with this email already exists (e.g., from before Clerk was added)
+            const existingUserByEmail = await User.findOne({ email: email });
+
+            if (existingUserByEmail) {
+                // Link the Clerk ID to the existing user
+                existingUserByEmail.clerkId = userId;
+                if (!existingUserByEmail.name) existingUserByEmail.name = name;
+                await existingUserByEmail.save();
+                user = existingUserByEmail.toObject();
+            } else {
+                // Create a new user
+                const newUser = new User({
+                    clerkId: userId,
                     email: email,
                     name: name,
                     role: 'customer',
-                }
-            },
-            { upsert: true, new: true }
-        ).lean();
+                });
+                await newUser.save();
+                user = newUser.toObject();
+            }
+        }
 
         // Fetch counts concurrently
         const [ordersCount, profilesCount] = await Promise.all([
