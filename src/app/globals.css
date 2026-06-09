@@ -155,3 +155,16 @@
     radial-gradient(circle at 80% 20%, 
       rgba(212,168,83,0.03) 0%, transparent 40%);
 }
+
+@keyframes shimmer {
+  to { background-position: 200% center; }
+}
+
+@keyframes marquee-roll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee-roll 18s linear infinite;
+}

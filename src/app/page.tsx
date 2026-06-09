@@ -1,7 +1,5 @@
-'use client';
-
-import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import LandingClient from '@/components/landing/LandingClient';
 
 // ─────────────────────────────────────────────
 // TYPES
@@ -45,166 +43,9 @@ const MARQUEE_ITEMS = [
 ];
 
 // ─────────────────────────────────────────────
-// CANVAS GEOMETRIC PATTERN
-// ─────────────────────────────────────────────
-function GeometricCanvas() {
-    const ref = useRef<HTMLCanvasElement>(null);
-    useEffect(() => {
-        const canvas = ref.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-        let raf: number;
-        let t = 0;
-
-        const resize = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        };
-        resize();
-        window.addEventListener('resize', resize);
-
-        const drawStar = (cx: number, cy: number, r: number, alpha: number) => {
-            ctx.save();
-            ctx.globalAlpha = alpha;
-            ctx.strokeStyle = 'rgba(201,153,42,1)';
-            ctx.lineWidth = 0.5;
-            ctx.beginPath();
-            for (let i = 0; i < 8; i++) {
-                const a = (i / 8) * Math.PI * 2;
-                const ar = a + Math.PI / 8;
-                const x1 = cx + r * Math.cos(a);
-                const y1 = cy + r * Math.sin(a);
-                const x2 = cx + r * 0.4 * Math.cos(ar);
-                const y2 = cy + r * 0.4 * Math.sin(ar);
-                if (i === 0) ctx.moveTo(x1, y1);
-                else ctx.lineTo(x1, y1);
-                ctx.lineTo(x2, y2);
-            }
-            ctx.closePath();
-            ctx.stroke();
-            ctx.restore();
-        };
-
-        const draw = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            t += 0.015;
-            const spacingX = 90;
-            const spacingY = 80;
-            const cols = Math.ceil(canvas.width / spacingX) + 2;
-            const rows = Math.ceil(canvas.height / spacingY) + 2;
-            for (let row = -1; row < rows; row++) {
-                for (let col = -1; col < cols; col++) {
-                    const cx = col * spacingX + (row % 2 === 0 ? 0 : spacingX / 2);
-                    const cy = row * spacingY;
-                    const offset = (col + row * 3) * 0.4;
-                    const alpha = (Math.sin(t + offset) * 0.5 + 0.5) * 0.1;
-                    drawStar(cx, cy, 22, alpha);
-                }
-            }
-            raf = requestAnimationFrame(draw);
-        };
-        draw();
-        return () => {
-            window.removeEventListener('resize', resize);
-            cancelAnimationFrame(raf);
-        };
-    }, []);
-    return <canvas ref={ref} className="lp-canvas" />;
-}
-
-// ─────────────────────────────────────────────
-// CUSTOM CURSOR
-// ─────────────────────────────────────────────
-function CustomCursor() {
-    const dotRef = useRef<HTMLDivElement>(null);
-    const ringRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        let mx = -100, my = -100;
-        let rx = -100, ry = -100;
-        let raf: number;
-
-        const onMove = (e: MouseEvent) => { mx = e.clientX; my = e.clientY; };
-        document.addEventListener('mousemove', onMove);
-
-        const tick = () => {
-            if (dotRef.current) {
-                dotRef.current.style.transform = `translate(${mx - 4}px,${my - 4}px)`;
-            }
-            rx += (mx - rx) * 0.12;
-            ry += (my - ry) * 0.12;
-            if (ringRef.current) {
-                ringRef.current.style.transform = `translate(${rx - 18}px,${ry - 18}px)`;
-            }
-            raf = requestAnimationFrame(tick);
-        };
-        tick();
-
-        const hover = () => { dotRef.current?.classList.add('lp-cursor-dot--hover'); ringRef.current?.classList.add('lp-cursor-ring--hover'); };
-        const leave = () => { dotRef.current?.classList.remove('lp-cursor-dot--hover'); ringRef.current?.classList.remove('lp-cursor-ring--hover'); };
-        const els = document.querySelectorAll('a,button,[data-hover]');
-        els.forEach(el => { el.addEventListener('mouseenter', hover); el.addEventListener('mouseleave', leave); });
-
-        return () => {
-            document.removeEventListener('mousemove', onMove);
-            cancelAnimationFrame(raf);
-        };
-    }, []);
-    return (
-        <>
-            <div ref={dotRef} className="lp-cursor-dot" />
-            <div ref={ringRef} className="lp-cursor-ring" />
-        </>
-    );
-}
-
-// ─────────────────────────────────────────────
-// COUNT-UP HOOK
-// ─────────────────────────────────────────────
-function useCountUp(target: number, duration = 1800) {
-    const [count, setCount] = useState(0);
-    const ref = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        const el = ref.current;
-        if (!el) return;
-        const observer = new IntersectionObserver(([entry]) => {
-            if (!entry.isIntersecting) return;
-            observer.disconnect();
-            const start = performance.now();
-            const tick = (now: number) => {
-                const p = Math.min((now - start) / duration, 1);
-                const ease = 1 - Math.pow(1 - p, 4);
-                setCount(Math.round(ease * target));
-                if (p < 1) requestAnimationFrame(tick);
-            };
-            requestAnimationFrame(tick);
-        }, { threshold: 0.3 });
-        observer.observe(el);
-        return () => observer.disconnect();
-    }, [target, duration]);
-    return { ref, count };
-}
-
-// ─────────────────────────────────────────────
-// STAT ITEM COMPONENT
-// ─────────────────────────────────────────────
-function StatBlock({ stat }: { stat: StatItem }) {
-    const { ref, count } = useCountUp(stat.value);
-    return (
-        <div ref={ref} className="lp-stat">
-            <span className="lp-stat-num">{count}{stat.suffix}</span>
-            <span className="lp-stat-label">{stat.label}</span>
-        </div>
-    );
-}
-
-// ─────────────────────────────────────────────
 // MAIN PAGE
 // ─────────────────────────────────────────────
 export default function LandingPage() {
-    const [loaded, setLoaded] = useState(false);
-    useEffect(() => { const t = setTimeout(() => setLoaded(true), 100); return () => clearTimeout(t); }, []);
-
     return (
         <>
             <style>{`
@@ -248,13 +89,7 @@ export default function LandingPage() {
 
                 /* hero title */
                 .lp-h1 { font-family: var(--font-playfair, serif); font-size: clamp(3.5rem,9vw,8rem); font-weight: 900; line-height: 0.95; margin: 0 0 1.8rem; }
-                .lp-h1-line { overflow: hidden; display: block; }
-                .lp-h1-word { display: inline-block; color: #fff; opacity: 0; animation: wordUp .7s ease forwards; }
-                .lp-h1-word--d1 { animation-delay: .25s; }
-                .lp-h1-word--d2 { animation-delay: .4s; }
-                .lp-h1-word--d3 { animation-delay: .55s; }
-                .lp-shimmer { background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 33%, var(--gold3) 66%, var(--gold) 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s linear infinite; font-style: italic; }
-
+                
                 /* hero sub */
                 .lp-hero-sub { color: rgba(255,255,255,0.5); font-weight: 300; font-size: clamp(.95rem,2vw,1.15rem); line-height: 1.7; max-width: 540px; margin: 0 auto 2.5rem; opacity: 0; animation: riseIn .7s .7s ease forwards; }
 
@@ -274,7 +109,7 @@ export default function LandingPage() {
 
                 /* ─── MARQUEE ─── */
                 .lp-marquee-wrap { width: 100%; overflow: hidden; border-top: 1px solid rgba(201,153,42,0.12); border-bottom: 1px solid rgba(201,153,42,0.12); background: rgba(201,153,42,0.03); padding: .75rem 0; position: relative; z-index: 3; }
-                .lp-marquee-track { display: flex; width: max-content; animation: marquee 28s linear infinite; }
+                .lp-marquee-track-inner { display: flex; width: max-content; }
                 .lp-marquee-item { display: flex; align-items: center; gap: 1.4rem; padding: 0 1.4rem; font-size: .65rem; letter-spacing: .35em; text-transform: uppercase; color: var(--gold2); white-space: nowrap; }
                 .lp-marquee-sep { color: var(--gold); font-size: .75rem; }
 
@@ -361,9 +196,6 @@ export default function LandingPage() {
 
                 /* ─── KEYFRAMES ─── */
                 @keyframes riseIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-                @keyframes wordUp { from { opacity:0; transform:translateY(100%); } to { opacity:1; transform:translateY(0); } }
-                @keyframes shimmer { 0%{background-position:0% center;} 100%{background-position:200% center;} }
-                @keyframes marquee { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
                 @keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
                 @keyframes breathe { 0%,100%{transform:translate(-50%,-50%) scale(1); opacity:.7;} 50%{transform:translate(-50%,-50%) scale(1.05); opacity:1;} }
                 @keyframes scrollWheel { 0%{transform:translateY(0);opacity:1;} 80%{transform:translateY(12px);opacity:0;} 100%{transform:translateY(0);opacity:0;} }
@@ -371,16 +203,13 @@ export default function LandingPage() {
                 @keyframes pulse { 0%,100%{transform:scale(1);opacity:.7;} 50%{transform:scale(1.08);opacity:1;} }
             `}</style>
 
-            {/* Custom cursor */}
-            <CustomCursor />
-
             {/* Noise overlay */}
             <div className="lp-noise" aria-hidden />
 
             <div className="lp-wrap">
                 {/* ─── HERO ─── */}
                 <section className="lp-hero">
-                    <GeometricCanvas />
+                    <canvas className="lp-canvas"></canvas>
                     <div className="lp-hero-grad" />
                     <div className="lp-hero-content">
                         {/* Logo */}
@@ -394,15 +223,20 @@ export default function LandingPage() {
 
                         {/* H1 */}
                         <h1 className="lp-h1">
-                            <span className="lp-h1-line">
-                                <span className="lp-h1-word lp-h1-word--d1">Wear</span>
+                            <span style={{ display: 'block' }}>Wear</span>
+                            <span style={{
+                                background: 'linear-gradient(135deg,#c9992a,#e8c060,#f5e0a0,#c9992a)',
+                                backgroundSize: '200% auto',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                                animation: 'shimmer 4s linear infinite',
+                                fontStyle: 'italic',
+                                display: 'block'
+                            }}>
+                                Excellence
                             </span>
-                            <span className="lp-h1-line">
-                                <span className={`lp-h1-word lp-h1-word--d2 lp-shimmer`}>Excellence</span>
-                            </span>
-                            <span className="lp-h1-line">
-                                <span className="lp-h1-word lp-h1-word--d3">Daily.</span>
-                            </span>
+                            <span style={{ display: 'block' }}>Daily</span>
                         </h1>
 
                         {/* Sub */}
@@ -429,7 +263,7 @@ export default function LandingPage() {
 
                 {/* ─── MARQUEE ─── */}
                 <div className="lp-marquee-wrap" aria-hidden>
-                    <div className="lp-marquee-track">
+                    <div className="marquee-track lp-marquee-track-inner">
                         {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
                             <span key={i} className="lp-marquee-item">
                                 {item}
@@ -442,7 +276,12 @@ export default function LandingPage() {
                 {/* ─── STATS ─── */}
                 <section aria-label="Brand stats">
                     <div className="lp-stats">
-                        {STATS.map(s => <StatBlock key={s.label} stat={s} />)}
+                        {STATS.map(s => (
+                            <div key={s.label} className="lp-stat">
+                                <span className="lp-stat-num" data-target={s.value} data-suffix={s.suffix}>0{s.suffix}</span>
+                                <span className="lp-stat-label">{s.label}</span>
+                            </div>
+                        ))}
                     </div>
                 </section>
 
@@ -488,7 +327,17 @@ export default function LandingPage() {
                         <span className="lp-stitch-eyebrow">Custom Stitching</span>
                         <h2 className="lp-stitch-h2">
                             Tailored to your<br />
-                            <em className="lp-shimmer" style={{ fontStyle: 'italic' }}>exact measurements</em>
+                            <span style={{
+                                background: 'linear-gradient(135deg,#c9992a,#e8c060,#f5e0a0,#c9992a)',
+                                backgroundSize: '200% auto',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                                animation: 'shimmer 4s linear infinite',
+                                fontStyle: 'italic'
+                            }}>
+                                exact measurements
+                            </span>
                         </h2>
                         <p className="lp-stitch-p">
                             Send us your fabric or choose from our range. Our master tailors craft each garment to your measurements with decades of experience in Islamic fashion.
@@ -531,7 +380,17 @@ export default function LandingPage() {
                     <div className="lp-cta-inner">
                         <h2 className="lp-cta-h2">
                             Dress with<br />
-                            <span className="lp-shimmer">intention</span>
+                            <span style={{
+                                background: 'linear-gradient(135deg,#c9992a,#e8c060,#f5e0a0,#c9992a)',
+                                backgroundSize: '200% auto',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                                animation: 'shimmer 4s linear infinite',
+                                fontStyle: 'italic'
+                            }}>
+                                intention
+                            </span>
                         </h2>
                         <p className="lp-cta-sub">
                             Every stitch, every thread — crafted with purpose.
@@ -568,6 +427,9 @@ export default function LandingPage() {
                     <p className="lp-footer-copy">© 2025 Fabloom Kandoras · All rights reserved · Koduvally, Kerala</p>
                 </footer>
             </div>
+            
+            {/* Inject interactive elements logic */}
+            <LandingClient />
         </>
     );
 }
