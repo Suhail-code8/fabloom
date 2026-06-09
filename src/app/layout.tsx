@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Playfair_Display, DM_Sans } from "next/font/google";
 import "./globals.css";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -7,7 +7,14 @@ import { ClerkProvider } from "@clerk/nextjs";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({
     subsets: ["latin"],
+    weight: ["400", "700", "900"],
+    style: ["normal", "italic"],
     variable: "--font-playfair"
+});
+const dmSans = DM_Sans({
+    subsets: ["latin"],
+    weight: ["200", "300", "400", "500"],
+    variable: "--font-dm-sans"
 });
 
 export const metadata: Metadata = {
@@ -65,7 +72,7 @@ export default function RootLayout({
                     <link rel="apple-touch-icon" href="/icons/icon-512.png" />
                     <link rel="icon" href="/icons/icon-192.png" />
                 </head>
-                <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-[#0f1035]`} suppressHydrationWarning>
+                <body className={`${inter.variable} ${playfair.variable} ${dmSans.variable} font-sans antialiased bg-[#0f1035]`} suppressHydrationWarning>
                     {children}
                     <Toaster position="top-center" richColors theme="dark" />
                     <InstallPrompt />
