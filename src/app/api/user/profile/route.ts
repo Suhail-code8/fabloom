@@ -16,13 +16,16 @@ export async function GET() {
     try {
         await dbConnect();
 
+        const email = clerkUser.emailAddresses?.[0]?.emailAddress || `${userId}@placeholder.local`;
+        const name = clerkUser.fullName || clerkUser.firstName || 'User';
+
         // Ensure user exists
         const user = await User.findOneAndUpdate(
             { clerkId: userId },
             {
                 $setOnInsert: {
-                    email: clerkUser.emailAddresses[0]?.emailAddress || '',
-                    name: clerkUser.fullName || clerkUser.firstName || 'User',
+                    email: email,
+                    name: name,
                     role: 'customer',
                 }
             },
@@ -52,6 +55,7 @@ export async function GET() {
         });
 
     } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error("API /api/user/profile ERROR:", error);
+        return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
     }
 }
