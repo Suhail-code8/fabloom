@@ -66,7 +66,7 @@ const nextConfig = {
                     },
                     {
                         key: 'Content-Security-Policy',
-                        value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.clerk.accounts.dev *.razorpay.com https://upload-widget.cloudinary.com https://widget.cloudinary.com blob:; connect-src 'self' *.clerk.accounts.dev *.razorpay.com clerk-telemetry.com *.clerk.com https://api.cloudinary.com https://*.cloudinary.com; img-src * data: blob: 'self'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; frame-src 'self' *.razorpay.com https://widget.cloudinary.com https://upload-widget.cloudinary.com; worker-src 'self' blob:;",
+                        value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.clerk.accounts.dev *.clerk.fabloomkandoras.in https://clerk.fabloomkandoras.in *.razorpay.com https://upload-widget.cloudinary.com https://widget.cloudinary.com blob:; connect-src 'self' *.clerk.accounts.dev *.clerk.fabloomkandoras.in https://clerk.fabloomkandoras.in *.razorpay.com clerk-telemetry.com *.clerk.com https://api.cloudinary.com https://*.cloudinary.com; img-src * data: blob: 'self'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; frame-src 'self' *.razorpay.com https://widget.cloudinary.com https://upload-widget.cloudinary.com; worker-src 'self' blob:;",
                     },
                 ],
             },
