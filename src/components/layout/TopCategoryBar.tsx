@@ -92,7 +92,7 @@ export default function TopCategoryBar() {
         >
             <div className="w-full md:max-w-2xl md:mx-auto lg:max-w-6xl px-3 py-2 flex flex-row items-center gap-2">
                 <div className="flex items-center gap-2 flex-shrink-0">
-                    <Link href="/" className="flex items-center gap-2">
+                    <Link href="/home" className="flex items-center gap-2">
                         <Image
                             src="/logo.jpeg"
                             alt="FK"

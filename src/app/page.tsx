@@ -247,7 +247,7 @@ export default function LandingPage() {
 
                         {/* CTAs */}
                         <div className="lp-cta-row">
-                            <Link href="/readymade" className="lp-btn-primary">Shop Collection →</Link>
+                            <Link href="/home" className="lp-btn-primary">Shop Collection →</Link>
                             <Link href="/stitching" className="lp-btn-ghost">Custom Stitching</Link>
                         </div>
                     </div>
@@ -395,9 +395,14 @@ export default function LandingPage() {
                         <p className="lp-cta-sub">
                             Every stitch, every thread — crafted with purpose.
                         </p>
-                        <Link href="/readymade" className="lp-btn-primary" style={{ fontSize: '1rem', padding: '1rem 2.5rem' }}>
+                        <Link href="/home" className="lp-btn-primary" style={{ fontSize: '1rem', padding: '1rem 2.5rem', marginBottom: '1.5rem', display: 'inline-block' }}>
                             Enter the Store →
                         </Link>
+                        <div style={{ marginTop: '1rem' }}>
+                            <Link href="/home" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', textDecoration: 'underline', letterSpacing: '0.04em' }}>
+                                Already a customer? Go to store →
+                            </Link>
+                        </div>
                     </div>
                 </section>
 
