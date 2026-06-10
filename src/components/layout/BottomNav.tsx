@@ -60,7 +60,7 @@ const InfoIcon = (active: boolean) => (
 // ============================================================================
 
 const NAV_TABS: NavTab[] = [
-    { label: 'Home',     href: '/',        icon: HomeIcon },
+    { label: 'Home',     href: '/home',    icon: HomeIcon },
     { label: 'Wishlist', href: '/wishlist', icon: HeartIcon },
     { label: 'Cart',     href: '/cart',     icon: BagIcon },
     { label: 'Account',  href: '/account',  icon: PersonIcon },
