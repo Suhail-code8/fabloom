@@ -4,128 +4,118 @@ import { useEffect } from 'react';
 
 export default function LandingClient() {
     useEffect(() => {
-        // ─── CANVAS GEOMETRIC PATTERN ───
-        const canvas = document.querySelector('.lp-canvas') as HTMLCanvasElement;
-        let rafCanvas: number;
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-                let t = 0;
-                const resize = () => {
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-                };
-                resize();
-                window.addEventListener('resize', resize);
+        // ── Mobile Menu Toggle ──
+        const openBtn = document.getElementById('lp-open-menu');
+        const closeBtn = document.getElementById('lp-close-menu');
+        const mobileNav = document.getElementById('lp-mobile-nav');
 
-                const drawStar = (cx: number, cy: number, r: number, alpha: number) => {
-                    ctx.save();
-                    ctx.globalAlpha = alpha;
-                    ctx.strokeStyle = 'rgba(201,153,42,1)';
-                    ctx.lineWidth = 0.5;
-                    ctx.beginPath();
-                    for (let i = 0; i < 8; i++) {
-                        const a = (i / 8) * Math.PI * 2;
-                        const ar = a + Math.PI / 8;
-                        const x1 = cx + r * Math.cos(a);
-                        const y1 = cy + r * Math.sin(a);
-                        const x2 = cx + r * 0.4 * Math.cos(ar);
-                        const y2 = cy + r * 0.4 * Math.sin(ar);
-                        if (i === 0) ctx.moveTo(x1, y1);
-                        else ctx.lineTo(x1, y1);
-                        ctx.lineTo(x2, y2);
-                    }
-                    ctx.closePath();
-                    ctx.stroke();
-                    ctx.restore();
-                };
+        const openMenu = () => mobileNav?.classList.remove('-translate-x-full');
+        const closeMenu = () => mobileNav?.classList.add('-translate-x-full');
 
-                const draw = () => {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    t += 0.015;
-                    const spacingX = 90;
-                    const spacingY = 80;
-                    const cols = Math.ceil(canvas.width / spacingX) + 2;
-                    const rows = Math.ceil(canvas.height / spacingY) + 2;
-                    for (let row = -1; row < rows; row++) {
-                        for (let col = -1; col < cols; col++) {
-                            const cx = col * spacingX + (row % 2 === 0 ? 0 : spacingX / 2);
-                            const cy = row * spacingY;
-                            const offset = (col + row * 3) * 0.4;
-                            const alpha = (Math.sin(t + offset) * 0.5 + 0.5) * 0.1;
-                            drawStar(cx, cy, 22, alpha);
-                        }
-                    }
-                    rafCanvas = requestAnimationFrame(draw);
-                };
-                draw();
+        openBtn?.addEventListener('click', openMenu);
+        closeBtn?.addEventListener('click', closeMenu);
+
+        // Close on backdrop click
+        mobileNav?.addEventListener('click', (e) => {
+            if (e.target === mobileNav) closeMenu();
+        });
+
+        // ── Top Nav Scroll Effect ──
+        const topNav = document.getElementById('lp-top-nav');
+        const handleScroll = () => {
+            if (!topNav) return;
+            if (window.scrollY > 60) {
+                topNav.style.borderBottom = '1px solid rgba(72,70,76,0.2)';
+                topNav.style.backgroundColor = 'rgba(5,4,15,0.85)';
+            } else {
+                topNav.style.borderBottom = '';
+                topNav.style.backgroundColor = 'transparent';
             }
-        }
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
 
-        // ─── CUSTOM CURSOR ───
-        const dot = document.querySelector('.lp-cursor-dot') as HTMLDivElement;
-        const ring = document.querySelector('.lp-cursor-ring') as HTMLDivElement;
-        let rafCursor: number;
-        if (dot && ring) {
-            let mx = -100, my = -100;
-            let rx = -100, ry = -100;
-
-            const onMove = (e: MouseEvent) => { mx = e.clientX; my = e.clientY; };
-            document.addEventListener('mousemove', onMove);
-
-            const tick = () => {
-                dot.style.transform = `translate(${mx - 4}px,${my - 4}px)`;
-                rx += (mx - rx) * 0.12;
-                ry += (my - ry) * 0.12;
-                ring.style.transform = `translate(${rx - 18}px,${ry - 18}px)`;
-                rafCursor = requestAnimationFrame(tick);
-            };
-            tick();
-
-            const hover = () => { dot.classList.add('lp-cursor-dot--hover'); ring.classList.add('lp-cursor-ring--hover'); };
-            const leave = () => { dot.classList.remove('lp-cursor-dot--hover'); ring.classList.remove('lp-cursor-ring--hover'); };
-            const els = document.querySelectorAll('a,button,[data-hover]');
-            els.forEach(el => { el.addEventListener('mouseenter', hover); el.addEventListener('mouseleave', leave); });
-        }
-
-        // ─── COUNT-UP ANIMATION ───
-        const statEls = document.querySelectorAll('.lp-stat-num');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const el = entry.target as HTMLElement;
-                    const target = parseInt(el.dataset.target || '0', 10);
-                    const suffix = el.dataset.suffix || '';
-                    if (target > 0) {
-                        const duration = 1800;
-                        const start = performance.now();
-                        const tick = (now: number) => {
-                            const p = Math.min((now - start) / duration, 1);
-                            const ease = 1 - Math.pow(1 - p, 4);
-                            el.innerText = Math.round(ease * target) + suffix;
-                            if (p < 1) requestAnimationFrame(tick);
-                        };
-                        requestAnimationFrame(tick);
+        // ── Intersection Observer (fade-up) ──
+        const observer = new IntersectionObserver(
+            (entries, obs) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('lp-visible');
+                        obs.unobserve(entry.target);
                     }
-                    observer.unobserve(el);
-                }
-            });
-        }, { threshold: 0.3 });
+                });
+            },
+            { rootMargin: '0px', threshold: 0.12 }
+        );
+        document.querySelectorAll('.lp-fade').forEach((el) => observer.observe(el));
 
-        statEls.forEach(el => observer.observe(el));
+        // ── Counter Animation ──
+        const counterEls = document.querySelectorAll<HTMLElement>('[data-count-target]');
+        const counterObs = new IntersectionObserver(
+            (entries, obs) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    const el = entry.target as HTMLElement;
+                    const target = parseInt(el.dataset.countTarget || '0', 10);
+                    const suffix = el.dataset.countSuffix || '';
+                    const duration = 1800;
+                    const start = performance.now();
+                    const tick = (now: number) => {
+                        const progress = Math.min((now - start) / duration, 1);
+                        const eased = 1 - Math.pow(1 - progress, 3);
+                        el.textContent = Math.floor(eased * target) + suffix;
+                        if (progress < 1) requestAnimationFrame(tick);
+                    };
+                    requestAnimationFrame(tick);
+                    obs.unobserve(el);
+                });
+            },
+            { threshold: 0.5 }
+        );
+        counterEls.forEach((el) => counterObs.observe(el));
+
+        // ── Custom cursor ──
+        const dot = document.getElementById('lp-cursor-dot');
+        const ring = document.getElementById('lp-cursor-ring');
+        let ringX = 0, ringY = 0;
+        let dotX = 0, dotY = 0;
+
+        const moveCursor = (e: MouseEvent) => {
+            dotX = e.clientX; dotY = e.clientY;
+            if (dot) {
+                dot.style.transform = `translate(${dotX - 4}px, ${dotY - 4}px)`;
+            }
+        };
+        window.addEventListener('mousemove', moveCursor, { passive: true });
+
+        const animRing = () => {
+            ringX += (dotX - ringX) * 0.12;
+            ringY += (dotY - ringY) * 0.12;
+            if (ring) ring.style.transform = `translate(${ringX - 18}px, ${ringY - 18}px)`;
+            requestAnimationFrame(animRing);
+        };
+        animRing();
+
+        const hoverEls = document.querySelectorAll('a,button,.lp-hover');
+        hoverEls.forEach((el) => {
+            el.addEventListener('mouseenter', () => {
+                dot?.classList.add('lp-cursor-dot--hover');
+                ring?.classList.add('lp-cursor-ring--hover');
+            });
+            el.addEventListener('mouseleave', () => {
+                dot?.classList.remove('lp-cursor-dot--hover');
+                ring?.classList.remove('lp-cursor-ring--hover');
+            });
+        });
 
         return () => {
-            if (rafCanvas) cancelAnimationFrame(rafCanvas);
-            if (rafCursor) cancelAnimationFrame(rafCursor);
-            document.removeEventListener('mousemove', () => {});
+            openBtn?.removeEventListener('click', openMenu);
+            closeBtn?.removeEventListener('click', closeMenu);
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('mousemove', moveCursor);
             observer.disconnect();
+            counterObs.disconnect();
         };
     }, []);
 
-    return (
-        <>
-            <div className="lp-cursor-dot" />
-            <div className="lp-cursor-ring" />
-        </>
-    );
+    return null;
 }
