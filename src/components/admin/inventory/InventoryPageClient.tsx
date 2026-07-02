@@ -3,9 +3,9 @@
 import { useState, useMemo } from 'react';
 import useSWR from 'swr';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 import type { AnyProduct } from '@/types/product';
 import RestockModal from './RestockModal';
-import AddProductDrawer from './AddProductDrawer';
 import EditProductDrawer from './EditProductDrawer';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -44,7 +44,7 @@ export default function InventoryPageClient() {
     const [search, setSearch] = useState('');
     const [restockProduct, setRestockProduct] = useState<AnyProduct | null>(null);
     const [editProduct, setEditProduct] = useState<AnyProduct | null>(null);
-    const [isAddOpen, setIsAddOpen] = useState(false);
+    const router = useRouter();
 
     const products = useMemo(() => data?.products || [], [data?.products]);
 
@@ -135,7 +135,7 @@ export default function InventoryPageClient() {
                     <p className="text-sm text-gray-500 mt-0.5">Manage products, stock, and catalog status</p>
                 </div>
                 <button
-                    onClick={() => setIsAddOpen(true)}
+                    onClick={() => router.push('/admin/products/new')}
                     className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#0f1035] text-white flex items-center gap-2"
                 >
                     + Add Product
@@ -263,9 +263,6 @@ export default function InventoryPageClient() {
                     onClose={() => setEditProduct(null)}
                     onSave={handleEditSave}
                 />
-            )}
-            {isAddOpen && (
-                <AddProductDrawer onClose={() => setIsAddOpen(false)} onSave={handleCreateSave} />
             )}
         </div>
     );

@@ -51,7 +51,10 @@ export default async function StorefrontPage() {
                 <FeaturedCategories />
 
                 {/* Divider */}
-                <div className="mx-4 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }} />
+                <div 
+                    className="mx-4 h-px" 
+                    style={{ background: 'linear-gradient(to right, transparent, rgba(212,168,83,0.3), transparent)' }} 
+                />
 
                 {/* 4a ── Trending readymade products */}
                 <ProductSectionRow
@@ -70,7 +73,10 @@ export default async function StorefrontPage() {
                 />
 
                 {/* Divider */}
-                <div className="mx-4 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }} />
+                <div 
+                    className="mx-4 h-px mt-2 mb-2" 
+                    style={{ background: 'linear-gradient(to right, transparent, rgba(212,168,83,0.3), transparent)' }} 
+                />
 
                 {/* 5 ── Tailoring CTA */}
                 <TailoringCTA />

@@ -77,11 +77,11 @@ function SizeDots({ sizeStock }: { sizeStock: IReadymadeProduct['sizeStock'] }) 
                     <span key={size} className="flex items-center gap-0.5">
                         <span
                             className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: inStock ? '#22c55e' : '#d1d5db' }}
+                            style={{ backgroundColor: inStock ? '#22c55e' : 'rgba(255,255,255,0.2)' }}
                         />
                         <span
                             className="text-[9px] font-medium leading-none"
-                            style={{ color: inStock ? '#374151' : '#9ca3af' }}
+                            style={{ color: inStock ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.35)' }}
                         >
                             {size}
                         </span>
@@ -132,14 +132,30 @@ export default function ReadymadeCard({ product }: ReadymadeCardProps) {
     return (
         <Link
             href={`/readymade/${product.slug || product._id}`}
-            className="flex flex-col h-full rounded-2xl overflow-hidden bg-white shadow-sm active:opacity-90 transition-opacity duration-150"
+            className="flex flex-col h-full rounded-2xl overflow-hidden active:opacity-90 transition-all duration-200 group"
+            style={{
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
+                transition: 'border-color 0.3s, box-shadow 0.3s, transform 0.3s',
+            }}
             aria-label={product.name}
-            onMouseEnter={() => setShowQuickAdd(true)}
-            onMouseLeave={() => setShowQuickAdd(false)}
+            onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(212,168,83,0.35)';
+                (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 8px 28px rgba(212,168,83,0.12)';
+                (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)';
+                setShowQuickAdd(true);
+            }}
+            onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.08)';
+                (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.25)';
+                (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)';
+                setShowQuickAdd(false);
+            }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
         >
-            <div className="aspect-[3/4] relative flex-shrink-0 overflow-hidden bg-gray-100">
+            <div className="aspect-[3/4] relative flex-shrink-0 overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
                 <img
                     src={product.images?.[0] ?? '/placeholder-product.jpg'}
                     alt={product.name}
@@ -149,14 +165,22 @@ export default function ReadymadeCard({ product }: ReadymadeCardProps) {
                 <QuickAddButton visible={showQuickAdd} />
             </div>
 
-            <div className="flex flex-col flex-1 p-3 min-h-[88px]">
-                <p className="text-xs font-semibold text-gray-900 line-clamp-2 leading-snug min-h-[2.5rem]">
+            <div className="flex flex-col flex-1 p-3 min-h-[88px]" style={{ backgroundColor: 'rgba(255,255,255,0.02)' }}>
+                <p className="text-xs font-semibold line-clamp-2 leading-snug min-h-[2.5rem]" style={{ color: 'rgba(255,255,255,0.88)' }}>
                     {product.name}
                 </p>
                 <div className="mt-1.5">
                     <SizeDots sizeStock={product.sizeStock} />
                 </div>
-                <p className="mt-auto pt-2 text-sm font-extrabold" style={{ color: '#0f1035' }}>
+                <p
+                    className="mt-auto pt-2 text-sm font-extrabold"
+                    style={{
+                        background: 'linear-gradient(135deg, #D4A853, #f3bf4d)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                    }}
+                >
                     ₹{product.price.toLocaleString('en-IN')}
                 </p>
             </div>

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import dbConnect from '@/lib/db';
-import { Order } from '@/models/Order';
+import { User } from '@/models/User';
 import { sendStitchingReady, sendStitchingStarted } from '@/lib/notifications/whatsapp';
+import { sendStitchingStartedEmail, sendStitchingReadyEmail } from '@/lib/notifications/email';
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const { userId } = await auth();
@@ -39,27 +40,49 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         }
         await order.save();
 
-        // Trigger WhatsApp notifications if applicable (we just trigger one per order)
+        // Trigger WhatsApp and Email notifications if applicable (we just trigger one per order)
         try {
             if (updatedCount > 0 && stitchingStatus !== lastStatus) {
                 const phone = order.shippingAddress.phone;
                 const customerName = order.shippingAddress.fullName;
+                
+                let email = null;
+                if (order.userId && order.userId !== 'guest') {
+                    const u = await User.findOne({ clerkId: order.userId }).lean();
+                    email = (u as any)?.email;
+                }
+
                 if (stitchingStatus === 'ready') {
                     void sendStitchingReady(phone, {
                         orderNumber: order.orderNumber,
                         customerName,
                         garmentType: 'Order Items',
                     });
+                    if (email) {
+                        void sendStitchingReadyEmail(email, {
+                            orderNumber: order.orderNumber,
+                            customerName,
+                            garmentType: 'Order Items',
+                        });
+                    }
                 } else if (stitchingStatus === 'cutting' && lastStatus === 'pending') {
                     void sendStitchingStarted(phone, {
                         orderNumber: order.orderNumber,
                         customerName,
                         garmentType: 'Order Items',
                     });
+                    if (email) {
+                        void sendStitchingStartedEmail(email, {
+                            orderNumber: order.orderNumber,
+                            customerName,
+                            garmentType: 'Order Items',
+                        });
+                    }
                 }
             }
         } catch (e) {
             // Ignore notification failures
+            console.error('Notification error:', e);
         }
 
         return NextResponse.json({ success: true, order });
@@ -83,7 +106,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     await order.save();
 
-    // WhatsApp notification stub for single item
+    // WhatsApp and Email notification stub for single item
     try {
         const nextStatus = item.stitchingDetails.status;
         if (status && nextStatus !== previousStatus) {
@@ -96,22 +119,43 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             const phone = order.shippingAddress.phone;
             const customerName = order.shippingAddress.fullName;
 
+            let email = null;
+            if (order.userId && order.userId !== 'guest') {
+                const u = await User.findOne({ clerkId: order.userId }).lean();
+                email = (u as any)?.email;
+            }
+
             if (nextStatus === 'ready') {
                 void sendStitchingReady(phone, {
                     orderNumber: order.orderNumber,
                     customerName,
                     garmentType,
                 });
+                if (email) {
+                    void sendStitchingReadyEmail(email, {
+                        orderNumber: order.orderNumber,
+                        customerName,
+                        garmentType,
+                    });
+                }
             } else if (nextStatus === 'cutting' && previousStatus === 'pending') {
                 void sendStitchingStarted(phone, {
                     orderNumber: order.orderNumber,
                     customerName,
                     garmentType,
                 });
+                if (email) {
+                    void sendStitchingStartedEmail(email, {
+                        orderNumber: order.orderNumber,
+                        customerName,
+                        garmentType,
+                    });
+                }
             }
         }
     } catch (e) {
         // Ignore notification failures
+        console.error('Notification error:', e);
     }
 
     return NextResponse.json({ success: true, item });

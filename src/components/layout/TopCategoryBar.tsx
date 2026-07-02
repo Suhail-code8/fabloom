@@ -98,7 +98,11 @@ export default function TopCategoryBar() {
                             alt="FK"
                             width={32}
                             height={32}
-                            className="rounded-full ring-1 ring-[#D4A853]/40 md:w-9 md:h-9"
+                            className="rounded-full md:w-9 md:h-9 transition-all duration-300"
+                            style={{
+                                border: '1.5px solid rgba(212,168,83,0.45)',
+                                boxShadow: '0 0 10px rgba(212,168,83,0.2)',
+                            }}
                         />
                         <div className="hidden sm:flex flex-col leading-tight">
                             <span
@@ -135,23 +139,24 @@ export default function TopCategoryBar() {
                             <li key={cat.id} className="flex-shrink-0">
                                 <Link
                                     href={cat.href}
-                                    className="flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] md:min-w-[72px] md:min-h-[72px] px-1.5 py-1.5 md:px-2 md:py-2 rounded-xl transition-all duration-200 active:scale-95 select-none"
+                                    className="flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] md:min-w-[72px] md:min-h-[72px] px-1.5 py-1.5 md:px-2 md:py-2 rounded-xl transition-all duration-200 active:scale-95 select-none hover:bg-white/5"
                                     aria-current={isActive ? 'page' : undefined}
                                 >
                                     <span
-                                        className={[
-                                            'flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full transition-all duration-200',
-                                            isActive ? 'ring-2 bg-white/5' : 'bg-white/5',
-                                        ].join(' ')}
-                                        style={
-                                            isActive
-                                                ? { boxShadow: '0 0 0 2px var(--brand-gold)' }
-                                                : {}
-                                        }
+                                        className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full transition-all duration-250"
+                                        style={{
+                                            backgroundColor: isActive ? 'rgba(212,168,83,0.1)' : 'rgba(255,255,255,0.05)',
+                                            boxShadow: isActive
+                                                ? '0 0 0 2px #D4A853, 0 0 14px rgba(212,168,83,0.25), inset 0 1px 0 rgba(255,255,255,0.08)'
+                                                : 'none',
+                                            transition: 'box-shadow 0.25s, background-color 0.25s',
+                                        }}
                                     >
                                         <span
                                             style={{
-                                                color: isActive ? 'var(--brand-gold)' : 'rgba(255,255,255,0.6)',
+                                                color: isActive ? 'var(--brand-gold)' : 'rgba(255,255,255,0.55)',
+                                                filter: isActive ? 'drop-shadow(0 0 4px rgba(212,168,83,0.5))' : 'none',
+                                                transition: 'color 0.2s, filter 0.2s',
                                             }}
                                         >
                                             {cat.icon}
@@ -161,7 +166,7 @@ export default function TopCategoryBar() {
                                     <span
                                         className="text-[9px] md:text-[10px] font-medium leading-tight text-center max-w-[56px] md:max-w-[64px] truncate transition-colors duration-200"
                                         style={{
-                                            color: isActive ? 'var(--brand-gold)' : 'rgba(255,255,255,0.55)',
+                                            color: isActive ? 'var(--brand-gold)' : 'rgba(255,255,255,0.45)',
                                         }}
                                     >
                                         {cat.label}

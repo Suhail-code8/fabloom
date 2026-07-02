@@ -109,6 +109,26 @@ export async function GET() {
                                 $group: {
                                     _id: null,
                                     totalOrders: { $sum: 1 },
+                                    // Revenue earned from completed or in-progress paid orders
+                                    totalRevenue: {
+                                        $sum: {
+                                            $cond: [
+                                                {
+                                                    $and: [
+                                                        { $eq: ['$paymentStatus', 'paid'] },
+                                                        {
+                                                            $in: [
+                                                                '$status',
+                                                                ['delivered', 'processing', 'shipped', 'confirmed'],
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                                { $ifNull: ['$totalAmount', 0] },
+                                                0,
+                                            ],
+                                        },
+                                    },
                                     todayRevenue: {
                                         $sum: {
                                             $cond: [
@@ -157,10 +177,18 @@ export async function GET() {
                                 $project: {
                                     _id: 0,
                                     totalOrders: 1,
+                                    totalRevenue: 1,
                                     todayRevenue: 1,
                                     pendingStitching: 1,
                                 },
                             },
+                        ],
+
+                        // Count of all order-items that have stitching details
+                        stitchingJobs: [
+                            { $unwind: { path: '$items', preserveNullAndEmptyArrays: false } },
+                            { $match: { 'items.stitchingDetails': { $ne: null } } },
+                            { $count: 'total' },
                         ],
 
                         revenueByDay: [
@@ -236,6 +264,7 @@ export async function GET() {
 
         const agg = ordersAgg?.[0] ?? null;
         const metricsRow = agg?.metrics?.[0] ?? null;
+        const stitchingJobsTotal = agg?.stitchingJobs?.[0]?.total ?? 0;
 
         if (!metricsRow) {
             return NextResponse.json(emptyPayload(lowStockCount));
@@ -249,8 +278,10 @@ export async function GET() {
             success: true,
             metrics: {
                 todayRevenue: metricsRow.todayRevenue ?? 0,
+                totalRevenue: metricsRow.totalRevenue ?? 0,
                 totalOrders: metricsRow.totalOrders ?? 0,
                 pendingStitching: metricsRow.pendingStitching ?? 0,
+                stitchingJobsTotal,
                 lowStockCount,
             },
             revenueByDay,

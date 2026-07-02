@@ -61,11 +61,15 @@ export default function SubCategoryNav({
                             style={{
                                 backgroundColor: isActive
                                     ? '#D4A853'
-                                    : 'rgba(255,255,255,0.08)',
-                                color: isActive ? '#0f1035' : 'rgba(255,255,255,0.7)',
+                                    : 'rgba(255,255,255,0.06)',
+                                color: isActive ? '#0f1035' : 'rgba(255,255,255,0.65)',
                                 border: isActive
                                     ? '1.5px solid #D4A853'
-                                    : '1.5px solid rgba(255,255,255,0.12)',
+                                    : '1.5px solid rgba(255,255,255,0.1)',
+                                boxShadow: isActive
+                                    ? '0 0 14px rgba(212,168,83,0.4), 0 2px 8px rgba(0,0,0,0.2)'
+                                    : 'none',
+                                fontWeight: isActive ? 700 : 500,
                             }}
                             aria-current={isActive ? 'true' : undefined}
                         >
