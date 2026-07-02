@@ -28,22 +28,12 @@ const nextConfig = {
     },
     async redirects() {
         return [
-            { source: '/admin', destination: '/dashboard', permanent: false },
-            { source: '/admin/dashboard', destination: '/dashboard', permanent: false },
-            { source: '/admin/orders', destination: '/orders', permanent: false },
-            { source: '/admin/orders/:id', destination: '/orders/:id', permanent: false },
-            { source: '/admin/production', destination: '/production', permanent: false },
-            { source: '/admin/inventory', destination: '/inventory', permanent: false },
-            // Legacy admin URLs → active pages
-            { source: '/admin/products/new', destination: '/inventory', permanent: false },
-            { source: '/admin/products', destination: '/inventory', permanent: false },
-            { source: '/admin/analytics', destination: '/dashboard', permanent: false },
-            { source: '/admin/stitching', destination: '/production', permanent: false },
-            { source: '/admin/stitching/pending', destination: '/production', permanent: false },
-            { source: '/admin/customers', destination: '/dashboard', permanent: false },
-            { source: '/admin/measurements', destination: '/dashboard', permanent: false },
-            { source: '/admin/settings', destination: '/dashboard', permanent: false },
-            { source: '/admin/settings/:path*', destination: '/dashboard', permanent: false },
+            { source: '/admin', destination: '/admin/dashboard', permanent: false },
+            { source: '/dashboard', destination: '/admin/dashboard', permanent: true },
+            { source: '/orders', destination: '/admin/orders', permanent: true },
+            { source: '/orders/:id', destination: '/admin/orders/:id', permanent: true },
+            { source: '/production', destination: '/admin/production', permanent: true },
+            { source: '/inventory', destination: '/admin/inventory', permanent: true },
             { source: '/products', destination: '/readymade', permanent: false },
         ];
     },
