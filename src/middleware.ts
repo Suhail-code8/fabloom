@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 const isProtectedRoute = createRouteMatcher([
     '/account(.*)',
     '/wishlist(.*)',
-    '/cart(.*)',
     '/checkout(.*)',
     '/api/user(.*)',
     '/api/measurements(.*)'
@@ -12,11 +11,7 @@ const isProtectedRoute = createRouteMatcher([
 
 const isAdminRoute = createRouteMatcher([
     '/admin(.*)',
-    '/api/admin(.*)',
-    '/dashboard(.*)',
-    '/orders(.*)',
-    '/production(.*)',
-    '/inventory(.*)',
+    '/api/admin(.*)'
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -41,16 +36,18 @@ export default clerkMiddleware(async (auth, req) => {
             await auth.protect();
         }
 
-        // Role check
-        let role = (authObj.sessionClaims as any)?.role || (authObj.sessionClaims as any)?.publicMetadata?.role || (authObj.sessionClaims as any)?.metadata?.role;
-        
+        // Role check — publicMetadata.role is the canonical field set in Clerk dashboard
+        let role = (authObj.sessionClaims?.publicMetadata as any)?.role;
+
+        // Fallback: fetch live from Clerk API if not present in session claims
+        // (session claims only refresh on next sign-in; fallback ensures freshness)
         if (!role && authObj.userId) {
             try {
                 const client = await clerkClient();
                 const user = await client.users.getUser(authObj.userId);
-                role = user?.publicMetadata?.role;
+                role = user?.publicMetadata?.role as string | undefined;
             } catch (err) {
-                console.error("Clerk API Role Fetch Error:", err);
+                console.error('Clerk API Role Fetch Error:', err);
             }
         }
 

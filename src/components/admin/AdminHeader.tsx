@@ -3,14 +3,18 @@
 import { usePathname } from 'next/navigation';
 
 const TITLES: Record<string, string> = {
-    '/dashboard': 'Dashboard',
+    '/admin': 'Dashboard',
     '/admin/dashboard': 'Dashboard',
-    '/orders': 'Orders',
     '/admin/orders': 'Orders',
-    '/production': 'Production',
     '/admin/production': 'Production',
-    '/inventory': 'Inventory',
     '/admin/inventory': 'Inventory',
+    '/admin/customers': 'Customers',
+    '/admin/measurements': 'Measurements',
+    '/admin/analytics': 'Analytics',
+    '/admin/settings': 'Settings',
+    '/admin/settings/shipping': 'Shipping Settings',
+    '/admin/settings/notifications': 'Notification Settings',
+    '/admin/products/new': 'Add Product',
 };
 
 function getPageTitle(pathname: string): string {

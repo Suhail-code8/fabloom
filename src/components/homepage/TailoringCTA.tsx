@@ -8,17 +8,24 @@ export default function TailoringCTA() {
                 style={{
                     background: 'linear-gradient(130deg, #1a0a40 0%, #2d1b69 50%, #0f1035 100%)',
                     border: '1px solid rgba(212,168,83,0.3)',
+                    boxShadow: '0 4px 32px rgba(212,168,83,0.07)',
                 }}
             >
                 {/* Decorative background circles */}
                 <div
-                    className="absolute -top-8 -right-8 w-32 h-32 rounded-full opacity-10"
-                    style={{ backgroundColor: '#D4A853' }}
+                    className="absolute -top-8 -right-8 w-32 h-32 rounded-full"
+                    style={{ backgroundColor: '#D4A853', opacity: 0.12, filter: 'blur(24px)' }}
                     aria-hidden
                 />
                 <div
-                    className="absolute -bottom-10 -left-6 w-28 h-28 rounded-full opacity-10"
-                    style={{ backgroundColor: '#D4A853' }}
+                    className="absolute -bottom-10 -left-6 w-28 h-28 rounded-full"
+                    style={{ backgroundColor: '#D4A853', opacity: 0.1, filter: 'blur(20px)' }}
+                    aria-hidden
+                />
+                {/* Ambient radial glow */}
+                <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{ background: 'radial-gradient(ellipse at 80% 0%, rgba(212,168,83,0.08) 0%, transparent 70%)' }}
                     aria-hidden
                 />
 
@@ -26,7 +33,11 @@ export default function TailoringCTA() {
                 <div className="relative z-10 mb-4">
                     <div
                         className="inline-flex items-center justify-center w-12 h-12 rounded-full"
-                        style={{ backgroundColor: 'rgba(212,168,83,0.15)' }}
+                        style={{
+                            backgroundColor: 'rgba(212,168,83,0.12)',
+                            border: '1px solid rgba(212,168,83,0.25)',
+                            boxShadow: '0 0 16px rgba(212,168,83,0.15)',
+                        }}
                     >
                         <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#D4A853" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="6" cy="6" r="3" />
@@ -68,8 +79,13 @@ export default function TailoringCTA() {
                 {/* CTA button */}
                 <Link
                     href="/fabrics"
-                    className="relative z-10 inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 active:scale-95"
-                    style={{ backgroundColor: '#D4A853', color: '#0f1035' }}
+                    className="relative z-10 inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 active:scale-95 hover:brightness-110"
+                    style={{
+                        backgroundColor: '#D4A853',
+                        color: '#0f1035',
+                        boxShadow: '0 4px 20px rgba(212,168,83,0.35)',
+                        transition: 'box-shadow 0.3s, filter 0.2s, transform 0.2s',
+                    }}
                 >
                     Browse Fabrics
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">

@@ -1,6 +1,4 @@
 import type { Metadata } from 'next';
-import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
 import CartPageClient from '@/components/cart/CartPageClient';
 
 export const metadata: Metadata = {
@@ -8,11 +6,9 @@ export const metadata: Metadata = {
     description: 'Review your items and custom stitching orders before checkout.',
 };
 
-export default async function CartPage() {
-    const user = await currentUser();
-    if (!user) {
-        redirect('/sign-in');
-    }
-
+// Guest-accessible — no auth check here.
+// Zustand hydrates the cart from localStorage for all visitors.
+// Auth is enforced at /checkout when payment is required.
+export default function CartPage() {
     return <CartPageClient />;
 }

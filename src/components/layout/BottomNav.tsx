@@ -128,7 +128,8 @@ export default function BottomNav() {
                                             color: isActive
                                                 ? 'var(--brand-gold)'
                                                 : 'rgba(255,255,255,0.45)',
-                                            transition: 'color 0.2s',
+                                            transition: 'color 0.2s, filter 0.2s',
+                                            filter: isActive ? 'drop-shadow(0 0 6px rgba(212,168,83,0.6))' : 'none',
                                         }}
                                     >
                                         {tab.icon(isActive)}
@@ -157,11 +158,16 @@ export default function BottomNav() {
                                     {tab.label}
                                 </span>
 
-                                {/* Active indicator dot */}
+                                {/* Active indicator pill */}
                                 {isActive && (
                                     <span
-                                        className="absolute bottom-1 w-1 h-1 rounded-full"
-                                        style={{ backgroundColor: 'var(--brand-gold)' }}
+                                        className="absolute bottom-0.5 rounded-full"
+                                        style={{
+                                            width: '20px',
+                                            height: '3px',
+                                            backgroundColor: 'var(--brand-gold)',
+                                            boxShadow: '0 0 8px rgba(212,168,83,0.7)',
+                                        }}
                                     />
                                 )}
                             </Link>

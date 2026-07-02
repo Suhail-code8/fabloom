@@ -120,14 +120,28 @@ export default function FabricCard({ fabric, onOpenDrawer }: FabricCardProps) {
 
     return (
         <div
-            className="flex flex-col h-full rounded-2xl overflow-hidden bg-white transition-all duration-150 active:scale-98"
-            style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.10)' }}
+            className="flex flex-col h-full rounded-2xl overflow-hidden transition-all duration-200 active:scale-[0.98] group"
+            style={{
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
+                transition: 'border-color 0.3s, box-shadow 0.3s',
+            }}
+            onMouseEnter={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(212,168,83,0.35)';
+                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 28px rgba(212,168,83,0.12)';
+            }}
+            onMouseLeave={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.08)';
+                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.25)';
+            }}
         >
             <button
                 type="button"
-                className="aspect-[3/4] relative flex-shrink-0 w-full cursor-pointer overflow-hidden bg-gray-50"
+                className="aspect-[3/4] relative flex-shrink-0 w-full cursor-pointer overflow-hidden"
                 onClick={() => onOpenDrawer(fabric)}
                 aria-label={`View ${fabric.name} details`}
+                style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}
             >
                 <img
                     src={fabric.texture ?? fabric.images?.[0] ?? '/placeholder-product.jpg'}
@@ -168,20 +182,28 @@ export default function FabricCard({ fabric, onOpenDrawer }: FabricCardProps) {
                 )}
             </button>
 
-            <div className="flex flex-col flex-1 p-3 min-h-0">
-                <p className="text-xs font-bold text-gray-900 leading-snug line-clamp-2">
+            <div className="flex flex-col flex-1 p-3 min-h-0" style={{ backgroundColor: 'rgba(255,255,255,0.02)' }}>
+                <p className="text-xs font-bold leading-snug line-clamp-2" style={{ color: 'rgba(255,255,255,0.9)' }}>
                     {fabric.name}
                 </p>
                 <div className="flex-1 min-h-[1rem] mt-1">
                     <StockBadge stock={fabric.stockInMeters} />
                     {fabric.gsm && (
-                        <span className="text-[10px] text-gray-400 block mt-1">{fabric.gsm} GSM</span>
+                        <span className="text-[10px] block mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>{fabric.gsm} GSM</span>
                     )}
                 </div>
                 <div className="mt-auto pt-2 flex flex-col gap-2">
-                    <p className="text-sm font-extrabold" style={{ color: '#0f1035' }}>
+                    <p
+                        className="text-sm font-extrabold"
+                        style={{
+                            background: 'linear-gradient(135deg, #D4A853, #f3bf4d)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                        }}
+                    >
                         ₹{fabric.pricePerMeter}
-                        <span className="text-[10px] font-medium text-gray-400">/m</span>
+                        <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.35)', WebkitTextFillColor: 'rgba(255,255,255,0.35)' }}>/m</span>
                     </p>
                     {fabric.stitchingAvailable && (
                         <button
@@ -194,7 +216,7 @@ export default function FabricCard({ fabric, onOpenDrawer }: FabricCardProps) {
                             style={{
                                 backgroundColor: 'rgba(212,168,83,0.1)',
                                 border: '1.5px solid rgba(212,168,83,0.35)',
-                                color: '#92650a',
+                                color: '#D4A853',
                             }}
                             aria-label={`Get ${fabric.name} stitched`}
                         >
