@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import dbConnect from '@/lib/db';
+import { Order } from '@/models/Order';
 import { User } from '@/models/User';
 import { sendStitchingReady, sendStitchingStarted } from '@/lib/notifications/whatsapp';
 import { sendStitchingStartedEmail, sendStitchingReadyEmail } from '@/lib/notifications/email';
