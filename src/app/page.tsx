@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import LandingClient from '@/components/landing/LandingClient';
+import HeroSection from '@/components/landing/HeroSection';
+import FeaturedCollections from '@/components/landing/FeaturedCollections';
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
@@ -8,9 +10,9 @@ const RATES = [
     { label: 'Saudi Kandora',   price: '₹850' },
     { label: 'Emirati Kandora', price: '₹1,000' },
     { label: 'Chinese Kandora', price: '₹600' },
-    { label: 'Jubba',           price: '₹350' },
-    { label: 'Pleat Jubba',     price: '₹400' },
-    { label: 'Kurta',           price: '₹350' },
+    { label: 'Premium Omani',   price: '₹950' },
+    { label: 'Premium Fabrics', price: 'From ₹350/m' },
+    { label: 'Designer Caps',   price: '₹250' },
 ];
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
@@ -23,12 +25,12 @@ export default function LandingPage() {
                 /* Base */
                 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
                 html { scroll-behavior: smooth; }
-                body { background: #05040f; color: #c9c5cc; font-family: var(--font-dm-sans, 'DM Sans', sans-serif); overflow-x: hidden; cursor: none; }
+                body { background: #0f1035; color: #c9c5cc; font-family: var(--font-dm-sans, 'DM Sans', sans-serif); overflow-x: hidden; cursor: none; }
                 @media (hover: none) { body { cursor: auto; } }
 
                 /* Scrollbar */
                 ::-webkit-scrollbar { width: 6px; }
-                ::-webkit-scrollbar-track { background: #05040f; }
+                ::-webkit-scrollbar-track { background: #0f1035; }
                 ::-webkit-scrollbar-thumb { background: #2a1f00; border-radius: 3px; }
                 ::-webkit-scrollbar-thumb:hover { background: #c9992a; }
 
@@ -47,13 +49,13 @@ export default function LandingPage() {
                 .lp-fade-d3 { transition-delay:.45s; }
 
                 /* Glass */
-                .lp-glass { background:rgba(5,4,15,0.45); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(201,153,42,0.14); }
+                .lp-glass { background:rgba(15,16,53,0.55); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(212,168,83,0.18); }
 
                 /* Nav */
                 #lp-top-nav { position:fixed; top:0; width:100%; z-index:50; backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); transition:background .4s, border .4s; }
 
                 /* Mobile nav */
-                #lp-mobile-nav { position:fixed; inset:0; z-index:60; background:#05040f; transform:translateX(-100%); transition:transform .55s cubic-bezier(.22,1,.36,1); display:flex; flex-direction:column; padding:3rem; gap:2rem; border-right:1px solid rgba(72,70,76,0.2); }
+                #lp-mobile-nav { position:fixed; inset:0; z-index:60; background:#0f1035; transform:translateX(-100%); transition:transform .55s cubic-bezier(.22,1,.36,1); display:flex; flex-direction:column; padding:3rem; gap:2rem; border-right:1px solid rgba(72,70,76,0.2); }
 
                 /* Sections */
                 .lp-section-gap { padding-top:8rem; padding-bottom:8rem; }
@@ -73,10 +75,10 @@ export default function LandingPage() {
                 @keyframes lp-shimmer { from { background-position:200% center; } to { background-position:-200% center; } }
 
                 /* CTA Buttons */
-                .lp-btn-gold { display:inline-flex; align-items:center; gap:.75rem; border:1px solid #c9992a; color:#f3bf4d; font-family:var(--font-dm-sans,'DM Sans',sans-serif); font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; padding:.9rem 2rem; transition:background .45s, color .45s; }
-                .lp-btn-gold:hover { background:#c9992a; color:#05040f; }
+                .lp-btn-gold { display:inline-flex; align-items:center; gap:.75rem; border:1px solid #D4A853; color:#D4A853; font-family:var(--font-dm-sans,'DM Sans',sans-serif); font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; padding:.9rem 2rem; transition:background .45s, color .45s; }
+                .lp-btn-gold:hover { background:#D4A853; color:#0f1035; }
                 .lp-btn-ghost { display:inline-flex; align-items:center; gap:.75rem; border:1px solid rgba(72,70,76,.4); color:rgba(201,197,204,.7); font-family:var(--font-dm-sans,'DM Sans',sans-serif); font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; padding:.9rem 2rem; transition:border-color .45s, color .45s; }
-                .lp-btn-ghost:hover { border-color:#c9992a; color:#f3bf4d; }
+                .lp-btn-ghost:hover { border-color:#D4A853; color:#D4A853; }
 
                 /* Stats */
                 .lp-stat-num { font-family:var(--font-playfair,'Playfair Display',serif); font-size:clamp(3.5rem,8vw,6rem); font-weight:700; color:#f3bf4d; line-height:1; }
@@ -166,38 +168,10 @@ export default function LandingPage() {
             </header>
 
             {/* ── HERO ─────────────────────────────────────────────────────────── */}
-            <section style={{ position: 'relative', width: '100%', height: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', overflow: 'hidden', paddingBottom: '3.5rem', paddingLeft: '1.5rem', paddingRight: '1.5rem', paddingTop: '7rem' }}>
-                {/* BG */}
-                <div style={{ position: 'absolute', inset: 0 }}>
-                    <Image src="/hero-kandora.png" alt="Elegant Arab man in white Kandora" fill style={{ objectFit: 'cover', objectPosition: 'top center' }} priority quality={90} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #05040f 0%, rgba(5,4,15,.55) 45%, transparent 100%)' }} />
-                </div>
-                {/* Content */}
-                <div style={{ position: 'relative', zIndex: 2, maxWidth: '1440px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }} className="lp-fade">
-                    <span style={{ fontSize: '.6rem', letterSpacing: '.3em', textTransform: 'uppercase', color: '#c9992a', marginBottom: '1.5rem', display: 'block', animation: 'lp-rise 1s .1s both' }}>
-                        Digital Haute Couture · Koduvally, Kerala
-                    </span>
-                    <h1 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(3rem,8vw,7rem)', fontWeight: 700, lineHeight: .95, marginBottom: '2rem', animation: 'lp-rise 1s .3s both', color: '#f6e1a1' }}>
-                        <span style={{ display: 'block' }}>Wear</span>
-                        <span style={{
-                            display: 'block',
-                            fontStyle: 'italic',
-                            background: 'linear-gradient(135deg,#c9992a,#f3bf4d,#f5e0a0,#c9992a)',
-                            backgroundSize: '300% auto',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text',
-                            animation: 'lp-shimmer 5s linear infinite',
-                        }}>Excellence</span>
-                        <span style={{ display: 'block' }}>Daily.</span>
-                    </h1>
-                    <div style={{ width: 1, height: '4rem', background: 'linear-gradient(to bottom,#c9992a,transparent)', margin: '0 auto 2rem', animation: 'lp-rise 1s .5s both' }} />
-                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center', animation: 'lp-rise 1s .7s both' }}>
-                        <Link href="/home" className="lp-btn-gold">Shop Collection →</Link>
-                        <Link href="/stitching" className="lp-btn-ghost">Custom Stitching</Link>
-                    </div>
-                </div>
-            </section>
+            <HeroSection />
+
+            {/* ── FEATURED COLLECTIONS ───────────────────────────────── */}
+            <FeaturedCollections />
 
             {/* ── MARQUEE ──────────────────────────────────────────────────────── */}
             <div style={{ overflow: 'hidden', borderTop: '1px solid rgba(201,153,42,.1)', borderBottom: '1px solid rgba(201,153,42,.1)', background: 'rgba(201,153,42,.03)', padding: '.7rem 0' }} aria-hidden>
@@ -215,22 +189,33 @@ export default function LandingPage() {
             </div>
 
             {/* ── THE HOUSE ─────────────────────────────────────────────────────── */}
-            <section className="lp-section-gap" style={{ background: '#05040f', padding: '8rem 1.5rem' }}>
-                <div style={{ maxWidth: '1440px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr', gap: '4rem', alignItems: 'center' }}>
-                    <div className="lp-fade">
-                        <span style={{ fontSize: '.6rem', letterSpacing: '.3em', textTransform: 'uppercase', color: '#c9992a', display: 'block', marginBottom: '1rem' }}>Heritage &amp; Precision</span>
+            <section className="lp-section-gap" style={{ background: '#0f1035', padding: '8rem 1.5rem' }}>
+                <style>{`
+                    @media (min-width: 1024px) {
+                        .lp-house-grid { grid-template-columns: 1fr 1fr !important; gap: 6rem !important; }
+                    }
+                `}</style>
+                <div className="lp-house-grid" style={{ maxWidth: '1440px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr', gap: '3rem', alignItems: 'center' }}>
+                    <div className="lp-fade" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '.6rem', letterSpacing: '.3em', textTransform: 'uppercase', color: '#D4A853', display: 'block', marginBottom: '1rem' }}>Heritage &amp; Precision</span>
                         <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2.2rem,5vw,3.5rem)', fontWeight: 700, lineHeight: 1.1, color: '#f6e1a1', marginBottom: '1.5rem' }}>
                             Crafted in Silence.<br/>
-                            <span style={{ color: '#f3bf4d', fontStyle: 'italic' }}>Worn with Presence.</span>
+                            <span style={{ color: '#D4A853', fontStyle: 'italic' }}>Worn with Presence.</span>
                         </h2>
                         <p style={{ color: 'rgba(201,197,204,.65)', fontSize: '1rem', lineHeight: 1.8, maxWidth: '540px', marginBottom: '2rem', fontWeight: 300 }}>
                             Rooted in the rich tapestry of Islamic fashion, Fabloom crafts garments that are more than mere attire — they are statements of identity and intent. Every stitch a testament to our dedication to the art of tailoring.
                         </p>
-                        <Link href="/about" className="lp-btn-ghost">Our Story →</Link>
+                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                            <Link href="/about" className="lp-btn-ghost">Our Story →</Link>
+                            <Link href="/home" className="lp-btn-gold">View Collection →</Link>
+                        </div>
                     </div>
                     <div className="lp-fade lp-fade-d1" style={{ position: 'relative', width: '100%', aspectRatio: '4/3', overflow: 'hidden' }}>
                         <Image src="/hero-tailor.png" alt="Master tailor atelier workspace" fill style={{ objectFit: 'cover' }} />
-                        <div style={{ position: 'absolute', inset: '16px', border: '1px solid rgba(201,153,42,.2)', pointerEvents: 'none' }} />
+                        <div style={{ position: 'absolute', inset: '16px', border: '1px solid rgba(212,168,83,.25)', pointerEvents: 'none' }} />
+                        {/* Decorative corner accents */}
+                        <div style={{ position: 'absolute', top: 0, left: 0, width: '2rem', height: '2rem', borderTop: '2px solid #D4A853', borderLeft: '2px solid #D4A853' }} />
+                        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '2rem', height: '2rem', borderBottom: '2px solid #D4A853', borderRight: '2px solid #D4A853' }} />
                     </div>
                 </div>
             </section>
@@ -238,7 +223,7 @@ export default function LandingPage() {
             {/* ── COLLECTIONS ───────────────────────────────────────────────────── */}
             <section style={{ background: '#0a0820', padding: '8rem 0' }}>
                 <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 1.5rem', textAlign: 'center', marginBottom: '5rem' }} className="lp-fade">
-                    <span style={{ fontSize: '.6rem', letterSpacing: '.3em', textTransform: 'uppercase', color: '#c9992a', display: 'block', marginBottom: '1rem' }}>Curated Portfolios</span>
+                    <span style={{ fontSize: '.6rem', letterSpacing: '.3em', textTransform: 'uppercase', color: '#D4A853', display: 'block', marginBottom: '1rem' }}>Curated Portfolios</span>
                     <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2rem,5vw,3.5rem)', fontWeight: 700, color: '#f6e1a1' }}>The Collections</h2>
                 </div>
 
@@ -246,15 +231,15 @@ export default function LandingPage() {
                 <div className="lp-collection-card lp-fade" style={{ display: 'flex', flexDirection: 'column', marginBottom: '6rem', cursor: 'none' }}>
                     <div style={{ position: 'relative', width: '100%', height: '70vh', overflow: 'hidden' }}>
                         <Image src="/hero-kandora.png" alt="Saudi Edition Kandora" fill className="lp-collection-img" style={{ objectFit: 'cover', objectPosition: 'top' }} />
-                        <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,4,15,.2)' }} />
+                        <div style={{ position: 'absolute', inset: 0, background: 'rgba(15,16,53,.2)' }} />
                         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '1.5rem 2rem' }} className="lp-glass">
-                            <span style={{ display: 'inline-block', border: '1px solid rgba(201,153,42,.35)', color: '#c9992a', fontSize: '.6rem', letterSpacing: '.15em', padding: '.25rem .75rem', marginBottom: '.75rem' }}>STRUCTURED</span>
+                            <span style={{ display: 'inline-block', border: '1px solid rgba(212,168,83,.4)', color: '#D4A853', fontSize: '.6rem', letterSpacing: '.15em', padding: '.25rem .75rem', marginBottom: '.75rem' }}>STRUCTURED</span>
                             <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.5rem', color: '#f6e1a1' }}>The Saudi Silhouette</h3>
                         </div>
                     </div>
-                    <div style={{ padding: '2rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ padding: '2rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                         <p style={{ color: 'rgba(201,197,204,.6)', fontSize: '.9rem', lineHeight: 1.7, maxWidth: '480px' }}>Defined by its sharp collar and commanding presence. An exercise in powerful minimalism.</p>
-                        <Link href="/readymade" className="lp-btn-gold" style={{ flexShrink: 0, marginLeft: '1rem' }}>Explore →</Link>
+                        <Link href="/readymade" className="lp-btn-gold" style={{ flexShrink: 0 }}>Explore →</Link>
                     </div>
                 </div>
 
@@ -262,15 +247,15 @@ export default function LandingPage() {
                 <div className="lp-collection-card lp-fade lp-fade-d1" style={{ display: 'flex', flexDirection: 'column', cursor: 'none' }}>
                     <div style={{ position: 'relative', width: '100%', height: '70vh', overflow: 'hidden' }}>
                         <Image src="/hero-emirati.png" alt="Emirati Edition Kandora" fill className="lp-collection-img" style={{ objectFit: 'cover' }} />
-                        <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,4,15,.2)' }} />
+                        <div style={{ position: 'absolute', inset: 0, background: 'rgba(15,16,53,.2)' }} />
                         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '1.5rem 2rem' }} className="lp-glass">
-                            <span style={{ display: 'inline-block', border: '1px solid rgba(201,153,42,.35)', color: '#c9992a', fontSize: '.6rem', letterSpacing: '.15em', padding: '.25rem .75rem', marginBottom: '.75rem' }}>FLUID</span>
+                            <span style={{ display: 'inline-block', border: '1px solid rgba(212,168,83,.4)', color: '#D4A853', fontSize: '.6rem', letterSpacing: '.15em', padding: '.25rem .75rem', marginBottom: '.75rem' }}>FLUID</span>
                             <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.5rem', color: '#f6e1a1' }}>The Emirati Fluidity</h3>
                         </div>
                     </div>
-                    <div style={{ padding: '2rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ padding: '2rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                         <p style={{ color: 'rgba(201,197,204,.6)', fontSize: '.9rem', lineHeight: 1.7, maxWidth: '480px' }}>Collarless design and elegant tassel — relaxed yet profoundly sophisticated.</p>
-                        <Link href="/readymade" className="lp-btn-gold" style={{ flexShrink: 0, marginLeft: '1rem' }}>Explore →</Link>
+                        <Link href="/readymade" className="lp-btn-gold" style={{ flexShrink: 0 }}>Explore →</Link>
                     </div>
                 </div>
             </section>
@@ -279,7 +264,7 @@ export default function LandingPage() {
             <section style={{ position: 'relative', width: '100%', height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                 <div style={{ position: 'absolute', inset: 0 }}>
                     <Image src="/hero-fabric.png" alt="Premium woven fabric close-up" fill style={{ objectFit: 'cover', opacity: .65 }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #05040f, rgba(5,4,15,.6), #05040f)' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #0f1035, rgba(15,16,53,.6), #0f1035)' }} />
                 </div>
                 <div className="lp-fade lp-glass" style={{ position: 'relative', zIndex: 1, maxWidth: '520px', margin: '1.5rem', padding: '3rem 2rem', textAlign: 'center' }}>
                     <div style={{ fontSize: '2rem', marginBottom: '1.25rem' }}>🧵</div>
@@ -289,34 +274,83 @@ export default function LandingPage() {
                     </p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '.5rem' }}>
                         {['Silk', 'Linen', 'Cotton', 'Wool Blend'].map((f) => (
-                            <span key={f} style={{ border: '1px solid rgba(72,70,76,.4)', color: 'rgba(201,197,204,.6)', fontSize: '.6rem', letterSpacing: '.15em', textTransform: 'uppercase', padding: '.35rem .85rem' }}>{f}</span>
+                            <span key={f} style={{ border: '1px solid rgba(212,168,83,.3)', color: 'rgba(201,197,204,.6)', fontSize: '.6rem', letterSpacing: '.15em', textTransform: 'uppercase', padding: '.35rem .85rem' }}>{f}</span>
                         ))}
                     </div>
                 </div>
             </section>
 
             {/* ── BESPOKE STITCHING ──────────────────────────────────────────────── */}
-            <section style={{ background: '#05040f', padding: '8rem 1.5rem' }}>
+            <section style={{ background: '#0f1035', padding: '8rem 1.5rem' }}>
                 <div style={{ maxWidth: '1440px', margin: '0 auto' }}>
-                    <div className="lp-fade" style={{ marginBottom: '3rem' }}>
-                        <span style={{ fontSize: '.6rem', letterSpacing: '.3em', textTransform: 'uppercase', color: '#c9992a', display: 'block', marginBottom: '1rem' }}>Custom Commission</span>
-                        <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2rem,5vw,3rem)', color: '#f3bf4d', marginBottom: '1rem' }}>Bespoke Stitching</h2>
-                        <p style={{ color: 'rgba(201,197,204,.5)', fontSize: '.9rem', lineHeight: 1.7 }}>The ultimate expression of personal style. Commission a piece tailored perfectly to your measurements.</p>
+                    {/* Section header */}
+                    <div className="lp-fade" style={{ textAlign: 'center', marginBottom: '5rem' }}>
+                        <span style={{ fontSize: '.6rem', letterSpacing: '.3em', textTransform: 'uppercase', color: '#D4A853', display: 'block', marginBottom: '1rem' }}>Custom Commission</span>
+                        <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2rem,5vw,3rem)', color: '#D4A853', marginBottom: '1rem' }}>Bespoke Stitching</h2>
+                        <p style={{ color: 'rgba(201,197,204,.5)', fontSize: '.9rem', lineHeight: 1.7, maxWidth: '560px', margin: '0 auto' }}>The ultimate expression of personal style. Commission a piece tailored perfectly to your measurements and fabric choice.</p>
                     </div>
-                    <div className="lp-fade lp-fade-d1" style={{ position: 'relative', width: '100%', aspectRatio: '16/9', overflow: 'hidden', marginBottom: '3rem' }}>
-                        <Image src="/hero-tailor.png" alt="Bespoke tailoring" fill style={{ objectFit: 'cover', filter: 'grayscale(60%)' }} />
-                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(5,4,15,.6), transparent)' }} />
-                    </div>
-                    <div className="lp-fade lp-fade-d2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0' }}>
-                        {RATES.map((r) => (
-                            <div key={r.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '.9rem .5rem', borderBottom: '1px solid rgba(72,70,76,.2)' }}>
-                                <span style={{ color: 'rgba(201,197,204,.7)', fontSize: '.9rem' }}>{r.label}</span>
-                                <span style={{ fontFamily: 'var(--font-playfair)', color: '#f3bf4d', fontSize: '1rem', fontWeight: 600 }}>{r.price}</span>
+
+                    {/* Desktop 3-column grid: image | rate table | description+CTA */}
+                    <div className="lp-fade lp-fade-d1 lp-bespoke-grid" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '3rem', alignItems: 'start' }}>
+                        <style>{`
+                            @media (min-width: 1024px) {
+                                .lp-bespoke-grid { grid-template-columns: 1.1fr 1fr 0.9fr !important; gap: 3.5rem !important; align-items: center !important; }
+                            }
+                        `}</style>
+
+                        {/* Column 1 — Tailor image */}
+                        <div style={{ position: 'relative', width: '100%', aspectRatio: '3/4', overflow: 'hidden' }}>
+                            <Image src="/hero-tailor.png" alt="Bespoke tailoring atelier" fill style={{ objectFit: 'cover', filter: 'grayscale(50%)' }} />
+                            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,16,53,.65), transparent 60%)' }} />
+                            <div style={{ position: 'absolute', top: '1rem', left: '1rem', width: '1.75rem', height: '1.75rem', borderTop: '2px solid #D4A853', borderLeft: '2px solid #D4A853' }} />
+                            <div style={{ position: 'absolute', bottom: '1rem', right: '1rem', width: '1.75rem', height: '1.75rem', borderBottom: '2px solid #D4A853', borderRight: '2px solid #D4A853' }} />
+                            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '1.25rem 1.5rem' }}>
+                                <span style={{ display: 'inline-block', border: '1px solid rgba(212,168,83,.4)', color: '#D4A853', fontSize: '.58rem', letterSpacing: '.15em', padding: '.25rem .7rem', marginBottom: '.5rem' }}>ATELIER CRAFTSMANSHIP</span>
+                                <p style={{ color: 'rgba(201,197,204,.75)', fontSize: '.82rem', lineHeight: 1.6 }}>Measured. Fitted. Perfected.</p>
                             </div>
-                        ))}
-                    </div>
-                    <div style={{ marginTop: '2.5rem' }} className="lp-fade lp-fade-d3">
-                        <Link href="/stitching" className="lp-btn-gold">Book a Commission →</Link>
+                        </div>
+
+                        {/* Column 2 — Rate card table */}
+                        <div style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(212,168,83,.12)', padding: '2rem' }}>
+                            <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.1rem', color: '#f6e1a1', marginBottom: '1.5rem', letterSpacing: '.04em' }}>Pricing Guide</h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                                {RATES.map((r, i) => (
+                                    <div key={r.label} style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        padding: '.95rem .25rem',
+                                        borderBottom: i < RATES.length - 1 ? '1px solid rgba(212,168,83,.1)' : 'none',
+                                    }}>
+                                        <span style={{ color: 'rgba(201,197,204,.75)', fontSize: '.88rem' }}>{r.label}</span>
+                                        <span style={{ fontFamily: 'var(--font-playfair)', color: '#D4A853', fontSize: '1rem', fontWeight: 600 }}>{r.price}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <p style={{ marginTop: '1.25rem', fontSize: '.72rem', color: 'rgba(201,197,204,.35)', letterSpacing: '.06em' }}>* Prices vary by fabric & complexity. WhatsApp for exact quote.</p>
+                        </div>
+
+                        {/* Column 3 — Description + CTA */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                            <div>
+                                <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.4rem,2.5vw,1.9rem)', color: '#f6e1a1', lineHeight: 1.2, marginBottom: '1.25rem' }}>
+                                    Your Vision,<br/>
+                                    <span style={{ fontStyle: 'italic', color: '#D4A853' }}>Our Craft.</span>
+                                </h3>
+                                <p style={{ color: 'rgba(201,197,204,.55)', fontSize: '.9rem', lineHeight: 1.8, marginBottom: '1rem' }}>
+                                    From the first measurement to the final fitting, every commission is a personal journey. Choose your fabric, silhouette, and embellishments.
+                                </p>
+                                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '.6rem' }}>
+                                    {['Made-to-measure precision', 'Fabric consultation included', 'WhatsApp progress updates', 'Pan-India delivery available'].map((pt) => (
+                                        <li key={pt} style={{ display: 'flex', alignItems: 'center', gap: '.6rem', color: 'rgba(201,197,204,.6)', fontSize: '.85rem' }}>
+                                            <span style={{ color: '#D4A853', fontSize: '.6rem' }}>✦</span>
+                                            {pt}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <Link href="/stitching" className="lp-btn-gold" style={{ alignSelf: 'flex-start' }}>Book a Commission →</Link>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -329,8 +363,8 @@ export default function LandingPage() {
                         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #0a0820 0%, transparent 60%)' }} />
                     </div>
                     <div className="lp-fade lp-fade-d1" style={{ textAlign: 'center', marginTop: '-4rem', position: 'relative', zIndex: 2 }}>
-                        <span style={{ fontSize: '.6rem', letterSpacing: '.3em', textTransform: 'uppercase', color: '#c9992a', display: 'block', marginBottom: '1rem' }}>Olfactory Elegance</span>
-                        <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2rem,5vw,3rem)', color: '#f3bf4d', marginBottom: '1.25rem' }}>Arabian Perfumes</h2>
+                        <span style={{ fontSize: '.6rem', letterSpacing: '.3em', textTransform: 'uppercase', color: '#D4A853', display: 'block', marginBottom: '1rem' }}>Olfactory Elegance</span>
+                        <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2rem,5vw,3rem)', color: '#D4A853', marginBottom: '1.25rem' }}>Arabian Perfumes</h2>
                         <p style={{ color: 'rgba(201,197,204,.6)', fontSize: '.95rem', lineHeight: 1.8, maxWidth: '480px', margin: '0 auto 2rem', fontWeight: 300 }}>
                             Complete the ensemble. Deep resonant Ouds and warm musks designed to linger — leaving an unforgettable impression.
                         </p>
@@ -339,8 +373,69 @@ export default function LandingPage() {
                 </div>
             </section>
 
+            {/* ── CAPS & ACCESSORIES ─────────────────────────────────────────────── */}
+            <section style={{ background: '#0f1035', padding: '8rem 1.5rem' }}>
+                <div style={{ maxWidth: '1440px', margin: '0 auto' }}>
+                    {/* Full-width visual banner */}
+                    <div className="lp-fade" style={{ position: 'relative', width: '100%', height: '50vh', overflow: 'hidden', marginBottom: '0' }}>
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #0f1035 0%, #1a1060 50%, #0f1035 100%)' }} />
+                        {/* Decorative geometric pattern */}
+                        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4rem', opacity: .12 }}>
+                            {[...Array(7)].map((_, i) => (
+                                <div key={i} style={{ width: '180px', height: '180px', border: '1px solid #D4A853', borderRadius: '50%', transform: `scale(${0.5 + i * 0.18})`, position: 'absolute' }} />
+                            ))}
+                        </div>
+                        {/* Central icon display */}
+                        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem' }}>
+                            <div style={{ fontSize: '4rem', filter: 'drop-shadow(0 0 24px rgba(212,168,83,.4))' }}>🧢</div>
+                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                <div style={{ width: '40px', height: '1px', background: '#D4A853', opacity: .5 }} />
+                                <span style={{ fontSize: '.58rem', letterSpacing: '.3em', textTransform: 'uppercase', color: '#D4A853' }}>Premium Hardware</span>
+                                <div style={{ width: '40px', height: '1px', background: '#D4A853', opacity: .5 }} />
+                            </div>
+                        </div>
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #0f1035 0%, transparent 60%)' }} />
+                    </div>
+
+                    {/* Content: text + feature grid */}
+                    <div className="lp-fade lp-fade-d1" style={{ marginTop: '-3rem', position: 'relative', zIndex: 2 }}>
+                        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+                            <span style={{ fontSize: '.6rem', letterSpacing: '.3em', textTransform: 'uppercase', color: '#D4A853', display: 'block', marginBottom: '1rem' }}>Complete the Look</span>
+                            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2rem,5vw,3rem)', color: '#D4A853', marginBottom: '1.25rem' }}>Caps &amp; Accessories</h2>
+                            <p style={{ color: 'rgba(201,197,204,.6)', fontSize: '.95rem', lineHeight: 1.8, maxWidth: '520px', margin: '0 auto', fontWeight: 300 }}>
+                                Elevate every ensemble. Our designer caps and curated hardware accessories are crafted to complement the Kandora aesthetic — precise, purposeful, premium.
+                            </p>
+                        </div>
+
+                        {/* Feature cards grid */}
+                        <div className="lp-caps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
+                            <style>{`
+                                @media (min-width: 768px) { .lp-caps-grid { grid-template-columns: repeat(4, 1fr) !important; } }
+                            `}</style>
+                            {[
+                                { icon: '🧢', label: 'Prayer Caps', desc: 'Embroidered cotton & lace', price: 'From ₹180' },
+                                { icon: '✦',  label: 'Designer Caps', desc: 'Structured Kandora-matched', price: '₹250' },
+                                { icon: '📿', label: 'Tasbeeh Beads', desc: 'Sandalwood & resin', price: 'From ₹150' },
+                                { icon: '🪡', label: 'Fabric Buttons', desc: 'Pearlescent & metallic', price: 'From ₹40/set' },
+                            ].map((item) => (
+                                <div key={item.label} className="lp-glass" style={{ padding: '2rem 1.5rem', textAlign: 'center', transition: 'border-color .3s, transform .3s' }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>{item.icon}</div>
+                                    <h4 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1rem', color: '#f6e1a1', marginBottom: '.4rem' }}>{item.label}</h4>
+                                    <p style={{ color: 'rgba(201,197,204,.5)', fontSize: '.78rem', lineHeight: 1.5, marginBottom: '.75rem' }}>{item.desc}</p>
+                                    <span style={{ fontFamily: 'var(--font-playfair)', color: '#D4A853', fontSize: '.9rem', fontWeight: 600 }}>{item.price}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div style={{ textAlign: 'center' }}>
+                            <Link href="/home" className="lp-btn-gold">Browse Accessories →</Link>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* ── STATS ─────────────────────────────────────────────────────────── */}
-            <section style={{ background: '#05040f', padding: '8rem 1.5rem', borderTop: '1px solid rgba(72,70,76,.12)', borderBottom: '1px solid rgba(72,70,76,.12)' }}>
+            <section style={{ background: '#0f1035', padding: '8rem 1.5rem', borderTop: '1px solid rgba(212,168,83,.08)', borderBottom: '1px solid rgba(212,168,83,.08)' }}>
                 <div style={{ maxWidth: '800px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', textAlign: 'center' }} className="lp-fade">
                     <div>
                         <span className="lp-stat-num" data-count-target="500" data-count-suffix="+">500+</span>
@@ -364,7 +459,7 @@ export default function LandingPage() {
             {/* ── VISIT / CONTACT ────────────────────────────────────────────────── */}
             <section style={{ background: '#0a0820', padding: '8rem 1.5rem' }}>
                 <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center', padding: '3rem 2rem' }} className="lp-glass lp-fade">
-                    <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.5rem,3vw,2rem)', color: '#f3bf4d', marginBottom: '1rem' }}>Concierge &amp; Location</h2>
+                    <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.5rem,3vw,2rem)', color: '#D4A853', marginBottom: '1rem' }}>Concierge &amp; Location</h2>
                     <p style={{ color: 'rgba(201,197,204,.55)', fontSize: '.9rem', lineHeight: 1.7, marginBottom: '2.5rem' }}>
                         Visit our atelier in Koduvally, Kerala, or connect with our digital concierge for remote consultations and custom orders.
                     </p>
@@ -384,11 +479,11 @@ export default function LandingPage() {
             </section>
 
             {/* ── FINAL CTA ──────────────────────────────────────────────────────── */}
-            <section style={{ height: '85vh', background: '#05040f', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2rem 1.5rem', position: 'relative', overflow: 'hidden' }}>
+            <section style={{ height: '85vh', background: '#0f1035', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2rem 1.5rem', position: 'relative', overflow: 'hidden' }}>
                 {/* Glow */}
-                <div style={{ position: 'absolute', top: '50%', left: '50%', width: '600px', height: '600px', marginTop: '-300px', marginLeft: '-300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(201,153,42,.1), transparent 70%)', pointerEvents: 'none' }} />
-                <div style={{ position: 'absolute', top: '50%', left: '50%', width: '350px', height: '350px', marginTop: '-175px', marginLeft: '-175px', borderRadius: '50%', border: '1px solid rgba(201,153,42,.1)', animation: 'lp-breathe 4s ease-in-out infinite', pointerEvents: 'none' }} />
-                <div style={{ position: 'absolute', top: '50%', left: '50%', width: '500px', height: '500px', marginTop: '-250px', marginLeft: '-250px', borderRadius: '50%', border: '1px solid rgba(201,153,42,.06)', animation: 'lp-breathe 4s 1s ease-in-out infinite', pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', top: '50%', left: '50%', width: '600px', height: '600px', marginTop: '-300px', marginLeft: '-300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(212,168,83,.12), transparent 70%)', pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', top: '50%', left: '50%', width: '350px', height: '350px', marginTop: '-175px', marginLeft: '-175px', borderRadius: '50%', border: '1px solid rgba(212,168,83,.12)', animation: 'lp-breathe 4s ease-in-out infinite', pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', top: '50%', left: '50%', width: '500px', height: '500px', marginTop: '-250px', marginLeft: '-250px', borderRadius: '50%', border: '1px solid rgba(212,168,83,.07)', animation: 'lp-breathe 4s 1s ease-in-out infinite', pointerEvents: 'none' }} />
                 <style>{`@keyframes lp-breathe { 0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.7;} 50%{transform:translate(-50%,-50%) scale(1.05);opacity:1;} }`}</style>
                 <div className="lp-fade" style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2.5rem,8vw,5.5rem)', fontWeight: 900, lineHeight: .95, color: '#f6e1a1', marginBottom: '1.5rem' }}>
@@ -414,7 +509,7 @@ export default function LandingPage() {
             </section>
 
             {/* ── FOOTER ─────────────────────────────────────────────────────────── */}
-            <footer className="lp-footer" style={{ background: '#05040f', padding: '4rem 1.5rem 2rem' }}>
+            <footer className="lp-footer" style={{ background: '#0f1035', padding: '4rem 1.5rem 2rem' }}>
                 <div style={{ maxWidth: '1440px', margin: '0 auto' }}>
                     <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2rem,5vw,3.5rem)', color: '#f3bf4d', fontStyle: 'italic', textAlign: 'center', marginBottom: '3rem' }}>
                         Fabloom Kandoras
