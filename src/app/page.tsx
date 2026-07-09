@@ -3,6 +3,7 @@ import Image from 'next/image';
 import LandingClient from '@/components/landing/LandingClient';
 import HeroSection from '@/components/landing/HeroSection';
 import FeaturedCollections from '@/components/landing/FeaturedCollections';
+import OurCraft from '@/components/landing/OurCraft';
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
@@ -172,6 +173,9 @@ export default function LandingPage() {
 
             {/* ── FEATURED COLLECTIONS ───────────────────────────────── */}
             <FeaturedCollections />
+
+            {/* ── OUR CRAFT ─────────────────────────────────────────── */}
+            <OurCraft />
 
             {/* ── MARQUEE ──────────────────────────────────────────────────────── */}
             <div style={{ overflow: 'hidden', borderTop: '1px solid rgba(201,153,42,.1)', borderBottom: '1px solid rgba(201,153,42,.1)', background: 'rgba(201,153,42,.03)', padding: '.7rem 0' }} aria-hidden>
