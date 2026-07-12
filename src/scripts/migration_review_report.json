@@ -1,0 +1,23 @@
+[
+  {
+    "productId": "6a0aac2cc38711b2cd1bf915",
+    "name": "Classic White Thobe",
+    "slug": "classic-white-thobe",
+    "legacyCategory": "mens",
+    "legacySubcategory": "thobe"
+  },
+  {
+    "productId": "6a151c2b8dbbb62f09c2e8ac",
+    "name": "Sky Blue Linen Shirt",
+    "slug": "sky-blue-linen-shirt",
+    "legacyCategory": "mens",
+    "legacySubcategory": "shirt"
+  },
+  {
+    "productId": "6a151c2b8dbbb62f09c2e8ad",
+    "name": "Charcoal Straight Pant",
+    "slug": "charcoal-straight-pant",
+    "legacyCategory": "mens",
+    "legacySubcategory": "pants"
+  }
+]
