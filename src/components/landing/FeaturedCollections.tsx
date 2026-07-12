@@ -1,9 +1,23 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RESPONSIVE HOOK
+// ─────────────────────────────────────────────────────────────────────────────
+function useIsMobile() {
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const check = () => setIsMobile(window.innerWidth < 1024);
+        check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+    }, []);
+    return isMobile;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONSTANTS
@@ -12,7 +26,7 @@ import { motion, useInView } from 'framer-motion';
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// DATA  (descriptions shortened to one sentence — luxury brands don't over-explain)
+// DATA
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface Collection {
@@ -70,37 +84,30 @@ const COLLECTIONS: Collection[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// EDITORIAL BLOCK — base component used for all four placements
-// Hover is orchestrated at the parent level via Framer variant propagation.
+// EDITORIAL BLOCK
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface BlockProps {
+interface EditorialBlockProps {
     collection: Collection;
-    /** Height of the image area in px or CSS string */
     height: string;
-    /** Stagger delay from when the grid enters view */
     delay: number;
-    /** Extra inline styles on the outer wrapper (for grid-area or z-index overrides) */
-    outerStyle?: React.CSSProperties;
+    alignText?: 'top' | 'bottom';
+    className?: string;
 }
 
-function EditorialBlock({ collection, height, delay, outerStyle }: BlockProps) {
+function EditorialBlock({ collection, height, delay, alignText = 'bottom', className }: EditorialBlockProps) {
     const ref = useRef<HTMLDivElement>(null);
     const inView = useInView(ref, { once: true, margin: '-60px 0px' });
+    const isMobile = useIsMobile();
 
     return (
-        // Scroll-entry wrapper
         <motion.div
             ref={ref}
             initial={{ opacity: 0, y: 40 }}
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-            transition={{ duration: 1.0, delay, ease: EASE }}
-            style={{ position: 'relative', ...outerStyle }}
+            transition={{ duration: 0.45, delay, ease: EASE }}
+            className={className}
         >
-            {/*
-             * Hover orchestrator — variant "hover" propagates to all children.
-             * No card border, no box-shadow border — depth comes from layered shadows.
-             */}
             <motion.div
                 initial="rest"
                 whileHover="hover"
@@ -112,196 +119,81 @@ function EditorialBlock({ collection, height, delay, outerStyle }: BlockProps) {
                     aria-label={`Explore ${collection.title.replace('\n', ' ')}`}
                     style={{ display: 'block', textDecoration: 'none', height: '100%' }}
                 >
-                    {/* ── IMAGE AREA ── */}
                     <div
                         style={{
                             position: 'relative',
                             width: '100%',
-                            height,
+                            height: isMobile ? '55vh' : height,
                             overflow: 'hidden',
                         }}
                     >
-                        {/* Image — zooms on hover via variant */}
                         <motion.div
                             variants={{
                                 rest: { scale: 1 },
                                 hover: {
-                                    scale: 1.06,
-                                    transition: { duration: 0.85, ease: EASE },
+                                    scale: 1.05,
+                                    transition: { duration: 0.3, ease: EASE },
                                 },
                             }}
-                            style={{
-                                position: 'absolute',
-                                inset: 0,
-                                willChange: 'transform',
-                            }}
+                            style={{ position: 'absolute', inset: 0, willChange: 'transform' }}
                         >
                             <Image
                                 src={collection.image}
                                 alt={collection.alt}
                                 fill
-                                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 40vw"
-                                style={{
-                                    objectFit: 'cover',
-                                    objectPosition: collection.objectPosition,
-                                }}
+                                sizes="(max-width: 1024px) 100vw, 40vw"
+                                style={{ objectFit: 'cover', objectPosition: collection.objectPosition }}
                             />
                         </motion.div>
 
-                        {/* ── VIGNETTES ── */}
-
-                        {/* Bottom — text legibility */}
                         <div
                             aria-hidden
                             style={{
                                 position: 'absolute',
-                                bottom: 0, left: 0, right: 0,
-                                height: '68%',
-                                background:
-                                    'linear-gradient(to top, rgba(8,6,28,0.97) 0%, rgba(15,16,53,0.6) 45%, transparent 100%)',
+                                ...(alignText === 'bottom'
+                                    ? { bottom: 0, left: 0, right: 0, height: '65%', background: 'linear-gradient(to top, rgba(15,16,53,0.95) 0%, transparent 100%)' }
+                                    : { top: 0, left: 0, right: 0, height: '65%', background: 'linear-gradient(to bottom, rgba(15,16,53,0.95) 0%, transparent 100%)' }),
                                 pointerEvents: 'none',
                                 zIndex: 2,
                             }}
                         />
 
-                        {/* Top — studio ceiling */}
-                        <div
-                            aria-hidden
-                            style={{
-                                position: 'absolute',
-                                top: 0, left: 0, right: 0,
-                                height: '20%',
-                                background:
-                                    'linear-gradient(to bottom, rgba(8,6,28,0.35) 0%, transparent 100%)',
-                                pointerEvents: 'none',
-                                zIndex: 2,
-                            }}
-                        />
-
-                        {/*
-                         * ── GOLD ACCENT LINE ──
-                         * Draws left-to-right on hover. GPU scaleX only.
-                         * Fabloom's editorial signature.
-                         */}
-                        <motion.div
-                            aria-hidden
-                            variants={{
-                                rest: { scaleX: 0 },
-                                hover: {
-                                    scaleX: 1,
-                                    transition: { duration: 0.48, ease: EASE },
-                                },
-                            }}
-                            style={{
-                                position: 'absolute',
-                                top: 0, left: 0, right: 0,
-                                height: '1.5px',
-                                background:
-                                    'linear-gradient(to right, transparent 0%, #D4A853 20%, #f5e0a0 50%, #D4A853 80%, transparent 100%)',
-                                transformOrigin: 'left center',
-                                zIndex: 5,
-                                pointerEvents: 'none',
-                            }}
-                        />
-
-                        {/* ── TEXT CONTENT ── lifted 4px on hover */}
                         <motion.div
                             variants={{
                                 rest: { y: 0 },
                                 hover: {
-                                    y: -4,
-                                    transition: { duration: 0.35, ease: EASE },
+                                    y: isMobile ? 0 : (alignText === 'bottom' ? -4 : 4),
+                                    transition: { duration: 0.3, ease: EASE },
                                 },
                             }}
                             style={{
                                 position: 'absolute',
-                                bottom: 0, left: 0, right: 0,
-                                padding: 'clamp(1.25rem, 3vw, 2rem)',
+                                ...(alignText === 'bottom' ? { bottom: 0 } : { top: 0 }),
+                                left: 0, right: 0,
+                                padding: '2rem',
                                 zIndex: 3,
                             }}
                         >
-                            {/* Collection number */}
-                            <span
-                                style={{
-                                    display: 'block',
-                                    fontFamily: 'var(--font-dm-sans)',
-                                    fontSize: '0.55rem',
-                                    letterSpacing: '0.35em',
-                                    textTransform: 'uppercase',
-                                    color: '#D4A853',
-                                    opacity: 0.75,
-                                    marginBottom: '0.5rem',
-                                }}
-                            >
+                            <span style={{ display: 'block', fontFamily: 'var(--font-dm-sans)', fontSize: '0.55rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: '#D4A853', marginBottom: '0.5rem' }}>
                                 {collection.label}
                             </span>
-
-                            {/* Title — preserves intentional line breaks */}
-                            <h3
-                                style={{
-                                    fontFamily: 'var(--font-playfair)',
-                                    fontSize: 'clamp(1.5rem, 2.6vw, 2rem)',
-                                    fontWeight: 700,
-                                    color: '#f6e1a1',
-                                    lineHeight: 1.1,
-                                    letterSpacing: '-0.01em',
-                                    marginBottom: '0.5rem',
-                                    whiteSpace: 'pre-line',
-                                }}
-                            >
+                            <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.75rem', fontWeight: 700, color: '#f6e1a1', lineHeight: 1.1, marginBottom: '0.5rem', whiteSpace: 'pre-line' }}>
                                 {collection.title}
                             </h3>
-
-                            {/* One sentence — reduced from previous multi-sentence */}
-                            <p
-                                style={{
-                                    fontFamily: 'var(--font-dm-sans)',
-                                    fontSize: '0.78rem',
-                                    fontWeight: 300,
-                                    lineHeight: 1.65,
-                                    color: 'rgba(201,197,204,0.55)',
-                                    maxWidth: '26ch',
-                                    marginBottom: '0.85rem',
-                                }}
-                            >
+                            <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', maxWidth: '24ch', marginBottom: '1rem' }}>
                                 {collection.description}
                             </p>
-
-                            {/* Explore + arrow */}
-                            <div
-                                style={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: '0.4rem',
-                                }}
-                            >
-                                <span
-                                    style={{
-                                        fontFamily: 'var(--font-dm-sans)',
-                                        fontSize: '0.58rem',
-                                        letterSpacing: '0.22em',
-                                        textTransform: 'uppercase',
-                                        color: '#D4A853',
-                                    }}
-                                >
+                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                                <span style={{ fontFamily: 'var(--font-dm-sans)', fontSize: '0.58rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: '#D4A853' }}>
                                     Explore
                                 </span>
                                 <motion.span
                                     aria-hidden
                                     variants={{
                                         rest: { x: 0, opacity: 0.6 },
-                                        hover: {
-                                            x: 6,
-                                            opacity: 1,
-                                            transition: { duration: 0.3, ease: EASE },
-                                        },
+                                        hover: { x: 6, opacity: 1, transition: { duration: 0.3, ease: EASE } },
                                     }}
-                                    style={{
-                                        color: '#D4A853',
-                                        fontSize: '0.8rem',
-                                        display: 'inline-block',
-                                        lineHeight: 1,
-                                    }}
+                                    style={{ color: '#D4A853', fontSize: '0.8rem', display: 'inline-block', lineHeight: 1 }}
                                 >
                                     →
                                 </motion.span>
@@ -321,6 +213,7 @@ function EditorialBlock({ collection, height, delay, outerStyle }: BlockProps) {
 function SectionHeader() {
     const ref = useRef<HTMLDivElement>(null);
     const inView = useInView(ref, { once: true, margin: '-40px 0px' });
+    const isMobile = useIsMobile();
 
     return (
         <div
@@ -371,9 +264,9 @@ function SectionHeader() {
             <div className="lp-fc-header">
                 <motion.h2
                     id="fc-heading"
-                    initial={{ opacity: 0, y: 28 }}
+                    initial={{ opacity: 0, y: isMobile ? 16 : 28 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.9, delay: 0.1, ease: EASE }}
+                    transition={{ duration: isMobile ? 0.6 : 0.9, delay: 0.1, ease: EASE }}
                     style={{
                         fontFamily: 'var(--font-playfair)',
                         fontSize: 'clamp(2.2rem, 4.5vw, 3.75rem)',
@@ -389,9 +282,9 @@ function SectionHeader() {
                 </motion.h2>
 
                 <motion.p
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: isMobile ? 12 : 20 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.9, delay: 0.18, ease: EASE }}
+                    transition={{ duration: isMobile ? 0.6 : 0.9, delay: 0.18, ease: EASE }}
                     style={{
                         fontFamily: 'var(--font-dm-sans)',
                         fontSize: 'clamp(0.875rem, 1.1vw, 0.95rem)',
@@ -423,7 +316,8 @@ function SectionHeader() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function FeaturedCollections() {
-    // Trigger for the entire grid — cards appear 250ms after header has settled.
+    const isMobile = useIsMobile();
+    // Trigger for the entire grid — cards appear shortly after header has settled.
     const gridRef = useRef<HTMLDivElement>(null);
     const gridInView = useInView(gridRef, { once: true, margin: '-60px 0px' });
 
@@ -436,7 +330,7 @@ export default function FeaturedCollections() {
                     flex-direction: column;
                     gap: 1.5rem;
                 }
-                @media (min-width: 768px) {
+                @media (min-width: 1024px) {
                     .lp-fc-header {
                         flex-direction: row;
                         align-items: flex-end;
@@ -445,26 +339,23 @@ export default function FeaturedCollections() {
                 }
 
                 /*
-                 * EDITORIAL GRID — 12-column basis on desktop.
-                 * On mobile: single column, generous gaps.
-                 * On tablet: 2-column even split.
-                 * On desktop: true 12-col with named areas for asymmetric placement.
+                 * EDITORIAL GRID
+                 * On mobile (<1024px): 1-2-1 layout. Asymmetric 65fr 35fr split on middle row.
+                 * On desktop (≥1024px): 12-col with complex overlap.
                  */
                 .lp-fc-editorial {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1rem;
+                    display: grid;
+                    grid-template-columns: 65fr 35fr;
+                    grid-template-rows: auto auto auto;
+                    gap: 0.75rem;
+                    align-items: start;
                 }
 
-                @media (min-width: 640px) {
-                    .lp-fc-editorial {
-                        display: grid;
-                        grid-template-columns: 1fr 1fr;
-                        grid-template-rows: auto auto;
-                        gap: 1rem;
-                        align-items: start;
-                    }
-                }
+                /* Mobile Block Placements */
+                .lp-fc-b1 { grid-column: 1 / 3; grid-row: 1; }
+                .lp-fc-b2 { grid-column: 1 / 2; grid-row: 2; }
+                .lp-fc-b3 { grid-column: 2 / 3; grid-row: 2; }
+                .lp-fc-b4 { grid-column: 1 / 3; grid-row: 3; }
 
                 @media (min-width: 1024px) {
                     .lp-fc-editorial {
@@ -472,24 +363,15 @@ export default function FeaturedCollections() {
                         grid-template-columns: repeat(12, 1fr);
                         grid-template-rows: auto auto;
                         gap: 1rem;
-                        align-items: start;
                     }
 
-                    /* Block 1 — large portrait, spans 7 of 12 cols */
+                    /* Block 1 — spans 7 cols */
                     .lp-fc-b1 { grid-column: 1 / 8; grid-row: 1; }
-
-                    /* Block 2 — landscape, spans 5 of 12 cols */
+                    /* Block 2 — spans 5 cols */
                     .lp-fc-b2 { grid-column: 8 / 13; grid-row: 1; }
-
-                    /* Block 3 — landscape, spans 5 of 12 cols */
+                    /* Block 3 — spans 5 cols */
                     .lp-fc-b3 { grid-column: 1 / 6; grid-row: 2; }
-
-                    /*
-                     * Block 4 — tall portrait, spans 7 of 12 cols.
-                     * margin-top: -60px creates the deliberate overlap into Row 1's space,
-                     * connecting the two rows visually and breaking the rigid grid rhythm.
-                     * z-index: 2 keeps it above Block 2 at the overlap seam.
-                     */
+                    /* Block 4 — spans 7 cols, overlaps Row 1 */
                     .lp-fc-b4 {
                         grid-column: 6 / 13;
                         grid-row: 2;
@@ -531,68 +413,53 @@ export default function FeaturedCollections() {
                 {/* Header — fades in first */}
                 <SectionHeader />
 
-                {/* Grid — 250ms after header */}
                 <div
                     ref={gridRef}
                     style={{
                         maxWidth: '1440px',
                         margin: '0 auto',
+                        // V3 mobile: consistent 64px padding bottom mapping to 128px desktop
                         padding: '0 clamp(1.5rem, 5vw, 5rem)',
-                        paddingBottom: 'clamp(5rem, 9vw, 8rem)',
+                        paddingBottom: 'clamp(4rem, 9vw, 8rem)',
                     }}
                 >
                     <div className="lp-fc-editorial">
 
-                        {/*
-                         * Block 1 — Ready-made
-                         * Tall portrait (7 cols). Dominates the first row.
-                         * The biggest block anchors the viewer's eye first.
-                         */}
+                        {/* Block 1 — Ready-made */}
                         <div className="lp-fc-b1">
                             <EditorialBlock
                                 collection={COLLECTIONS[0]}
-                                height="clamp(420px, 62vh, 680px)"
-                                delay={gridInView ? 0.25 : 0}
+                                height={isMobile ? 'clamp(340px, 55vh, 480px)' : 'clamp(420px, 62vh, 680px)'}
+                                delay={gridInView ? (isMobile ? 0.1 : 0.25) : 0}
                             />
                         </div>
 
-                        {/*
-                         * Block 2 — Bespoke Tailoring
-                         * Landscape (5 cols). Shorter than Block 1 — creates the vertical
-                         * tension that makes Row 1 feel alive rather than uniform.
-                         */}
+                        {/* Block 2 — Bespoke Tailoring (Taller, 65% width on mobile) */}
                         <div className="lp-fc-b2">
                             <EditorialBlock
                                 collection={COLLECTIONS[1]}
-                                height="clamp(320px, 45vh, 500px)"
-                                delay={gridInView ? 0.37 : 0}
+                                height={isMobile ? 'clamp(280px, 45vh, 400px)' : 'clamp(320px, 45vh, 500px)'}
+                                delay={gridInView ? (isMobile ? 0.2 : 0.37) : 0}
+                                alignText="bottom"
                             />
                         </div>
 
-                        {/*
-                         * Block 3 — Luxury Fabrics
-                         * Landscape (5 cols). Shorter block on Row 2 left.
-                         * Its lower height exposes Block 4's overlap edge.
-                         */}
+                        {/* Block 3 — Luxury Fabrics (Shorter, 35% width, Text-First on mobile) */}
                         <div className="lp-fc-b3">
                             <EditorialBlock
                                 collection={COLLECTIONS[2]}
-                                height="clamp(300px, 40vh, 460px)"
-                                delay={gridInView ? 0.32 : 0}
+                                height={isMobile ? 'clamp(220px, 35vh, 320px)' : 'clamp(300px, 40vh, 460px)'}
+                                delay={gridInView ? (isMobile ? 0.3 : 0.32) : 0}
+                                alignText={isMobile ? 'top' : 'bottom'}
                             />
                         </div>
 
-                        {/*
-                         * Block 4 — Accessories
-                         * Tall portrait (7 cols). margin-top: -60px creates the deliberate
-                         * overlap — Block 4's top edge intrudes into Row 1's space.
-                         * This is the editorial centrepiece of the grid rhythm.
-                         */}
+                        {/* Block 4 — Accessories */}
                         <div className="lp-fc-b4">
                             <EditorialBlock
                                 collection={COLLECTIONS[3]}
-                                height="clamp(460px, 65vh, 700px)"
-                                delay={gridInView ? 0.44 : 0}
+                                height={isMobile ? 'clamp(340px, 55vh, 480px)' : 'clamp(460px, 65vh, 700px)'}
+                                delay={gridInView ? (isMobile ? 0.4 : 0.44) : 0}
                             />
                         </div>
 

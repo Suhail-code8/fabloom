@@ -104,8 +104,7 @@ function QuickAddButton({ visible }: { visible: boolean }) {
         >
             <button
                 onClick={(e) => e.preventDefault()}
-                className="w-full py-2 rounded-xl text-xs font-bold transition-all duration-150 active:scale-95"
-                style={{ backgroundColor: '#D4A853', color: '#0f1035' }}
+                className="ecom-btn w-full py-2.5 text-xs font-bold"
             >
                 + Quick Add
             </button>
@@ -132,26 +131,10 @@ export default function ReadymadeCard({ product }: ReadymadeCardProps) {
     return (
         <Link
             href={`/readymade/${product.slug || product._id}`}
-            className="flex flex-col h-full rounded-2xl overflow-hidden active:opacity-90 transition-all duration-200 group"
-            style={{
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
-                transition: 'border-color 0.3s, box-shadow 0.3s, transform 0.3s',
-            }}
+            className="ecom-card group active:opacity-90"
             aria-label={product.name}
-            onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(212,168,83,0.35)';
-                (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 8px 28px rgba(212,168,83,0.12)';
-                (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)';
-                setShowQuickAdd(true);
-            }}
-            onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.08)';
-                (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.25)';
-                (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)';
-                setShowQuickAdd(false);
-            }}
+            onMouseEnter={() => setShowQuickAdd(true)}
+            onMouseLeave={() => setShowQuickAdd(false)}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
         >

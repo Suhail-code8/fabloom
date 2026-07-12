@@ -50,7 +50,7 @@ export default async function ProductDetailPage({ params }: Props) {
     ];
 
     return (
-        <div className="min-h-screen bg-white store-pb-action-nav lg:store-pb-nav">
+        <div className="min-h-screen store-pb-action-nav lg:store-pb-nav text-white">
             <ProductStructuredData product={product as any} />
             <BreadcrumbStructuredData items={breadcrumbs} />
             

@@ -1,9 +1,23 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RESPONSIVE HOOK
+// ─────────────────────────────────────────────────────────────────────────────
+function useIsMobile() {
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const check = () => setIsMobile(window.innerWidth < 1024);
+        check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+    }, []);
+    return isMobile;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // OUR CRAFT — emotional storytelling section
@@ -19,7 +33,7 @@ const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 // LEFT COLUMN — typography + editorial details
 // ─────────────────────────────────────────────────────────────────────────────
 
-function CraftText() {
+function CraftText({ isMobile }: { isMobile: boolean }) {
     const ref = useRef<HTMLDivElement>(null);
     const inView = useInView(ref, { once: true, margin: '-80px 0px' });
 
@@ -31,6 +45,8 @@ function CraftText() {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
+                alignItems: isMobile ? 'center' : 'flex-start',
+                textAlign: isMobile ? 'center' : 'left',
                 padding: 'clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 5rem)',
                 zIndex: 2,
             }}
@@ -45,13 +61,14 @@ function CraftText() {
                 aria-hidden
                 initial={{ opacity: 0 }}
                 animate={inView ? { opacity: 0.055 } : {}}
-                transition={{ duration: 1.8, delay: 0.1, ease: EASE }}
+                transition={{ duration: isMobile ? 1.0 : 1.8, delay: 0.1, ease: EASE }}
                 style={{
                     position: 'absolute',
-                    top: 'clamp(1rem, 4vw, 2.5rem)',
-                    left: 'clamp(0.5rem, 3vw, 2rem)',
+                    top: isMobile ? '50%' : 'clamp(1rem, 4vw, 2.5rem)',
+                    left: isMobile ? '50%' : 'clamp(0.5rem, 3vw, 2rem)',
+                    transform: isMobile ? 'translate(-50%, -50%)' : 'none',
                     fontFamily: 'var(--font-playfair)',
-                    fontSize: 'clamp(10rem, 18vw, 18rem)',
+                    fontSize: 'clamp(12rem, 18vw, 18rem)',
                     lineHeight: 1,
                     color: '#D4A853',
                     zIndex: 0,
@@ -72,7 +89,7 @@ function CraftText() {
                 aria-hidden
                 initial={{ scaleY: 0 }}
                 animate={inView ? { scaleY: 1 } : {}}
-                transition={{ duration: 1.1, delay: 0.25, ease: EASE }}
+                transition={{ duration: isMobile ? 0.6 : 1.1, delay: 0.25, ease: EASE }}
                 style={{
                     position: 'absolute',
                     left: 'clamp(1.5rem, 5vw, 5rem)',
@@ -85,11 +102,12 @@ function CraftText() {
                     zIndex: 1,
                     pointerEvents: 'none',
                     willChange: 'transform',
+                    display: isMobile ? 'none' : 'block', // hidden on mobile
                 }}
             />
 
             {/* Content — sits above the decorative elements */}
-            <div style={{ position: 'relative', zIndex: 2, paddingLeft: 'clamp(1rem, 2.5vw, 2rem)' }}>
+            <div style={{ position: 'relative', zIndex: 2, paddingLeft: isMobile ? '0' : 'clamp(1rem, 2.5vw, 2rem)' }}>
 
                 {/* Overline */}
                 <motion.span
@@ -125,7 +143,7 @@ function CraftText() {
                         <motion.span
                             initial={{ y: '110%', opacity: 0 }}
                             animate={inView ? { y: '0%', opacity: 1 } : {}}
-                            transition={{ duration: 1.0, delay: 0.35, ease: EASE }}
+                            transition={{ duration: isMobile ? 0.6 : 1.0, delay: 0.2, ease: EASE }}
                             style={{ display: 'block', color: '#f6e1a1' }}
                         >
                             Every Stitch
@@ -136,7 +154,7 @@ function CraftText() {
                         <motion.span
                             initial={{ y: '110%', opacity: 0 }}
                             animate={inView ? { y: '0%', opacity: 1 } : {}}
-                            transition={{ duration: 1.0, delay: 0.49, ease: EASE }}
+                            transition={{ duration: isMobile ? 0.6 : 1.0, delay: isMobile ? 0.25 : 0.49, ease: EASE }}
                             style={{
                                 display: 'block',
                                 fontStyle: 'italic',
@@ -153,17 +171,18 @@ function CraftText() {
 
                 {/* Body paragraph */}
                 <motion.p
-                    initial={{ opacity: 0, y: 22 }}
+                    initial={{ opacity: 0, y: isMobile ? 12 : 22 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.95, delay: 0.65, ease: EASE }}
+                    transition={{ duration: isMobile ? 0.6 : 0.95, delay: isMobile ? 0.35 : 0.65, ease: EASE }}
                     style={{
                         fontFamily: 'var(--font-dm-sans)',
-                        fontSize: 'clamp(0.875rem, 1.1vw, 0.95rem)',
+                        fontSize: 'clamp(0.95rem, 1.1vw, 0.95rem)',
                         fontWeight: 300,
                         lineHeight: 1.9,
-                        color: 'rgba(201,197,204,0.58)',
+                        color: 'rgba(201,197,204,0.7)',
                         maxWidth: '36ch',
                         marginBottom: '2.75rem',
+                        marginInline: isMobile ? 'auto' : '0',
                     }}
                 >
                     At Fabloom, tailoring is more than taking measurements.
@@ -174,9 +193,9 @@ function CraftText() {
 
                 {/* Subtle text CTA — not a button, editorial link style */}
                 <motion.div
-                    initial={{ opacity: 0, y: 16 }}
+                    initial={{ opacity: 0, y: isMobile ? 8 : 16 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.85, delay: 0.8, ease: EASE }}
+                    transition={{ duration: isMobile ? 0.5 : 0.85, delay: isMobile ? 0.45 : 0.8, ease: EASE }}
                 >
                     <Link
                         href="/stitching"
@@ -209,7 +228,7 @@ function CraftText() {
 // RIGHT COLUMN — immersive editorial image
 // ─────────────────────────────────────────────────────────────────────────────
 
-function CraftImage() {
+function CraftImage({ isMobile }: { isMobile: boolean }) {
     const ref = useRef<HTMLDivElement>(null);
     const inView = useInView(ref, { once: true, margin: '-60px 0px' });
 
@@ -219,9 +238,9 @@ function CraftImage() {
             style={{
                 position: 'relative',
                 width: '100%',
-                // Full section height on desktop — image fills its column completely
+                // Full section height on desktop, restricted to 45vh max on mobile
                 height: '100%',
-                minHeight: 'clamp(420px, 70vh, 820px)',
+                minHeight: isMobile ? 'clamp(280px, 45vh, 400px)' : 'clamp(420px, 70vh, 820px)',
             }}
         >
             {/*
@@ -254,7 +273,7 @@ function CraftImage() {
                         ? { clipPath: 'inset(0% 0% 0% 0%)', scale: 1 }
                         : {}
                 }
-                transition={{ duration: 1.3, delay: 0.15, ease: EASE }}
+                transition={{ duration: isMobile ? 0.75 : 1.3, delay: 0.15, ease: EASE }}
                 style={{
                     position: 'absolute',
                     inset: 0,
@@ -268,7 +287,7 @@ function CraftImage() {
                  * and scale don't compound on the same element.
                  */}
                 <motion.div
-                    whileHover={{ scale: 1.025 }}
+                    whileHover={!isMobile ? { scale: 1.025 } : {}}
                     transition={{ duration: 0.9, ease: EASE }}
                     style={{
                         position: 'absolute',
@@ -277,7 +296,7 @@ function CraftImage() {
                     }}
                 >
                     <Image
-                        src="/hero-tailor.png"
+                        src="/hero-kandoras.png"
                         alt="Master tailor working with fabric — hands, needle, craft"
                         fill
                         sizes="(max-width: 768px) 100vw, 60vw"
@@ -348,6 +367,8 @@ function CraftImage() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function OurCraft() {
+    const isMobile = useIsMobile();
+    
     return (
         <>
             <style>{`
@@ -358,7 +379,7 @@ export default function OurCraft() {
                 .lp-craft-grid {
                     display: flex;
                     flex-direction: column;
-                    min-height: clamp(520px, 80vh, 900px);
+                    min-height: clamp(480px, 80vh, 900px);
                 }
                 @media (min-width: 1024px) {
                     .lp-craft-grid {
@@ -378,7 +399,7 @@ export default function OurCraft() {
                     // Generous vertical breathing room above (connects from FeaturedCollections)
                     // and below (connects into Marquee / Bespoke section)
                     paddingTop: 'clamp(4rem, 8vw, 7rem)',
-                    paddingBottom: 'clamp(4rem, 8vw, 7rem)',
+                    paddingBottom: 'clamp(3.5rem, 8vw, 7rem)',
                 }}
             >
                 {/*
@@ -427,10 +448,10 @@ export default function OurCraft() {
                     }}
                 >
                     {/* Left — text */}
-                    <CraftText />
+                    <CraftText isMobile={isMobile} />
 
                     {/* Right — image */}
-                    <CraftImage />
+                    <CraftImage isMobile={isMobile} />
                 </div>
             </section>
         </>

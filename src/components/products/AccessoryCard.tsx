@@ -123,11 +123,10 @@ export default function AccessoryCard({
         <Wrapper
             href={href ?? '#'}
             onClick={onClick}
-            className="group relative flex flex-col h-full rounded-2xl overflow-hidden bg-white cursor-pointer transition-all duration-150 active:scale-98"
-            style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}
+            className="ecom-card group relative active:scale-98"
             aria-label={product.name}
         >
-            <div className={`relative w-full flex-shrink-0 ${aspectClass} overflow-hidden bg-gray-50`}>
+            <div className={`relative w-full flex-shrink-0 ${aspectClass} overflow-hidden`} style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
                 <WishlistButton productId={product._id} />
                 <img
                     src={product.images?.[0] ?? '/placeholder-product.jpg'}
@@ -158,13 +157,21 @@ export default function AccessoryCard({
                 )}
             </div>
 
-            <div className="flex flex-col flex-1 p-3 min-h-0">
-                <p className="text-xs font-bold text-gray-900 leading-snug line-clamp-2">
+            <div className="flex flex-col flex-1 p-3 min-h-[88px]" style={{ backgroundColor: 'rgba(255,255,255,0.02)' }}>
+                <p className="text-xs font-semibold line-clamp-2 leading-snug min-h-[2.5rem]" style={{ color: 'rgba(255,255,255,0.88)' }}>
                     {product.name}
                 </p>
                 {children && <div className="flex-1 mt-2">{children}</div>}
                 <div className={children ? 'mt-auto pt-2' : 'mt-auto pt-2 flex-1 flex flex-col justify-end'}>
-                    <p className="text-sm font-extrabold" style={{ color: '#0f1035' }}>
+                    <p
+                        className="text-sm font-extrabold"
+                        style={{
+                            background: 'linear-gradient(135deg, #D4A853, #f3bf4d)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                        }}
+                    >
                         ₹{product.price.toLocaleString('en-IN')}
                     </p>
                 </div>

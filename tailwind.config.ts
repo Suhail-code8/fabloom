@@ -52,6 +52,10 @@ const config = {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				brand: {
+					navy: '#0f1035',
+					gold: '#D4A853',
+				},
 				emerald: {
 					'50': '#ecfdf5',
 					'100': '#d1fae5',
@@ -100,6 +104,9 @@ const config = {
 				sans: ['var(--font-inter)', 'sans-serif'],
 				serif: ['var(--font-playfair)', 'serif'],
 			},
+			boxShadow: {
+				'premium': '0 10px 30px -10px rgba(15, 16, 53, 0.15)',
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
@@ -107,20 +114,12 @@ const config = {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' }
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' }
 				}
 			},
 			animation: {

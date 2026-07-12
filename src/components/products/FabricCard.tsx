@@ -119,23 +119,7 @@ export default function FabricCard({ fabric, onOpenDrawer }: FabricCardProps) {
     const router = useRouter();
 
     return (
-        <div
-            className="flex flex-col h-full rounded-2xl overflow-hidden transition-all duration-200 active:scale-[0.98] group"
-            style={{
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
-                transition: 'border-color 0.3s, box-shadow 0.3s',
-            }}
-            onMouseEnter={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(212,168,83,0.35)';
-                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 28px rgba(212,168,83,0.12)';
-            }}
-            onMouseLeave={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.08)';
-                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.25)';
-            }}
-        >
+        <div className="ecom-card group active:scale-[0.98]">
             <button
                 type="button"
                 className="aspect-[3/4] relative flex-shrink-0 w-full cursor-pointer overflow-hidden"
@@ -212,12 +196,7 @@ export default function FabricCard({ fabric, onOpenDrawer }: FabricCardProps) {
                                 e.stopPropagation();
                                 router.push(`/stitching?fabricId=${fabric._id}`);
                             }}
-                            className="w-full flex items-center justify-center gap-1.5 py-2.5 min-h-[44px] rounded-xl text-xs font-bold transition-all duration-200 active:scale-95"
-                            style={{
-                                backgroundColor: 'rgba(212,168,83,0.1)',
-                                border: '1.5px solid rgba(212,168,83,0.35)',
-                                color: '#D4A853',
-                            }}
+                            className="ecom-btn-outline w-full py-2.5 min-h-[44px] text-xs"
                             aria-label={`Get ${fabric.name} stitched`}
                         >
                             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">

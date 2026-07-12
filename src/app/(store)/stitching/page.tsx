@@ -55,12 +55,16 @@ export default function StitchingPage() {
                         const profileData = await profileRes.json();
                         if (isMounted) setProfiles(profileData.profiles ?? []);
                     }
-                } catch (pErr) {
-                    console.warn('Profiles fetch failed or aborted:', pErr);
+                } catch (pErr: any) {
+                    if (pErr.name !== 'AbortError') {
+                        console.warn('Profiles fetch failed:', pErr);
+                    }
                 }
 
-            } catch (error) {
-                console.error('Failed to load stitching data:', error);
+            } catch (error: any) {
+                if (error.name !== 'AbortError') {
+                    console.error('Failed to load stitching data:', error);
+                }
             } finally {
                 clearTimeout(timeout);
                 if (isMounted) setIsLoading(false);
@@ -69,7 +73,7 @@ export default function StitchingPage() {
         loadData();
         return () => {
             isMounted = false;
-            controller.abort();
+            controller.abort('Component unmounted');
             clearTimeout(timeout);
         };
     }, []);

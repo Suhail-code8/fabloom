@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -12,7 +12,21 @@ import {
 } from 'framer-motion';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ANIMATION VARIANTS  (unchanged from V1)
+// RESPONSIVE HOOK
+// ─────────────────────────────────────────────────────────────────────────────
+function useIsMobile() {
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const check = () => setIsMobile(window.innerWidth < 1024);
+        check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+    }, []);
+    return isMobile;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ANIMATION VARIANTS (dynamic based on isMobile)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const containerVariants: Variants = {
@@ -22,41 +36,41 @@ const containerVariants: Variants = {
     },
 };
 
-const fadeUp: Variants = {
-    hidden: { opacity: 0, y: 24 },
+const getFadeUp = (isMobile: boolean): Variants => ({
+    hidden: { opacity: 0, y: isMobile ? 16 : 40 },
     visible: {
         opacity: 1,
         y: 0,
-        transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+        transition: { duration: isMobile ? 0.75 : 0.9, ease: [0.22, 1, 0.36, 1] },
     },
-};
+});
 
-const badgeVariants: Variants = {
-    hidden: { opacity: 0, y: 16 },
+const getBadgeVariants = (isMobile: boolean): Variants => ({
+    hidden: { opacity: 0, y: isMobile ? 12 : 24 },
     visible: {
         opacity: 1,
         y: 0,
-        transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+        transition: { duration: isMobile ? 0.6 : 0.7, ease: [0.22, 1, 0.36, 1] },
     },
-};
+});
 
-const lineReveal: Variants = {
+const getLineReveal = (isMobile: boolean): Variants => ({
     hidden: { opacity: 0, y: '110%' },
     visible: {
         opacity: 1,
         y: '0%',
-        transition: { duration: 1.0, ease: [0.22, 1, 0.36, 1] },
+        transition: { duration: isMobile ? 0.85 : 1.0, ease: [0.22, 1, 0.36, 1] },
     },
-};
+});
 
-const imageVariants: Variants = {
-    hidden: { opacity: 0, scale: 1.06 },
+const getImageVariants = (isMobile: boolean): Variants => ({
+    hidden: { opacity: 0, scale: 1.04 },
     visible: {
         opacity: 1,
         scale: 1,
-        transition: { duration: 1.4, ease: [0.22, 1, 0.36, 1] },
+        transition: { duration: isMobile ? 1.2 : 1.4, ease: [0.22, 1, 0.36, 1] },
     },
-};
+});
 
 const glowBreath: Variants = {
     initial: { opacity: 0.4, scale: 1 },
@@ -90,12 +104,11 @@ const scrollBounce: Variants = {
 // SUB-COMPONENTS — Left Column  (typography/spacing refined, not redesigned)
 // ─────────────────────────────────────────────────────────────────────────────
 
-function HeroBadge() {
+function HeroBadge({ isMobile }: { isMobile: boolean }) {
     return (
         <motion.div
-            variants={badgeVariants}
-            // V2: increased bottom margin for breathing room on mobile
-            className="inline-flex items-center gap-3 mb-10 md:mb-12"
+            variants={getBadgeVariants(isMobile)}
+            className="inline-flex items-center gap-3 mb-8 md:mb-12"
         >
             <span
                 aria-hidden
@@ -115,25 +128,24 @@ function HeroBadge() {
     );
 }
 
-function HeroHeading() {
+function HeroHeading({ isMobile }: { isMobile: boolean }) {
     return (
         <motion.h1
             variants={containerVariants}
-            // V2: increased bottom margin
-            className="mb-10 md:mb-12"
+            className="mb-6 md:mb-12"
             style={{
                 fontFamily: 'var(--font-playfair)',
                 fontWeight: 700,
-                lineHeight: 1,
+                lineHeight: 1.05,
                 letterSpacing: '-0.01em',
             }}
         >
-            <span className="overflow-hidden block">
+            <span className="overflow-hidden block pb-1">
                 <motion.span
-                    variants={lineReveal}
+                    variants={getLineReveal(isMobile)}
                     className="block"
                     style={{
-                        fontSize: 'clamp(2.8rem, 5.5vw, 5.5rem)',
+                        fontSize: 'clamp(2.5rem, 5.5vw, 5.5rem)',
                         color: '#f6e1a1',
                     }}
                 >
@@ -141,12 +153,12 @@ function HeroHeading() {
                 </motion.span>
             </span>
 
-            <span className="overflow-hidden block">
+            <span className="overflow-hidden block pb-1">
                 <motion.span
-                    variants={lineReveal}
+                    variants={getLineReveal(isMobile)}
                     className="block"
                     style={{
-                        fontSize: 'clamp(2.8rem, 5.5vw, 5.5rem)',
+                        fontSize: 'clamp(2.5rem, 5.5vw, 5.5rem)',
                         fontStyle: 'italic',
                         background:
                             'linear-gradient(110deg, #c9992a 0%, #D4A853 40%, #f5e0a0 70%, #D4A853 100%)',
@@ -162,15 +174,14 @@ function HeroHeading() {
     );
 }
 
-function HeroBody() {
+function HeroBody({ isMobile }: { isMobile: boolean }) {
     return (
         <motion.p
-            variants={fadeUp}
-            // V2: increased bottom margin
-            className="mb-12 md:mb-14 max-w-[38ch]"
+            variants={getFadeUp(isMobile)}
+            className="mb-8 md:mb-14 max-w-[38ch]"
             style={{
                 fontFamily: 'var(--font-dm-sans)',
-                fontSize: 'clamp(0.875rem, 1.1vw, 1rem)',
+                fontSize: 'clamp(0.95rem, 1.1vw, 1rem)',
                 fontWeight: 300,
                 lineHeight: 1.85,
                 color: 'rgba(201, 197, 204, 0.65)',
@@ -183,14 +194,14 @@ function HeroBody() {
     );
 }
 
-function HeroActions() {
+function HeroActions({ isMobile }: { isMobile: boolean }) {
     return (
         <motion.div
-            variants={fadeUp}
+            variants={getFadeUp(isMobile)}
             className="flex flex-wrap gap-4 items-center"
         >
             <motion.div
-                whileHover={{ y: -2 }}
+                whileHover={!isMobile ? { y: -2 } : {}}
                 whileTap={{ y: 0 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
             >
@@ -200,6 +211,7 @@ function HeroActions() {
                     style={{
                         display: 'inline-flex',
                         alignItems: 'center',
+                        justifyContent: 'center',
                         gap: '0.65rem',
                         border: '1px solid #D4A853',
                         background: '#D4A853',
@@ -208,21 +220,22 @@ function HeroActions() {
                         fontSize: '0.68rem',
                         letterSpacing: '0.2em',
                         textTransform: 'uppercase',
-                        padding: '1rem 2.25rem',
+                        minHeight: '48px', // touch target guarantee
+                        padding: '0 2.25rem',
                         textDecoration: 'none',
                         fontWeight: 500,
                         transition: 'background 0.35s ease, color 0.35s ease, box-shadow 0.35s ease',
                     }}
-                    onMouseEnter={(e) => {
+                    onMouseEnter={!isMobile ? ((e) => {
                         const el = e.currentTarget as HTMLAnchorElement;
                         el.style.background = '#c9992a';
                         el.style.boxShadow = '0 8px 32px rgba(212,168,83,0.25)';
-                    }}
-                    onMouseLeave={(e) => {
+                    }) : undefined}
+                    onMouseLeave={!isMobile ? ((e) => {
                         const el = e.currentTarget as HTMLAnchorElement;
                         el.style.background = '#D4A853';
                         el.style.boxShadow = 'none';
-                    }}
+                    }) : undefined}
                 >
                     Shop Collection
                     <span aria-hidden style={{ fontSize: '0.75rem', opacity: 0.8 }}>→</span>
@@ -230,7 +243,7 @@ function HeroActions() {
             </motion.div>
 
             <motion.div
-                whileHover={{ y: -2 }}
+                whileHover={!isMobile ? { y: -2 } : {}}
                 whileTap={{ y: 0 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
             >
@@ -240,6 +253,7 @@ function HeroActions() {
                     style={{
                         display: 'inline-flex',
                         alignItems: 'center',
+                        justifyContent: 'center',
                         gap: '0.65rem',
                         border: '1px solid rgba(201,197,204,0.25)',
                         color: 'rgba(201,197,204,0.75)',
@@ -247,21 +261,22 @@ function HeroActions() {
                         fontSize: '0.68rem',
                         letterSpacing: '0.2em',
                         textTransform: 'uppercase',
-                        padding: '1rem 2.25rem',
+                        minHeight: '48px', // touch target guarantee
+                        padding: '0 2.25rem',
                         textDecoration: 'none',
                         fontWeight: 400,
                         transition: 'border-color 0.35s ease, color 0.35s ease',
                     }}
-                    onMouseEnter={(e) => {
+                    onMouseEnter={!isMobile ? ((e) => {
                         const el = e.currentTarget as HTMLAnchorElement;
                         el.style.borderColor = '#D4A853';
                         el.style.color = '#D4A853';
-                    }}
-                    onMouseLeave={(e) => {
+                    }) : undefined}
+                    onMouseLeave={!isMobile ? ((e) => {
                         const el = e.currentTarget as HTMLAnchorElement;
                         el.style.borderColor = 'rgba(201,197,204,0.25)';
                         el.style.color = 'rgba(201,197,204,0.75)';
-                    }}
+                    }) : undefined}
                 >
                     Book Tailoring
                 </Link>
@@ -270,13 +285,12 @@ function HeroActions() {
     );
 }
 
-function HeroTrustBar() {
+function HeroTrustBar({ isMobile }: { isMobile: boolean }) {
     const items = ['500+ Happy Patrons', 'Pan-India Delivery', 'WhatsApp Concierge'];
     return (
         <motion.div
-            variants={fadeUp}
-            // V2: more top breathing room
-            className="flex flex-wrap gap-x-6 gap-y-3 mt-12 md:mt-14"
+            variants={getFadeUp(isMobile)}
+            className="flex flex-wrap gap-x-6 gap-y-3 mt-10 md:mt-14"
         >
             {items.map((item, i) => (
                 <span
@@ -439,7 +453,6 @@ function HeroImage({ mouseX, mouseY }: HeroImageProps) {
 
     return (
         <motion.div
-            variants={imageVariants}
             // V2: relative wrapper is the clip boundary
             style={{
                 position: 'relative',
@@ -693,12 +706,14 @@ function HeroImage({ mouseX, mouseY }: HeroImageProps) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function HeroSection() {
+    const isMobile = useIsMobile();
     const sectionRef = useRef<HTMLElement>(null);
 
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+        if (isMobile) return;
         const rect = sectionRef.current?.getBoundingClientRect();
         if (!rect) return;
         mouseX.set(((e.clientX - rect.left) / rect.width - 0.5) * 2);
@@ -706,6 +721,7 @@ export default function HeroSection() {
     };
 
     const handleMouseLeave = () => {
+        if (isMobile) return;
         mouseX.set(0);
         mouseY.set(0);
     };
@@ -773,12 +789,11 @@ export default function HeroSection() {
                         width: '100%',
                         maxWidth: '1440px',
                         margin: '0 auto',
-                        // V2: more generous vertical padding on mobile for breathing room
-                        padding:
-                            'clamp(8rem, 13vw, 10rem) clamp(1.5rem, 5vw, 5rem) clamp(6rem, 9vw, 8rem)',
+                        // V3: Mobile spacing standardized: 104px top (inc header), 64px bottom
+                        padding: 'clamp(6.5rem, 13vw, 10rem) clamp(1.5rem, 5vw, 5rem) clamp(4rem, 9vw, 8rem)',
                         display: 'grid',
                         gridTemplateColumns: '1fr',
-                        gap: '4rem',
+                        gap: '2.5rem',
                         alignItems: 'center',
                     }}
                     className="lp-hero-grid"
@@ -805,27 +820,23 @@ export default function HeroSection() {
                         animate="visible"
                         style={{ display: 'flex', flexDirection: 'column' }}
                     >
-                        <HeroBadge />
-                        <HeroHeading />
-                        <HeroBody />
-                        <HeroActions />
-                        <HeroTrustBar />
+                        <HeroBadge isMobile={isMobile} />
+                        <HeroHeading isMobile={isMobile} />
+                        <HeroBody isMobile={isMobile} />
+                        <HeroActions isMobile={isMobile} />
+                        <HeroTrustBar isMobile={isMobile} />
                     </motion.div>
 
                     {/* ── RIGHT COLUMN — Image ── */}
                     <motion.div
-                        variants={imageVariants}
+                        variants={getImageVariants(isMobile)}
                         initial="hidden"
                         animate="visible"
                         style={{
                             position: 'relative',
                             width: '100%',
-                            /*
-                             * V2: taller image container — was clamp(420px, 65vh, 780px).
-                             * Extra height lets more of the garment show without cropping.
-                             * On desktop the grid row alignment handles the rest.
-                             */
-                            height: 'clamp(520px, 75vh, 860px)',
+                            // V3: mobile clamped to 55vh maximum, desktop remains 75vh-860px
+                            height: 'clamp(400px, 55vh, 860px)',
                         }}
                     >
                         <HeroImage mouseX={mouseX} mouseY={mouseY} />

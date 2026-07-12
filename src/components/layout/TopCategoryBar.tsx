@@ -139,7 +139,7 @@ export default function TopCategoryBar() {
                             <li key={cat.id} className="flex-shrink-0">
                                 <Link
                                     href={cat.href}
-                                    className="flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] md:min-w-[72px] md:min-h-[72px] px-1.5 py-1.5 md:px-2 md:py-2 rounded-xl transition-all duration-200 active:scale-95 select-none hover:bg-white/5"
+                                    className="flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] md:min-w-[72px] md:min-h-[72px] px-1.5 py-1.5 md:px-2 md:py-2 rounded-xl transition-all duration-200 active:scale-95 select-none hover:bg-[rgba(15,16,53,0.95)]/5"
                                     aria-current={isActive ? 'page' : undefined}
                                 >
                                     <span
@@ -184,3 +184,4 @@ export default function TopCategoryBar() {
         </nav>
     );
 }
+

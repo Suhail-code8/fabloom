@@ -44,10 +44,10 @@ export default function CartItem({
     };
 
     return (
-        <div className="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow">
+        <div className="bg-[rgba(255,255,255,0.02)] border rounded-lg p-4 hover:shadow-md transition-shadow">
             <div className="flex gap-4">
                 {/* Product Image */}
-                <div className="flex-shrink-0 w-24 h-24 relative rounded-md overflow-hidden bg-gray-100">
+                <div className="flex-shrink-0 w-24 h-24 relative rounded-md overflow-hidden bg-[rgba(255,255,255,0.1)]">
                     <Image
                         src={item.image || '/placeholder.png'}
                         alt={item.name}
@@ -74,10 +74,10 @@ export default function CartItem({
                                     {item.size}
                                 </Badge>
                                 {item.material && (
-                                    <span className="text-xs text-gray-500">• {item.material}</span>
+                                    <span className="text-xs text-gray-400">• {item.material}</span>
                                 )}
                                 {item.color && (
-                                    <span className="text-xs text-gray-500">• {item.color}</span>
+                                    <span className="text-xs text-gray-400">• {item.color}</span>
                                 )}
                             </div>
                         )}
@@ -89,7 +89,7 @@ export default function CartItem({
                                     <Ruler className="h-3 w-3" />
                                     <span>{item.meters} meters</span>
                                     {item.fabricType && (
-                                        <span className="text-xs text-gray-500">
+                                        <span className="text-xs text-gray-400">
                                             • {item.fabricType}
                                         </span>
                                     )}
@@ -199,7 +199,7 @@ export default function CartItem({
                             ₹{getItemTotal().toLocaleString('en-IN')}
                         </p>
                         {item.itemType === 'fabric' && (
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-400">
                                 ₹{item.pricePerMeter}/meter × {item.meters}m
                             </p>
                         )}
@@ -242,3 +242,4 @@ export default function CartItem({
         </div>
     );
 }
+
