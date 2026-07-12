@@ -18,6 +18,7 @@ export interface IBaseProduct {
     featured: boolean;
     active: boolean;
     tags: string[];
+    collectionIds?: string[]; // Array of collection IDs
     createdAt: string;
     updatedAt: string;
 }

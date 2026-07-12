@@ -89,12 +89,14 @@ interface MeasurementProfilePickerProps {
     profiles: IMeasurementProfile[];
     onSelect?: (profile: IMeasurementProfile) => void;
     selectedProfileId?: string;
+    onProfileAdded?: (profile: IMeasurementProfile) => void;
 }
 
 export default function MeasurementProfilePicker({ 
     profiles, 
     onSelect, 
-    selectedProfileId 
+    selectedProfileId,
+    onProfileAdded 
 }: MeasurementProfilePickerProps) {
     const { selectedProfile, setProfile } = useStitchingStore();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -113,7 +115,7 @@ export default function MeasurementProfilePicker({
                 </p>
             </div>
             {profiles.length > 0 ? (
-                <div className="flex flex-col gap-3" role="radiogroup">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" role="radiogroup">
                     {profiles.map((p) => (
                         <ProfileCard 
                             key={p._id} 
@@ -124,14 +126,14 @@ export default function MeasurementProfilePicker({
                     ))}
                 </div>
             ) : (
-                <div className="rounded-2xl px-6 py-8 text-center" style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1.5px dashed rgba(255,255,255,0.15)' }}>
-                    <p className="text-sm text-white opacity-60">No profiles saved yet.</p>
+                <div className="rounded-2xl px-6 py-10 text-center" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.15)' }}>
+                    <p className="text-sm text-white opacity-50">No profiles saved yet.</p>
                 </div>
             )}
-            <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center justify-between mt-3">
                 <button
-                    className="flex items-center justify-center gap-2 flex-1 py-4 rounded-2xl text-sm font-bold transition-all duration-200 active:scale-98"
-                    style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1.5px dashed rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.65)' }}
+                    className="flex items-center justify-center gap-2 flex-1 py-4 rounded-2xl text-sm font-bold transition-all duration-200 active:scale-98 hover:bg-[#D4A853]/10"
+                    style={{ backgroundColor: 'transparent', border: '1px solid rgba(212,168,83,0.4)', color: '#D4A853' }}
                     onClick={() => setIsDrawerOpen(true)}
                     aria-label="Add a new measurement profile"
                 >
@@ -157,6 +159,7 @@ export default function MeasurementProfilePicker({
                 onSuccess={(newProfile) => {
                     setIsDrawerOpen(false);
                     handleSelect(newProfile);
+                    if (onProfileAdded) onProfileAdded(newProfile);
                     router.refresh();
                 }}
             />

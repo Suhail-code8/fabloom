@@ -51,7 +51,7 @@ export default function OrderSummaryBar({ currentStep, onNext, onBack }: {
 
     return (
         <div
-            className="store-action-bar-flush border-t"
+            className="store-action-bar-flush border-t w-full md:max-w-2xl md:left-1/2 md:-translate-x-1/2 md:border-x md:rounded-t-2xl shadow-[0_-8px_30px_rgba(0,0,0,0.4)]"
             style={{
                 backgroundColor: '#0f1035',
                 borderColor: 'rgba(255,255,255,0.1)',

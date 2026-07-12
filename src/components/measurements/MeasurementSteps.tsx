@@ -175,7 +175,7 @@ export function Step2Measurements() {
 
     return (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex justify-center mb-2 sticky top-0 z-10 py-4 bg-[#0f1035]/90 backdrop-blur-sm">
+            <div className="flex justify-center mb-6">
                 <BodyDiagram highlighted={active} onSelectPoint={handleSelectPoint} />
             </div>
             <div className="flex flex-col gap-3">

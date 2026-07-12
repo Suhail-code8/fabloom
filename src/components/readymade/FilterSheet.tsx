@@ -70,7 +70,7 @@ export default function FilterSheet({ open, onClose }: FilterSheetProps) {
         <>
             {/* Backdrop */}
             <div
-                className="fixed inset-0 z-50 transition-all duration-300"
+                className="fixed inset-0 z-[60] transition-all duration-300"
                 style={{
                     backgroundColor: 'rgba(0,0,0,0.6)',
                     backdropFilter: 'blur(2px)',
@@ -87,7 +87,7 @@ export default function FilterSheet({ open, onClose }: FilterSheetProps) {
                 role="dialog"
                 aria-modal="true"
                 aria-label="Filter & Sort"
-                className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl transition-transform duration-300 ease-out"
+                className="fixed bottom-0 left-0 right-0 z-[60] rounded-t-3xl transition-transform duration-300 ease-out"
                 style={{
                     backgroundColor: '#ffffff',
                     transform: open ? 'translateY(0)' : 'translateY(100%)',

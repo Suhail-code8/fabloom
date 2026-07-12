@@ -262,6 +262,7 @@ export default function ProductDetailClient({ product }: Props) {
                                                 profiles={profiles}
                                                 onSelect={setMeasurementProfile} 
                                                 selectedProfileId={measurementProfile?._id}
+                                                onProfileAdded={(newProfile) => setProfiles(prev => [newProfile, ...prev])}
                                             />
                                         </div>
                                     )}

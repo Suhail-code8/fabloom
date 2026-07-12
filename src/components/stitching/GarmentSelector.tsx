@@ -55,7 +55,7 @@ export default function GarmentSelector() {
                 <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>
                     Garment Type
                 </p>
-                <div className="flex flex-col gap-2.5">
+                <div className="grid grid-cols-2 gap-3">
                     {GARMENTS.map((g) => {
                         const selected = garmentType === g.type;
                         return (
@@ -64,31 +64,31 @@ export default function GarmentSelector() {
                                 role="radio"
                                 aria-checked={selected}
                                 onClick={() => setGarmentType(g.type)}
-                                className="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-left transition-all duration-200 active:scale-98"
+                                className="flex flex-col items-center justify-center p-5 rounded-2xl text-center transition-all duration-300 group"
                                 style={{
-                                    backgroundColor: selected ? 'rgba(212,168,83,0.12)' : 'rgba(255,255,255,0.05)',
-                                    border: selected ? '2px solid #D4A853' : '2px solid rgba(255,255,255,0.08)',
+                                    backgroundColor: selected ? 'rgba(212,168,83,0.08)' : 'rgba(255,255,255,0.03)',
+                                    border: selected ? '1.5px solid #D4A853' : '1px solid rgba(255,255,255,0.08)',
+                                    boxShadow: selected ? '0 0 20px rgba(212,168,83,0.15)' : 'none',
                                 }}
                             >
-                                <span className="text-2xl flex-shrink-0">{g.emoji}</span>
-                                <div className="flex-1 min-w-0">
-                                    <p
-                                        className="text-sm font-bold leading-tight"
-                                        style={{ color: selected ? '#D4A853' : 'rgba(255,255,255,0.9)' }}
-                                    >
-                                        {g.type}
-                                    </p>
-                                    <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                                        {g.desc}
-                                    </p>
-                                </div>
-                                {/* Stitching price on right */}
-                                <span
-                                    className="flex-shrink-0 text-sm font-extrabold"
-                                    style={{ color: selected ? '#D4A853' : 'rgba(255,255,255,0.3)' }}
+                                <span className="text-4xl mb-3 transition-transform duration-300 group-active:scale-95">{g.emoji}</span>
+                                <p
+                                    className="text-[13px] font-bold leading-tight"
+                                    style={{ color: selected ? '#D4A853' : 'rgba(255,255,255,0.9)' }}
                                 >
-                                    ₹{STITCHING_PRICE[g.type]}
-                                </span>
+                                    {g.type}
+                                </p>
+                                <p className="text-[10px] mt-1 opacity-70" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                                    {g.desc}
+                                </p>
+                                <div 
+                                    className="mt-3 px-3 py-1 rounded-full transition-colors duration-300" 
+                                    style={{ backgroundColor: selected ? '#D4A853' : 'rgba(255,255,255,0.06)' }}
+                                >
+                                    <span className="text-[11px] font-extrabold" style={{ color: selected ? '#0f1035' : 'rgba(255,255,255,0.6)' }}>
+                                        ₹{STITCHING_PRICE[g.type]}
+                                    </span>
+                                </div>
                             </button>
                         );
                     })}

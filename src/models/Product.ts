@@ -17,6 +17,7 @@ export interface IProduct extends Document {
     featured: boolean;
     active: boolean;
     tags: string[];
+    collectionIds?: mongoose.Types.ObjectId[];
     createdAt: Date;
     updatedAt: Date;
 }
@@ -82,6 +83,7 @@ const ProductSchema = new Schema<IProduct>(
         featured: { type: Boolean, default: false },
         active: { type: Boolean, default: true },
         tags: [{ type: String }],
+        collectionIds: [{ type: Schema.Types.ObjectId, ref: 'Collection' }],
     },
     {
         timestamps: true,

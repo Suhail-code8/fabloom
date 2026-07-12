@@ -73,7 +73,7 @@ export default function StitchingPage() {
         loadData();
         return () => {
             isMounted = false;
-            controller.abort('Component unmounted');
+            controller.abort();
             clearTimeout(timeout);
         };
     }, []);
@@ -115,40 +115,47 @@ export default function StitchingPage() {
             className="min-h-screen store-pb-no-nav pb-36"
             style={{ backgroundColor: '#0f1035' }}
         >
-            {/* Page title */}
-            <div className="px-4 pt-5 pb-4">
-                <h1 className="text-2xl font-extrabold text-white leading-tight">
-                    Custom Stitching
-                </h1>
-                <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                    Bespoke tailoring for Saudi, Emirati, Chinese styles & more.
-                </p>
-            </div>
-
-            {/* Premium Info Box */}
-            <div className="mx-4 mb-6 p-4 rounded-2xl bg-white/5 border border-[#D4A853]/20 flex items-start gap-3">
-                <span className="text-[#D4A853] text-lg mt-0.5">✨</span>
-                <div>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#D4A853] mb-1">
-                        Exclusive Added Service
-                    </h3>
-                    <p className="text-xs leading-relaxed text-white/70">
-                        Add custom stitching to any premium fabric purchase in your order. Our expert tailors will craft the perfect fit according to your measurements.
+            <div className="max-w-2xl mx-auto w-full">
+                {/* Page title */}
+                <div className="px-4 pt-5 pb-4">
+                    <h1 className="text-2xl font-extrabold text-white leading-tight">
+                        Custom Stitching
+                    </h1>
+                    <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                        Bespoke tailoring for Saudi, Emirati, Chinese styles & more.
                     </p>
                 </div>
+
+                {/* Premium Info Box */}
+                <div className="mx-4 mb-6 p-4 rounded-2xl bg-white/5 border border-[#D4A853]/20 flex items-start gap-3">
+                    <span className="text-[#D4A853] text-lg mt-0.5">✨</span>
+                    <div>
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-[#D4A853] mb-1">
+                            Exclusive Added Service
+                        </h3>
+                        <p className="text-xs leading-relaxed text-white/70">
+                            Add custom stitching to any premium fabric purchase in your order. Our expert tailors will craft the perfect fit according to your measurements.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Stepper indicator */}
+                <StitchingStepperHeader currentStep={step} />
+
+                {/* Divider */}
+                <div className="mx-4 mb-6 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.07)' }} />
+
+                {/* Step content */}
+                {step === 1 && <FabricSelector fabrics={fabrics} />}
+                {step === 2 && <MetersSelector />}
+                {step === 3 && <GarmentSelector />}
+                {step === 4 && (
+                    <MeasurementProfilePicker 
+                        profiles={profiles} 
+                        onProfileAdded={(newProfile) => setProfiles(prev => [newProfile, ...prev])} 
+                    />
+                )}
             </div>
-
-            {/* Stepper indicator */}
-            <StitchingStepperHeader currentStep={step} />
-
-            {/* Divider */}
-            <div className="mx-4 mb-6 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.07)' }} />
-
-            {/* Step content */}
-            {step === 1 && <FabricSelector fabrics={fabrics} />}
-            {step === 2 && <MetersSelector />}
-            {step === 3 && <GarmentSelector />}
-            {step === 4 && <MeasurementProfilePicker profiles={profiles} />}
 
             {/* Sticky bottom bar */}
             <OrderSummaryBar

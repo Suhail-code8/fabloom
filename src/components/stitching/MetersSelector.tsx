@@ -17,35 +17,37 @@ export default function MetersSelector() {
             </div>
 
             <div
-                className="rounded-2xl p-5"
-                style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '2px solid rgba(255,255,255,0.08)' }}
+                className="max-w-sm mx-auto w-full rounded-2xl p-6 shadow-lg"
+                style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}
             >
                 <div className="flex items-center justify-between gap-4">
                     <button
                         onClick={() => setMeters(Math.max(1, parseFloat((meters - 0.5).toFixed(1))))}
-                        className="w-12 h-12 rounded-2xl text-xl font-extrabold transition-all duration-150 active:scale-90"
-                        style={{ backgroundColor: 'rgba(255,255,255,0.08)', color: '#fff' }}
+                        className="w-12 h-12 flex items-center justify-center rounded-2xl text-2xl font-light transition-all duration-150 active:scale-90"
+                        style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
                         aria-label="Decrease meters"
                     >
                         −
                     </button>
 
                     <div className="flex-1 text-center">
-                        <p className="text-3xl font-extrabold text-white">{meters}m</p>
+                        <p className="text-4xl font-extrabold text-white tracking-tight">{meters}m</p>
                         {selectedFabric && (
-                            <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.55)' }}>
-                                ₹{selectedFabric.pricePerMeter.toLocaleString('en-IN')} / meter · Total:{' '}
-                                <strong style={{ color: '#D4A853' }}>
-                                    ₹{(selectedFabric.pricePerMeter * meters).toLocaleString('en-IN')}
-                                </strong>
-                            </p>
+                            <div className="flex flex-col items-center gap-1 mt-2">
+                                <p className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                                    ₹{selectedFabric.pricePerMeter.toLocaleString('en-IN')} / meter
+                                </p>
+                                <p className="text-sm font-bold" style={{ color: '#D4A853' }}>
+                                    Total: ₹{(selectedFabric.pricePerMeter * meters).toLocaleString('en-IN')}
+                                </p>
+                            </div>
                         )}
                     </div>
 
                     <button
                         onClick={() => setMeters(Math.min(max, parseFloat((meters + 0.5).toFixed(1))))}
-                        className="w-12 h-12 rounded-2xl text-xl font-extrabold transition-all duration-150 active:scale-90"
-                        style={{ backgroundColor: '#D4A853', color: '#0f1035' }}
+                        className="w-12 h-12 flex items-center justify-center rounded-2xl text-2xl font-light transition-all duration-150 active:scale-90"
+                        style={{ backgroundColor: '#D4A853', color: '#0f1035', boxShadow: '0 4px 14px rgba(212,168,83,0.3)' }}
                         aria-label="Increase meters"
                     >
                         +
@@ -53,7 +55,7 @@ export default function MetersSelector() {
                 </div>
 
                 {selectedFabric && (
-                    <p className="text-center text-[10px] mt-3" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                    <p className="text-center text-[10px] font-bold uppercase tracking-widest mt-6 pt-4 border-t" style={{ color: 'rgba(255,255,255,0.3)', borderColor: 'rgba(255,255,255,0.05)' }}>
                         Max {selectedFabric.stockInMeters}m available
                     </p>
                 )}

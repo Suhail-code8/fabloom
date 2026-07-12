@@ -66,8 +66,8 @@ export default function CheckoutPageClient() {
                     const postOffice = data[0].PostOffice[0];
                     setNewAddr(prev => ({ ...prev, city: postOffice.District, state: postOffice.State }));
                 }
-            } catch (err) {
-                console.error(err);
+            } catch (err: any) {
+                console.warn('Failed to fetch pincode data:', err.message);
             }
             setPincodeLoading(false);
         }
