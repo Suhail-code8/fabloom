@@ -1,5 +1,7 @@
+'use client';
 import React from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { ICollectionModel } from '@/models/Collection';
 
 interface CollectionNavigatorProps {
@@ -12,37 +14,60 @@ export function CollectionNavigator({ collections, currentPath, title = "Explore
     if (!collections || collections.length === 0) return null;
 
     return (
-        <section className="py-12 border-b border-gray-100">
-            <div className="max-w-7xl mx-auto px-4">
-                {title && <h2 className="text-sm tracking-widest uppercase text-gray-500 mb-8 text-center">{title}</h2>}
+        <section className="py-16 md:py-24 border-b border-gray-100">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+                {title && (
+                    <motion.h2 
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                        className="text-xs tracking-[0.2em] uppercase text-gray-400 mb-12 text-center font-medium"
+                    >
+                        {title}
+                    </motion.h2>
+                )}
                 
-                {/* Mobile: Horizontal scroll, Desktop: Flex wrap or Grid */}
-                <div className="flex overflow-x-auto pb-4 hide-scrollbar gap-6 md:justify-center md:flex-wrap">
-                    {collections.map(col => {
+                {/* Horizontal scroll container with smooth snapping for mobile */}
+                <div className="flex overflow-x-auto pb-8 -mx-4 px-4 sm:mx-0 sm:px-0 gap-6 md:gap-8 snap-x snap-mandatory hide-scrollbar justify-start md:justify-center">
+                    {collections.map((col, idx) => {
                         const href = `${currentPath}/${col.slug}`;
                         return (
                             <Link 
                                 key={col._id} 
                                 href={href}
-                                className="group flex-shrink-0 w-[280px] md:w-[320px] flex flex-col items-center"
+                                className="group flex-shrink-0 w-[75vw] sm:w-[280px] md:w-[320px] flex flex-col items-center snap-center"
                             >
-                                <div className="w-full h-[360px] bg-gray-100 overflow-hidden relative mb-4 rounded-sm">
-                                    {col.heroImage ? (
-                                        <div 
-                                            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                                            style={{ backgroundImage: `url(${col.heroImage})` }}
-                                        />
-                                    ) : (
-                                        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 text-gray-300">
-                                            <span className="font-serif italic text-lg">{col.name}</span>
+                                <motion.div 
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-50px" }}
+                                    transition={{ duration: 0.6, delay: idx * 0.1 }}
+                                    className="w-full"
+                                >
+                                    <div className="w-full aspect-[4/5] bg-gray-50 overflow-hidden relative mb-6 rounded-[2px]">
+                                        {col.heroImage ? (
+                                            <div 
+                                                className="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-110"
+                                                style={{ backgroundImage: `url(${col.heroImage})` }}
+                                            />
+                                        ) : (
+                                            <div className="absolute inset-0 flex items-center justify-center bg-[#f7f7f7] text-gray-300">
+                                                <span className="font-serif italic text-xl">{col.name}</span>
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-500" />
+                                    </div>
+                                    <div className="text-center">
+                                        <h3 className="text-2xl font-serif text-gray-900 mb-3 group-hover:text-black transition-colors">{col.name}</h3>
+                                        <div className="inline-block relative">
+                                            <span className="text-[10px] tracking-[0.15em] uppercase text-gray-500 transition-colors pb-1 group-hover:text-gray-900">
+                                                Discover
+                                            </span>
+                                            <span className="absolute bottom-0 left-0 w-full h-[1px] bg-gray-900 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                                         </div>
-                                    )}
-                                    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500" />
-                                </div>
-                                <h3 className="text-xl font-serif text-gray-900 mb-2">{col.name}</h3>
-                                <span className="text-xs tracking-wider uppercase text-gray-500 border-b border-transparent group-hover:border-gray-500 transition-colors pb-1">
-                                    Discover
-                                </span>
+                                    </div>
+                                </motion.div>
                             </Link>
                         );
                     })}
