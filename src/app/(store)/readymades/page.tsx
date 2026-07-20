@@ -1,22 +1,17 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { CollectionService } from '@/lib/services/collection.service';
-import { Product } from '@/models/Product';
 import {
     CollectionHero,
     EditorialSection,
-    ChildCollectionGrid,
-    FeaturedProducts,
-    CollectionProductGrid,
-    BuyingGuide,
-    TestimonialsSection,
-    CollectionBreadcrumbs
+    CollectionNavigator,
+    TrustSection
 } from '@/components/collection';
 import dbConnect from '@/lib/db';
 
 export const metadata = {
-    title: 'Readymades | Fabloom',
-    description: 'Shop our premium collection of readymade Islamic fashion.',
+    title: 'Luxury Readymades | Fabloom',
+    description: 'Explore the definitive collection of luxury readymade garments, tailored for the modern gentleman.',
 };
 
 export default async function ReadymadesRootPage() {
@@ -29,45 +24,29 @@ export default async function ReadymadesRootPage() {
         return notFound();
     }
 
-    // Fetch required data
+    // Fetch child collections for the navigator (Kandoora, Kurta, etc.)
     const children = await CollectionService.getChildCollections(collection._id.toString());
-    const products = await Product.find({ collectionIds: collection._id }).limit(20).lean();
     
-    // Breadcrumbs
-    const breadcrumbs = [
-        { name: collection.name, slug: collection.slug, path: '/readymades' }
-    ];
-
-    // Placeholder data for featured products
-    const featuredProducts = products.slice(0, 4);
-
     return (
-        <main className="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <CollectionBreadcrumbs items={breadcrumbs} />
-            
+        <main className="min-h-screen bg-white pb-24">
             <CollectionHero 
                 title={collection.name} 
-                heroImage={collection.heroImage} 
+                heroImage={collection.heroImage || '/placeholder-hero.jpg'} 
             />
 
-            <EditorialSection 
-                content={collection.editorialText || 'Discover our premium range of readymade garments, crafted for elegance and comfort.'} 
-            />
+            <div className="max-w-4xl mx-auto px-4 mt-8 mb-16">
+                <EditorialSection 
+                    content={collection.editorialText || 'Discover our premium range of readymade garments, crafted for elegance, exceptional comfort, and a flawless drape.'} 
+                />
+            </div>
 
-            <ChildCollectionGrid 
-                childrenCollections={children} 
+            <CollectionNavigator 
+                collections={children} 
                 currentPath="/readymades" 
+                title="The Collections"
             />
 
-            {featuredProducts.length > 0 && (
-                <FeaturedProducts products={featuredProducts} />
-            )}
-
-            <CollectionProductGrid products={products} />
-
-            <BuyingGuide guideLink={collection.buyingGuideLink} />
-
-            <TestimonialsSection show={collection.showTestimonials !== false} />
+            <TrustSection />
         </main>
     );
 }

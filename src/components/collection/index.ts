@@ -6,3 +6,6 @@ export * from './CollectionProductGrid';
 export * from './BuyingGuide';
 export * from './TestimonialsSection';
 export * from './CollectionBreadcrumbs';
+export * from './CollectionNavigator';
+export * from './TrustSection';
+export * from './CrossSellSection';

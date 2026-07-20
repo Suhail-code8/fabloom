@@ -5,12 +5,12 @@ import { Product } from '@/models/Product';
 import {
     CollectionHero,
     EditorialSection,
-    ChildCollectionGrid,
+    CollectionNavigator,
     FeaturedProducts,
     CollectionProductGrid,
     BuyingGuide,
-    TestimonialsSection,
-    CollectionBreadcrumbs
+    CollectionBreadcrumbs,
+    CrossSellSection
 } from '@/components/collection';
 import dbConnect from '@/lib/db';
 
@@ -34,7 +34,6 @@ export async function generateMetadata({ params }: { params: { slug: string[] } 
 export default async function ReadymadesDynamicPage({ params }: { params: { slug: string[] } }) {
     await dbConnect();
     
-    // Resolve the collection by prefixing with 'readymades'
     const fullPath = ['readymades', ...params.slug];
     const collection = await CollectionService.resolvePath(fullPath);
     
@@ -42,14 +41,17 @@ export default async function ReadymadesDynamicPage({ params }: { params: { slug
         return notFound();
     }
 
+    const depth = params.slug.length;
+    const isLevel2 = depth === 1; // e.g., kandoora
+    const isLevel3 = depth === 2; // e.g., kandoora/saudi
+
     // Fetch required data
     const children = await CollectionService.getChildCollections(collection._id.toString());
-    const products = await Product.find({ collectionIds: collection._id }).limit(20).lean();
+    const products = await Product.find({ collectionIds: collection._id }).limit(24).lean();
     const breadcrumbNodes = await CollectionService.getBreadcrumbs(collection._id.toString());
     
     // Build breadcrumbs for the UI
     const breadcrumbs = breadcrumbNodes.map((node, index) => {
-        // Construct path iteratively based on index
         const pathSlugs = breadcrumbNodes.slice(0, index + 1).map(n => n.slug);
         const path = `/${pathSlugs.join('/')}`;
         return {
@@ -60,35 +62,76 @@ export default async function ReadymadesDynamicPage({ params }: { params: { slug
     });
 
     const currentPath = `/${fullPath.join('/')}`;
-    const featuredProducts = products.slice(0, 4);
+    
+    // We differentiate Featured Piece vs Featured Products by slicing different amounts
+    const featuredProducts = isLevel3 ? products.slice(0, 1) : products.slice(0, 3);
+    const gridProducts = isLevel3 ? products.slice(1) : products.slice(3);
 
     return (
-        <main className="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <CollectionBreadcrumbs items={breadcrumbs} />
+        <main className="min-h-screen bg-white pb-24">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <CollectionBreadcrumbs items={breadcrumbs} />
+            </div>
             
             <CollectionHero 
                 title={collection.name} 
-                heroImage={collection.heroImage} 
+                heroImage={collection.heroImage || '/placeholder-hero.jpg'} 
             />
 
-            <EditorialSection 
-                content={collection.editorialText} 
-            />
-
-            <ChildCollectionGrid 
-                childrenCollections={children} 
-                currentPath={currentPath} 
-            />
-
-            {featuredProducts.length > 0 && (
-                <FeaturedProducts products={featuredProducts} />
+            {/* Level 2: Parent Collection Experience */}
+            {isLevel2 && (
+                <>
+                    {children.length > 0 && (
+                        <div className="mt-8 mb-16">
+                            <CollectionNavigator 
+                                collections={children} 
+                                currentPath={currentPath}
+                                title="Explore Styles"
+                            />
+                        </div>
+                    )}
+                    
+                    <div className="max-w-3xl mx-auto px-4 mb-16">
+                        <EditorialSection content={collection.editorialText || `The quintessential ${collection.name}, reimagined for modern luxury.`} />
+                    </div>
+                    
+                    {featuredProducts.length > 0 && (
+                        <FeaturedProducts products={featuredProducts} />
+                    )}
+                    
+                    <div className="max-w-7xl mx-auto px-4 mt-16">
+                        <CollectionProductGrid products={gridProducts} />
+                    </div>
+                </>
             )}
 
-            <CollectionProductGrid products={products} />
+            {/* Level 3: Leaf Collection Experience */}
+            {isLevel3 && (
+                <>
+                    <div className="max-w-3xl mx-auto px-4 mt-12 mb-16">
+                        <EditorialSection content={collection.editorialText || `Signature design and master tailoring define our ${collection.name}.`} />
+                    </div>
 
-            <BuyingGuide guideLink={collection.buyingGuideLink} />
+                    {featuredProducts.length > 0 && (
+                        <div className="max-w-5xl mx-auto px-4 mb-16">
+                            <h2 className="text-xl tracking-widest text-center text-gray-500 uppercase mb-8">The Signature Piece</h2>
+                            {/* We just reuse FeaturedProducts but with 1 item it will render nicely centered */}
+                            <FeaturedProducts products={featuredProducts} />
+                        </div>
+                    )}
 
-            <TestimonialsSection show={collection.showTestimonials !== false} />
+                    <div className="max-w-7xl mx-auto px-4 mb-16">
+                        <BuyingGuide guideLink={collection.buyingGuideLink || '/measure-guide'} />
+                    </div>
+
+                    <div className="max-w-7xl mx-auto px-4 mt-16">
+                        <CollectionProductGrid products={gridProducts} />
+                    </div>
+
+                    <CrossSellSection />
+                </>
+            )}
+            
         </main>
     );
 }
