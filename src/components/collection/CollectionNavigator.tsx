@@ -48,7 +48,7 @@ export function CollectionNavigator({ collections, currentPath, title = "Explore
                                     <div className="w-full aspect-[4/5] bg-foreground/5 overflow-hidden relative mb-6 rounded-[2px]">
                                         {col.heroImage ? (
                                             <div 
-                                                className="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105"
+                                                className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-out group-hover:scale-105"
                                                 style={{ backgroundImage: `url(${col.heroImage})` }}
                                             />
                                         ) : (
@@ -64,7 +64,7 @@ export function CollectionNavigator({ collections, currentPath, title = "Explore
                                             <span className="text-[10px] tracking-[0.2em] uppercase text-foreground/60 transition-colors pb-1 group-hover:text-accent">
                                                 Discover
                                             </span>
-                                            <span className="absolute bottom-0 left-0 w-full h-[1px] bg-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left ease-[cubic-bezier(0.25,0.46,0.45,0.94)]" />
+                                            <span className="absolute bottom-0 left-0 w-full h-[1px] bg-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left ease-out" />
                                         </div>
                                     </div>
                                 </motion.div>

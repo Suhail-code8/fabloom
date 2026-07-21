@@ -47,7 +47,7 @@ export function CrossSellSection({
                             <h3 className="text-2xl font-serif text-gray-800 group-hover:text-black transition-colors text-center">{item.name}</h3>
                             <div className="mt-8 overflow-hidden h-6">
                                 <motion.span 
-                                    className="inline-block border-b border-gray-900 pb-1 text-xs tracking-widest uppercase font-medium transform translate-y-6 group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                                    className="inline-block border-b border-gray-900 pb-1 text-xs tracking-widest uppercase font-medium transform translate-y-6 group-hover:translate-y-0 transition-transform duration-500 ease-out"
                                 >
                                     Explore
                                 </motion.span>
