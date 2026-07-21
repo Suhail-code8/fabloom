@@ -30,7 +30,7 @@ export class CollectionService {
 
         // Initialize map
         for (const col of allCollections) {
-            map.set(col._id.toString(), { ...col, children: [] } as CollectionTreeNode);
+            map.set(col._id.toString(), { ...col, children: [] } as unknown as CollectionTreeNode);
         }
 
         // Build tree
@@ -70,7 +70,7 @@ export class CollectionService {
             if (breadcrumbs[i].slug !== slugs[i]) return null;
         }
 
-        return candidate as ICollectionModel;
+        return candidate as unknown as ICollectionModel;
     }
 
     /**
@@ -82,9 +82,9 @@ export class CollectionService {
         let currentId: string | null = collectionId;
 
         while (currentId) {
-            const node = await Collection.findById(currentId).lean();
+            const node = await Collection.findById(currentId).lean() as unknown as ICollectionModel;
             if (!node) break;
-            breadcrumbs.unshift(node as ICollectionModel);
+            breadcrumbs.unshift(node);
             currentId = node.parentId ? node.parentId.toString() : null;
         }
 
@@ -96,8 +96,9 @@ export class CollectionService {
      */
     static async getChildCollections(parentId: string): Promise<ICollectionModel[]> {
         await this.init();
-        return Collection.find({ parentId: new mongoose.Types.ObjectId(parentId), isActive: true })
+        const results = await Collection.find({ parentId: new mongoose.Types.ObjectId(parentId), isActive: true })
             .sort({ displayOrder: 1 })
             .lean();
+        return results as unknown as ICollectionModel[];
     }
 }

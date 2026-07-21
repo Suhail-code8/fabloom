@@ -14,9 +14,10 @@ import {
 } from '@/components/collection';
 import dbConnect from '@/lib/db';
 
-export async function generateMetadata({ params }: { params: { slug: string[] } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }) {
     await dbConnect();
-    const fullPath = ['readymades', ...params.slug];
+    const resolvedParams = await params;
+    const fullPath = ['readymades', ...resolvedParams.slug];
     const collection = await CollectionService.resolvePath(fullPath);
 
     if (!collection) {
@@ -31,17 +32,18 @@ export async function generateMetadata({ params }: { params: { slug: string[] } 
     };
 }
 
-export default async function ReadymadesDynamicPage({ params }: { params: { slug: string[] } }) {
+export default async function ReadymadesDynamicPage({ params }: { params: Promise<{ slug: string[] }> }) {
     await dbConnect();
     
-    const fullPath = ['readymades', ...params.slug];
+    const resolvedParams = await params;
+    const fullPath = ['readymades', ...resolvedParams.slug];
     const collection = await CollectionService.resolvePath(fullPath);
     
     if (!collection) {
         return notFound();
     }
 
-    const depth = params.slug.length;
+    const depth = resolvedParams.slug.length;
     const isLevel2 = depth === 1; // e.g., kandoora
     const isLevel3 = depth === 2; // e.g., kandoora/saudi
 
@@ -121,7 +123,7 @@ export default async function ReadymadesDynamicPage({ params }: { params: { slug
                     )}
 
                     <div className="max-w-7xl mx-auto px-4 mb-16">
-                        <BuyingGuide guideLink={collection.buyingGuideLink || '/measure-guide'} />
+                        <BuyingGuide guideLink={collection.buyingGuideUrl || '/measure-guide'} />
                     </div>
 
                     <div className="max-w-7xl mx-auto px-4 mt-16">

@@ -4,31 +4,36 @@
 
 @layer base {
   :root {
-    --background: 0 0% 99%;
-    --foreground: 238 56% 13%; /* Dark Navy Text */
-    --card: 0 0% 100%;
-    --card-foreground: 238 56% 13%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 238 56% 13%;
+    /* 80% Cashmere / Warm White */
+    --background: 40 20% 97%; /* #F9F8F6 */
+    --foreground: 233 55% 13%; /* Deep Navy #0f1035 */
     
-    /* Globally forcing the Primary color to Brand Gold (#D4A853) */
-    --primary: 40 59% 62%;
-    --primary-foreground: 0 0% 100%;
+    --card: 40 20% 97%;
+    --card-foreground: 233 55% 13%;
+    --popover: 40 20% 97%;
+    --popover-foreground: 233 55% 13%;
     
-    /* Secondary defaults to a soft navy tint */
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 238 56% 13%;
+    /* 15% Deep Navy */
+    --primary: 233 55% 13%;
+    --primary-foreground: 40 20% 97%;
     
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 40 59% 95%; /* Soft gold accent */
-    --accent-foreground: 238 56% 13%;
+    /* 5% Warm Gold Accents */
+    --accent: 40 65% 58%; /* #D4A853 */
+    --accent-foreground: 233 55% 13%;
+    
+    --secondary: 40 10% 92%;
+    --secondary-foreground: 233 55% 13%;
+    
+    --muted: 40 10% 92%;
+    --muted-foreground: 233 30% 40%;
+    
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 40 59% 62%; /* Focus rings glow gold */
-    --radius: 0.5rem;
+    
+    --border: 40 15% 90%;
+    --input: 40 15% 90%;
+    --ring: 40 65% 58%;
+    --radius: 0px; /* Sharp architectural corners */
     
     /* Charts */
     --chart-1: 12 76% 61%;
@@ -39,29 +44,33 @@
   }
 
   .dark {
-    /* Dark Mode Background forced to Brand Navy (#0f1035) */
-    --background: 238 56% 13%;
-    --foreground: 0 0% 98%;
+    /* Even in dark mode, we maintain the Navy/Gold identity */
+    --background: 233 55% 13%; /* #0f1035 */
+    --foreground: 40 20% 97%; /* Cashmere text */
     
-    --card: 238 45% 18%; /* Slightly lighter navy for cards */
-    --card-foreground: 0 0% 98%;
-    --popover: 238 45% 18%;
-    --popover-foreground: 0 0% 98%;
+    --card: 233 55% 13%;
+    --card-foreground: 40 20% 97%;
+    --popover: 233 55% 13%;
+    --popover-foreground: 40 20% 97%;
     
-    --primary: 40 59% 62%;
-    --primary-foreground: 238 56% 13%;
+    --primary: 40 65% 58%; /* Gold */
+    --primary-foreground: 233 55% 13%;
     
-    --secondary: 238 30% 25%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 238 30% 25%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 238 30% 25%;
-    --accent-foreground: 0 0% 98%;
+    --secondary: 233 40% 20%;
+    --secondary-foreground: 40 20% 97%;
+    
+    --muted: 233 40% 20%;
+    --muted-foreground: 40 10% 70%;
+    
+    --accent: 40 65% 58%;
+    --accent-foreground: 233 55% 13%;
+    
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 238 30% 25%;
-    --input: 238 30% 25%;
-    --ring: 40 59% 62%;
+    --destructive-foreground: 40 20% 97%;
+    
+    --border: 233 40% 25%;
+    --input: 233 40% 25%;
+    --ring: 40 65% 58%;
   }
 
   :root {
