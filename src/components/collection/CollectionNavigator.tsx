@@ -29,7 +29,7 @@ export function CollectionNavigator({ collections, currentPath, title = "Explore
                 )}
                 
                 {/* Horizontal scroll container with smooth snapping for mobile */}
-                <div className="flex overflow-x-auto pb-8 -mx-4 px-4 sm:mx-0 sm:px-0 gap-6 md:gap-8 snap-x snap-mandatory hide-scrollbar justify-start md:justify-center">
+                <div className="flex overflow-x-auto pb-8 -mx-4 px-4 sm:mx-0 sm:px-0 gap-6 md:gap-8 snap-x snap-mandatory hide-scrollbar justify-start">
                     {collections.map((col, idx) => {
                         const href = `${currentPath}/${col.slug}`;
                         return (
