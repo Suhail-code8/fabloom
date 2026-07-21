@@ -14,7 +14,7 @@ export function CollectionNavigator({ collections, currentPath, title = "Explore
     if (!collections || collections.length === 0) return null;
 
     return (
-        <section className="py-16 md:py-24 border-b border-gray-100">
+        <section className="py-16 md:py-24">
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
                 {title && (
                     <motion.h2 
@@ -22,7 +22,7 @@ export function CollectionNavigator({ collections, currentPath, title = "Explore
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6 }}
-                        className="text-xs tracking-[0.2em] uppercase text-gray-400 mb-12 text-center font-medium"
+                        className="text-[10px] tracking-[0.25em] uppercase text-foreground/50 mb-12 text-center font-medium"
                     >
                         {title}
                     </motion.h2>
@@ -36,7 +36,7 @@ export function CollectionNavigator({ collections, currentPath, title = "Explore
                             <Link 
                                 key={col._id} 
                                 href={href}
-                                className="group flex-shrink-0 w-[75vw] sm:w-[280px] md:w-[320px] flex flex-col items-center snap-center"
+                                className="group flex-shrink-0 w-[80vw] sm:w-[300px] md:w-[360px] flex flex-col items-center snap-center"
                             >
                                 <motion.div 
                                     initial={{ opacity: 0, y: 20 }}
@@ -45,26 +45,26 @@ export function CollectionNavigator({ collections, currentPath, title = "Explore
                                     transition={{ duration: 0.6, delay: idx * 0.1 }}
                                     className="w-full"
                                 >
-                                    <div className="w-full aspect-[4/5] bg-gray-50 overflow-hidden relative mb-6 rounded-[2px]">
+                                    <div className="w-full aspect-[4/5] bg-foreground/5 overflow-hidden relative mb-6 rounded-[2px]">
                                         {col.heroImage ? (
                                             <div 
-                                                className="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-110"
+                                                className="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105"
                                                 style={{ backgroundImage: `url(${col.heroImage})` }}
                                             />
                                         ) : (
-                                            <div className="absolute inset-0 flex items-center justify-center bg-[#f7f7f7] text-gray-300">
+                                            <div className="absolute inset-0 flex items-center justify-center bg-foreground/5 text-foreground/30">
                                                 <span className="font-serif italic text-xl">{col.name}</span>
                                             </div>
                                         )}
-                                        <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-500" />
+                                        <div className="absolute inset-0 bg-foreground/5 group-hover:bg-black/0 transition-colors duration-500" />
                                     </div>
                                     <div className="text-center">
-                                        <h3 className="text-2xl font-serif text-gray-900 mb-3 group-hover:text-black transition-colors">{col.name}</h3>
+                                        <h3 className="text-2xl font-serif text-foreground mb-3 group-hover:text-foreground/80 transition-colors">{col.name}</h3>
                                         <div className="inline-block relative">
-                                            <span className="text-[10px] tracking-[0.15em] uppercase text-gray-500 transition-colors pb-1 group-hover:text-gray-900">
+                                            <span className="text-[10px] tracking-[0.2em] uppercase text-foreground/60 transition-colors pb-1 group-hover:text-accent">
                                                 Discover
                                             </span>
-                                            <span className="absolute bottom-0 left-0 w-full h-[1px] bg-gray-900 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                                            <span className="absolute bottom-0 left-0 w-full h-[1px] bg-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left ease-[cubic-bezier(0.25,0.46,0.45,0.94)]" />
                                         </div>
                                     </div>
                                 </motion.div>

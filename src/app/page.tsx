@@ -1,10 +1,20 @@
 import Link from 'next/link';
 import HeroSection from '@/components/landing/HeroSection';
 import BrandManifesto from '@/components/landing/BrandManifesto';
+import EditorialQuote from '@/components/landing/EditorialQuote';
+import { CollectionNavigator } from '@/components/collection';
+import { CollectionService } from '@/lib/services/collection.service';
 // import FeaturedCollections from '@/components/landing/FeaturedCollections';
 // import OurCraft from '@/components/landing/OurCraft';
 
-export default function LandingPage() {
+export default async function LandingPage() {
+    // Fetch readymades collections
+    const readymades = await CollectionService.resolvePath(['readymades']);
+    let readymadesChildren: any[] = [];
+    if (readymades) {
+        readymadesChildren = await CollectionService.getChildCollections(readymades._id.toString());
+    }
+
     return (
         <main className="min-h-screen bg-background">
             
@@ -47,8 +57,22 @@ export default function LandingPage() {
             {/* ── SECTION 2: BRAND MANIFESTO ─────────────────────────────────── */}
             <BrandManifesto />
 
+            {/* ── SECTION 3: EDITORIAL QUOTE ─────────────────────────────────── */}
+            <EditorialQuote />
+
+            {/* ── SECTION 4: READYMADES COLLECTIONS CATALOGUE ────────────────── */}
+            {readymadesChildren && readymadesChildren.length > 0 && (
+                <div className="pb-32 bg-background">
+                    <CollectionNavigator 
+                        collections={readymadesChildren} 
+                        currentPath="/readymades" 
+                        title="The Readymades Collection" 
+                    />
+                </div>
+            )}
+
             {/* 
-                Legacy Sections (Temporarily commented for Phase 5 Milestone 1)
+                Legacy Sections (Temporarily commented for Phase 5 Milestone 2)
                 <FeaturedCollections />
                 <OurCraft />
                 ...
